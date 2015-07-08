@@ -7,3 +7,5 @@ Dalam SILO terdapat fitur-fitur sebagai berikut :
 * SBBK
 * Laporan Mutasi Obat (per bulan, per semester, per tahun)
 * Laporan Obat Expire
+## Instalasi
+Perlu diketahui bahwa SILO ini menggunakan Themes berbayar (cube), sebelum menginstallnya Anda terlebih dahulu harus membeli themes tersebut kemudian menyalinnya ke direktori themes. Theme cube bisa Anda beli di <a href="https://wrapbootstrap.com/theme/cube-bootstrap-admin-theme-angularjs-WB008R559">sini</a>.
