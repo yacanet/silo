@@ -1,0 +1,179 @@
+<%@ Title="Profiles" %>
+<com:TContent ID="moduleheader">
+    <i class="fa fa-group"></i> Profiles
+</com:TContent>
+<com:TContent ID="modulebreadcrumb">        
+    <li class="active">Profiles</li>
+</com:TContent>
+<com:TContent ID="maincontent">        
+    <com:TPanel Visible="<%= $this->getDefaultProcess(false) %>">
+        <com:TActiveHiddenField ID="hiddenuserid" />
+        <com:TActiveHiddenField ID="hiddenusername" />
+        <com:TActiveHiddenField ID="hiddenemail" />        
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="main-box">
+                    <header class="main-box-header clearfix">
+                        <h2 class="pull-left"><i class="fa fa-pencil"></i> Informasi Login</h2>
+                        <div class="icon-box pull-right">                                       
+                            
+                        </div>
+                    </header> 
+                    <div class="main-box-body clearfix">
+                        <div class="form-horizontal"> 
+                            <div class="form-group" id="divTxtUsername">
+                                <label class="col-lg-2 control-label">Username :</label>                        
+                                <div class="col-lg-4">
+                                    <com:TTextBox ID="txtUsername" CssClass="form-control" Attributes.PlaceHolder="Username" Enabled="false" />			                                                                                                       
+                                </div>
+                            </div>
+                            <div class="form-group" id="divTxtPassword">
+                                <label class="col-lg-2 control-label">Password :</label>
+                                <div class="col-lg-2">
+                                    <com:TTextBox ID="txtPassword" CssClass="form-control" Attributes.PlaceHolder="Password" TextMode="Password"/>                                
+                                </div>
+                            </div>
+                            <div class="form-group" id="divTxtRetypePassword">
+                            <label class="col-lg-2 control-label">Re-type Password :</label>
+                                <div class="col-lg-2">
+                                    <com:TTextBox ID="txtPassword2" CssClass="form-control" Attributes.PlaceHolder="Re-type Password" TextMode="Password" />
+                                    <com:TCompareValidator ID="FieldRetypePasswordValidator" ControlToValidate="txtPassword" ControlToCompare="txtPassword2" Display="Dynamic" ErrorMessage="Isi Password tidak sama" ValidationGroup="profileuser" FocusOnError="true" CssClass="has-error help-block">				
+                                        <prop:ClientSide.OnValidationError>
+                                            $('divTxtRetypePassword').addClassName('has-error');
+                                            jQuery('#<%=$this->FieldRetypePasswordValidator->ClientID%>').removeAttr('style');
+                                        </prop:ClientSide.OnValidationError>
+                                        <prop:ClientSide.OnValidationSuccess>
+                                            $('divTxtRetypePassword').removeClassName('has-error');
+                                        </prop:ClientSide.OnValidationSuccess>
+                                    </com:TCompareValidator>
+                                </div>
+                            </div> 
+                        </div>
+                    </div>
+                </div>
+            </div>  
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="main-box">
+                    <header class="main-box-header clearfix">
+                        <h2 class="pull-left"><i class="fa fa-pencil"></i> Informasi User</h2>
+                        <div class="icon-box pull-right">                                       
+                            
+                        </div>
+                    </header> 
+                    <div class="main-box-body clearfix">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="form-horizontal">
+                                    <div class="form-group" id="divNama">
+                                        <label class="col-lg-4 control-label">Nama :</label>
+                                        <div class="col-lg-8">
+                                            <com:TTextBox ID="txtNama" CssClass="form-control" Attributes.PlaceHolder="Nama " />			                            
+                                            <com:TRequiredFieldValidator ID="FieldNama" ControlToValidate="txtNama" Display="Dynamic" ErrorMessage="Isi Nama" ValidationGroup="profileuser" FocusOnError="true" CssClass="has-error help-block">			
+                                                <prop:ClientSide.OnValidationError>
+                                                    $('divNama').addClassName('has-error');
+                                                    jQuery('#<%=$this->FieldNama->ClientID%>').removeAttr('style');
+                                                </prop:ClientSide.OnValidationError>
+                                                <prop:ClientSide.OnValidationSuccess>
+                                                    $('divNama').removeClassName('has-error');
+                                                </prop:ClientSide.OnValidationSuccess>
+                                            </com:TRequiredFieldValidator>                                         
+                                        </div>
+                                    </div>
+                                    <div class="form-group" id="divNIP">
+                                        <label class="col-lg-4 control-label">NIP :</label>
+                                        <div class="col-lg-5">
+                                            <com:TTextBox ID="txtNIP" CssClass="form-control" Attributes.PlaceHolder="NIP" MaxLength="18" Attributes.OnKeyUp="formatangka(this,true)" />			                            
+                                            <com:TRequiredFieldValidator ID="FieldNIP" ControlToValidate="txtNIP" Display="Dynamic" ErrorMessage="Isi NIP " ValidationGroup="profileuser" FocusOnError="true" CssClass="has-error help-block">			
+                                                <prop:ClientSide.OnValidationError>
+                                                    $('divNIP').addClassName('has-error');
+                                                    jQuery('#<%=$this->FieldNIP->ClientID%>').removeAttr('style');
+                                                </prop:ClientSide.OnValidationError>
+                                                <prop:ClientSide.OnValidationSuccess>
+                                                    $('divNIP').removeClassName('has-error');
+                                                </prop:ClientSide.OnValidationSuccess>
+                                            </com:TRequiredFieldValidator>                                         
+                                        </div>
+                                    </div>
+                                    <div class="form-group" id="divTxtEmail">
+                                        <label class="col-sm-4 control-label">Email :</label>
+                                        <div class="col-xs-7">
+                                            <com:TTextBox ID="txtAlamatEmail" CssClass="form-control" Attributes.PlaceHolder="alamat email" />                        
+                                            <com:TRequiredFieldValidator ID="FieldEmailValidator" ControlToValidate="txtAlamatEmail" Display="Dynamic" ErrorMessage="Isi Email" ValidationGroup="profileuser" FocusOnError="true" CssClass="has-error help-block">				
+                                                <prop:ClientSide.OnValidationError>
+                                                    $('divTxtEmail').addClassName('has-error');
+                                                    jQuery('#<%=$this->FieldEmailValidator->ClientID%>').removeAttr('style');
+                                                </prop:ClientSide.OnValidationError>
+                                                <prop:ClientSide.OnValidationSuccess>
+                                                    $('divTxtEmail').removeClassName('has-error');
+                                                </prop:ClientSide.OnValidationSuccess>
+                                            </com:TRequiredFieldValidator>
+                                            <com:TEmailAddressValidator ID="EmailValidator" ControlToValidate="txtAlamatEmail" Display="Dynamic" ErrorMessage="Format alamat email salah" ValidationGroup="profileuser" FocusOnError="true" CheckMXRecord="false" CssClass="has-error help-block" />
+                                            <com:TActiveCustomValidator ID="CustomEmailValidator" ControlToValidate="txtAlamatEmail" Display="Dynamic" OnServerValidate="checkEmail" ValidationGroup="profileuser" ErrorMessage="Email Yang Anda Inputkan Sudah Ada" FocusOnError="true" CssClass="has-error help-block">
+                                                <prop:ClientSide.OnValidationError>
+                                                    $('divTxtEmail').addClassName('has-error');
+                                                    jQuery('#<%=$this->CustomEmailValidator->ClientID%>').removeAttr('style');
+                                                </prop:ClientSide.OnValidationError>
+                                                <prop:ClientSide.OnValidationSuccess>
+                                                    $('divTxtEmail').removeClassName('has-error');
+                                                </prop:ClientSide.OnValidationSuccess>
+                                            </com:TActiveCustomValidator>
+                                        </div>
+                                    </div>
+                                    <div class="form-group" id="divNoHP">
+                                        <label class="col-sm-4 control-label">No HP :</label>
+                                        <div class="col-xs-4">
+                                            <com:TTextBox ID="txtNoHP" CssClass="form-control" Attributes.PlaceHolder="No HP" Attributes.OnKeyUp="formatangka(this,true)" />			                                                                                          
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-horizontal">
+                                    <div class="form-group" id="divPhotoUser">
+                                        <label class="col-sm-4 control-label">Photo User :</label>
+                                        <div class="col-xs-4">
+                                            <com:TActiveFileUpload ID="photoUser" OnFileUpload="onImgUpload" />
+                                            <com:TActiveHiddenField ID="path_userimages" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label">&nbsp;</label>
+                                        <div class="col-xs-4">                                        
+                                            <com:TActiveImage ID="userPhoto" CssClass="img-thumbnail" Attributes.OnError="no_photo(this,'<%=$this->Page->setup->getAddress()%>/resources/userimages/no_photo.png')" />                                        
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label">&nbsp;</label>
+                                        <div class="col-xs-8">                                                                                
+                                            <com:TActiveLabel ID="errorUpload" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <com:TActiveLinkButton ID="btnSave" CssClass="btn btn-primary" OnClick="saveData" ValidationGroup="profileuser">
+                                        <prop:Text><i class="fa fa-save"></i> Simpan</prop:Text>
+                                        <prop:ClientSide.OnPreDispatch>
+                                            $('loading').show();                                             
+                                            $('<%=$this->btnSave->ClientId%>').disabled='disabled';						
+                                        </prop:ClientSide.OnPreDispatch>
+                                        <prop:ClientSide.OnLoading>
+                                            $('<%=$this->btnSave->ClientId%>').disabled='disabled';						
+                                        </prop:ClientSide.OnLoading>
+                                        <prop:ClientSide.OnComplete>																	
+                                            $('<%=$this->btnSave->ClientId%>').disabled='';						                                            
+                                            $('loading').hide(); 
+                                        </prop:ClientSide.OnComplete>
+                                    </com:TActiveLinkButton>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>        
+        </div>
+    </com:TPanel>             
+</com:TContent>

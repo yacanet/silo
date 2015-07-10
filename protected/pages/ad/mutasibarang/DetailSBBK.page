@@ -1,0 +1,175 @@
+<%@ Title="Mutasi Barang Masuk - Detail Obat pada SBBK" %>
+<com:TContent ID="moduleheader">
+    <i class="fa fa-file-archive-o"></i> Detail pada SBBK (Surat Bukti Barang Keluar)
+</com:TContent>
+<com:TContent ID="modulebreadcrumb">    
+    <li><a href="#">Mutasi Barang Masuk</a></li>
+    <li class="active">Detail SBBK</li>
+</com:TContent>
+<com:TContent ID="maincontent">
+<com:TPanel Visible="<%= $this->getDefaultProcess() %>">  
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="main-box">
+                <header class="main-box-header clearfix">
+                    <h2><i class="fa fa-search"></i> Pencarian Data</h2>
+                </header>
+                <div class="main-box-body clearfix">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-lg-3 control-label">Kriteria :</label>
+                            <div class="col-lg-5">
+                                <com:TDropDownList ID="cmbKriteria" CssClass="form-control">                                                           
+                                    <com:TListItem Text="Nomor SBBK" Value="kode" />
+                                    <com:TListItem Text="Nomor Faktur" Value="nomor" />
+                                </com:TDropDownList>
+                            </div>
+                        </div>
+                        <div class="form-group" id="divtxtKriteria">
+                            <label class="col-lg-3 control-label">Isi Kriteria :</label>
+                            <div class="col-lg-6">
+                                <com:TActiveTextBox ID="txtKriteria" CssClass="form-control" />                                            
+                                <com:TRequiredFieldValidator ID="spanKriteriaValidator1" ValidationGroup="viewPegawai" Display="Dynamic" ControlToValidate="txtKriteria" ErrorMessage="Inputkan NIP." FocusOnError="true" CssClass="has-error help-block">	
+                                    <prop:ClientSide.OnValidationError>
+                                        $('divtxtKriteria').addClassName('has-error');
+                                        jQuery('#<%=$this->spanKriteriaValidator1->ClientID%>').removeAttr('style');                                
+                                    </prop:ClientSide.OnValidationError>
+                                    <prop:ClientSide.OnValidationSuccess>
+                                        $('divtxtKriteria').removeClassName('has-error');
+                                    </prop:ClientSide.OnValidationSuccess>
+                                </com:TRequiredFieldValidator>
+                                <com:TRequiredFieldValidator ID="spanKriteriaValidator2" ValidationGroup="filterForm" Display="Dynamic" ControlToValidate="txtKriteria" ErrorMessage="Input apa yang Anda cari, sesuai dengan kriteria yang Anda tentukan." FocusOnError="true" CssClass="has-error help-block">	
+                                    <prop:ClientSide.OnValidationError>
+                                        $('divtxtKriteria').addClassName('has-error');
+                                        jQuery('#<%=$this->spanKriteriaValidator2->ClientID%>').removeAttr('style');                                
+                                    </prop:ClientSide.OnValidationError>
+                                    <prop:ClientSide.OnValidationSuccess>
+                                        $('divtxtKriteria').removeClassName('has-error');
+                                    </prop:ClientSide.OnValidationSuccess>
+                                </com:TRequiredFieldValidator>                                         
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-lg-offset-3 col-lg-10">
+                                <com:TActiveCustomButton ID="btnSearch" CssClass="btn btn-info"  OnClick="Page.searchRecord" ValidationGroup="filterForm" Attributes.Title="Cari">
+                                    <prop:Text>                                        
+                                        <i class="fa fa-search"></i> Cari                                        
+                                    </prop:Text>
+                                    <prop:ClientSide.OnPreDispatch>         
+                                        $('loading').show();
+                                    </prop:ClientSide.OnPreDispatch>
+                                    <prop:ClientSide.OnLoading>
+                                        $('<%=$this->btnSearch->ClientId%>').disabled='disabled';						
+                                    </prop:ClientSide.OnLoading>
+                                    <prop:ClientSide.OnComplete>																	
+                                        $('<%=$this->btnSearch->ClientId%>').disabled='';						                               						                                        
+                                        $('loading').hide();
+                                    </prop:ClientSide.OnComplete>
+                                </com:TActiveCustomButton>  
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="main-box">
+                <header class="main-box-header clearfix">
+                    <h2><i class="fa fa-bookmark"></i> Filter Data</h2>
+                </header>
+                <div class="main-box-body clearfix">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-lg-3 control-label">Status SBBK :</label>
+                            <div class="col-lg-6">
+                                <com:TDropDownList ID="cmbFilterStatus" CssClass="form-control">
+                                    <com:TListItem Value="complete" Text="Complete" /> 
+                                    <com:TListItem Value="draft" Text="Draft" /> 
+                                    <com:TListItem Value="none" Text="Belum Selesai di Input" /> 
+                                </com:TDropDownList>
+                            </div>
+                        </div>    
+                        <div class="form-group">
+                            <div class="col-lg-offset-3 col-lg-10">
+                                <com:TActiveCustomButton ID="btnFilter" CssClass="btn btn-info"  OnClick="Page.filterRecord" Attributes.Title="Filter">
+                                    <prop:Text>                                        
+                                        <i class="fa fa-bookmark"></i> Filter
+                                    </prop:Text>
+                                    <prop:ClientSide.OnPreDispatch>         
+                                        $('loading').show();
+                                    </prop:ClientSide.OnPreDispatch>
+                                    <prop:ClientSide.OnLoading>
+                                        $('<%=$this->btnFilter->ClientId%>').disabled='disabled';						
+                                    </prop:ClientSide.OnLoading>
+                                    <prop:ClientSide.OnComplete>																	
+                                        $('<%=$this->btnFilter->ClientId%>').disabled='';						                               						                                        
+                                        $('loading').hide();
+                                    </prop:ClientSide.OnComplete>
+                                </com:TActiveCustomButton>  
+                            </div>
+                        </div>
+                        <br /><br /><br />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="main-box clearfix">
+                <header class="main-box-header clearfix">
+                    <h2 class="pull-left"><i class="fa fa-file-archive-o"></i> Detail SBBK</h2>                     
+                </header>
+                <div class="main-box-body clearfix">
+                    <div class="table-responsive">
+                        <com:TActiveRepeater ID="RepeaterS" DataKeyField="idsbbk" AllowPaging="true" PageSize="10" AllowCustomPaging="true">
+                            <prop:HeaderTemplate>			
+                                <table class="table table-striped table-hover">	
+                                    <thead>
+                                    <tr>
+                                        <th style="width:170px"><span>NOMOR SBBK</span></th>
+                                        <th><span>TANGGAL SBBK</span></th>                                        
+                                        <th style="width:120px"><span>KODE OBAT</span></th>
+                                        <th style="width:230px"><span>NAMA OBAT</span></th>
+                                        <th style="width:170px"><span>KEMASAN</span></th>
+                                        <th><span>HARGA</span></th>
+                                        <th><span>PEMBERIAN</span></th>                                  
+                                        <th><span>SUB TOTAL</span></th>
+                                    </tr>								
+                                    </thead>
+                                    <tbody>
+                            </prop:HeaderTemplate>
+                            <prop:ItemTemplate>
+                                <tr>
+                                    <td><%#$this->DataItem['no_sbbk_puskesmas']%></td>
+                                    <td><%#$this->Page->TGL->tanggal('d/m/Y',$this->DataItem['tanggal_sbbk_puskesmas'])%></td>                                        
+                                    <td><%#$this->DataItem['kode_obat']%></td>   
+                                    <td><%#$this->DataItem['nama_obat']%></td>                                                                       
+                                    <td><%#$this->DataItem['kemasan']%></td>   
+                                    <td><%#$this->Page->Obat->toRupiah($this->DataItem['harga'])%></td>
+                                    <td><%#$this->DataItem['pemberian_puskesmas']%></td>                                    
+                                    <td><%#$this->DataItem['subtotal']%></td>
+                                </tr>
+                            </prop:ItemTemplate>				                
+                            <prop:FooterTemplate>               
+                                </tbody>
+                                </table>
+                            </prop:FooterTemplate>	
+                            <prop:EmptyTemplate>                                                       
+                                <div class="alert alert-info">
+                                    <i class="fa fa-info-circle fa-fw fa-lg"></i>
+                                    <strong>
+                                        Info!
+                                    </strong>
+                                     Data Obat pada SBBK belum ada.
+                                </div>
+                            </prop:EmptyTemplate>
+                        </com:TActiveRepeater>
+                        <%include Application.CustomPaging%>                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>    
+</com:TPanel>
+</com:TContent>

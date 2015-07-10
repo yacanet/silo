@@ -1,0 +1,409 @@
+<%@ Title="Mutasi Barang Masuk - Penghapusan Stock Obat" %>
+<com:TContent ID="moduleheader">
+    <i class="fa fa-times-circle-o"></i> Penghapusan Stock Obat Tahun <com:TActiveLabel ID="labelTahun" />
+</com:TContent>
+<com:TContent ID="modulebreadcrumb">    
+    <li><a href="#">Mutasi Barang Masuk</a></li>
+    <li class="active">Penghapusan Stock</li>
+</com:TContent>
+<com:TContent ID="csscontent">
+<link rel="stylesheet" href="<%=$this->Theme->baseUrl%>/css/libs/select2.css" type="text/css" />
+<link rel="stylesheet" type="text/css" href="<%=$this->Theme->baseUrl%>/css/libs/nifty-component.css"/>
+</com:TContent>
+<com:TContent ID="maincontent">
+<com:TPanel Visible="<%= $this->getAddProcess(false) %>">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="main-box clearfix">
+                <header class="main-box-header clearfix">
+                    <h2 class="pull-left">Form Penghapusan Stock Obat</h2>
+                    <div class="filter-block pull-right">                                                
+                        <com:TActiveLinkButton ID="btnCloseBuat" CssClass="btn btn-warning pull-right" OnClick="closePenghapusan" ValidationGroup="formNomorSBBM2">
+                            <prop:Text><i class="fa fa-times fa-lg"></i></prop:Text>
+                            <prop:ClientSide.OnPreDispatch>                                                                   
+                                $('loading').show(); 
+                                $('<%=$this->btnCloseBuat->ClientId%>').disabled='disabled';						
+                            </prop:ClientSide.OnPreDispatch>
+                            <prop:ClientSide.OnLoading>
+                                $('<%=$this->btnCloseBuat->ClientId%>').disabled='disabled';						
+                            </prop:ClientSide.OnLoading>
+                            <prop:ClientSide.OnComplete>																	                                    						                                                                            
+                                $('<%=$this->btnCloseBuat->ClientId%>').disabled='';
+                                $('loading').hide(); 
+                            </prop:ClientSide.OnComplete>
+                        </com:TActiveLinkButton>
+                    </div>
+                </header>
+                <div class="main-box-body clearfix">
+                    <div class="form-horizontal">                                                        
+                        <div class="form-group" id="divAddNoBeritaAcara">
+                            <label class="col-lg-2 control-label">No. Berita Acara :</label>
+                            <div class="col-lg-10">
+                                <div class="row">
+                                    <div class="col-lg-3 col-sm-6">
+                                        <com:TTextBox ID="txtAddNoBeritaAcara" CssClass="form-control" /> 
+                                    </div>
+                                    <div class="col-lg-4 col-sm-6">
+                                        <com:TRequiredFieldValidator ID="FieldAddNoBeritaAcaraValidator" ValidationGroup="addpenghapusanstock" Display="Dynamic" ControlToValidate="txtAddNoBeritaAcara" ErrorMessage="Isi No. Berita Acara" CssClass="has-error help-block">	
+                                            <prop:ClientSide.OnValidationError>
+                                                $('divAddNoBeritaAcara').addClassName('has-error');
+                                                jQuery('#<%=$this->FieldAddNoBeritaAcaraValidator->ClientID%>').removeAttr('style');
+                                            </prop:ClientSide.OnValidationError>
+                                            <prop:ClientSide.OnValidationSuccess>
+                                                $('divAddNoBeritaAcara').removeClassName('has-error');
+                                            </prop:ClientSide.OnValidationSuccess>
+                                        </com:TRequiredFieldValidator>     
+                                        <com:TActiveCustomValidator ID="addNoBeritaAcara" ControlToValidate="txtAddNoBeritaAcara" Display="Dynamic" OnServerValidate="checkNoBeritaAcara" ValidationGroup="addpenghapusanstock" ErrorMessage="Nomor Berita Acara Yang Anda Inputkan Sudah Ada" FocusOnError="true" CssClass="has-error help-block">
+                                            <prop:ClientSide.OnValidationError>
+                                                $('divAddNoBeritaAcara').addClassName('has-error');
+                                                jQuery('#<%=$this->addNoBeritaAcara->ClientID%>').removeAttr('style');
+                                            </prop:ClientSide.OnValidationError>
+                                            <prop:ClientSide.OnValidationSuccess>
+                                                $('divAddNoBeritaAcara').removeClassName('has-error');
+                                            </prop:ClientSide.OnValidationSuccess>
+                                        </com:TActiveCustomValidator>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>                         
+                        <div class="form-group">
+                            <label class="col-lg-2 control-label">Tanggal Penghapusan :</label>
+                            <div class="col-lg-10">
+                                <com:TCustomDatePicker ID="cmbAddTanggalPenghapusanStock" DateFormat="dd-MMMM-yyyy" Culture="id"  FromYear="<%=$_SESSION['ta']%>" UpToYear="<%=$_SESSION['ta']%>" InputMode="DropDownList" />                                    
+                            </div>
+                        </div>                          
+                        <div class="form-group" id="divAddTotalQTY">
+                            <label class="col-lg-2 control-label">Total QTY :</label>
+                            <div class="col-lg-10">
+                                <div class="row">
+                                    <div class="col-lg-1 col-sm-11">
+                                        <p class="form-control-static"><%=PenghapusanStock::$totalQTY%></p>
+                                        <com:THiddenField ID="hiddenTotalQTY" Value="<%=PenghapusanStock::$totalQTY%>" />
+                                    </div>
+                                    <div class="col-lg-10 col-sm-2">
+                                        <com:TCompareValidator ValidationGroup="addpenghapusanstock" ControlToValidate="hiddenTotalQTY" ValueToCompare="0" DataType="Integer" Operator="GreaterThan" Text="Jumlah Quantity keranjang obat harus lebih besar dari 0." />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>                     
+                        <div class="form-group">
+                            <div class="col-lg-offset-2 col-lg-10">
+                                <com:TActiveCustomButton ID="btnSave" CssClass="btn btn-primary" OnClick="saveData" ValidationGroup="addpenghapusanstock">
+                                    <prop:Text><i class="fa fa-save"></i> Simpan</prop:Text>
+                                    <prop:ClientSide.OnPreDispatch>                                                                   
+                                        $('loading').show(); 
+                                        $('<%=$this->btnSave->ClientId%>').disabled='disabled';						
+                                        $('<%=$this->btnCheckout->ClientId%>').disabled='disabled';
+                                    </prop:ClientSide.OnPreDispatch>
+                                    <prop:ClientSide.OnLoading>
+                                        $('<%=$this->btnSave->ClientId%>').disabled='disabled';						
+                                        $('<%=$this->btnCheckout->ClientId%>').disabled='disabled';
+                                    </prop:ClientSide.OnLoading>
+                                    <prop:ClientSide.OnComplete>																	                                    						                                                                            
+                                        $('<%=$this->btnSave->ClientId%>').disabled='';
+                                        $('<%=$this->btnCheckout->ClientId%>').disabled='';
+                                        $('loading').hide(); 
+                                    </prop:ClientSide.OnComplete>
+                                </com:TActiveCustomButton>
+                                <com:TActiveCustomButton ID="btnCheckout" CssClass="btn btn-success" OnClick="checkOut" ValidationGroup="addpenghapusanstock">
+                                    <prop:Text><i class="fa fa-shopping-cart"></i> Checkout</prop:Text>
+                                    <prop:ClientSide.OnPreDispatch>                                                                   
+                                        $('loading').show(); 
+                                        $('<%=$this->btnSave->ClientId%>').disabled='disabled';
+                                        $('<%=$this->btnCheckout->ClientId%>').disabled='disabled';						
+                                    </prop:ClientSide.OnPreDispatch>
+                                    <prop:ClientSide.OnLoading>
+                                        $('<%=$this->btnSave->ClientId%>').disabled='disabled';
+                                        $('<%=$this->btnCheckout->ClientId%>').disabled='disabled';						
+                                    </prop:ClientSide.OnLoading>
+                                    <prop:ClientSide.OnComplete>																	                                    						                                                                            
+                                        $('<%=$this->btnSave->ClientId%>').disabled='';
+                                        $('<%=$this->btnCheckout->ClientId%>').disabled='';
+                                        $('loading').hide(); 
+                                    </prop:ClientSide.OnComplete>
+                                </com:TActiveCustomButton>                                
+                            </div>
+                        </div>                    
+                    </div> 
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="main-box clearfix">
+                <header class="main-box-header clearfix">
+                    <h2 class="pull-left"><i class="fa fa-shopping-cart"></i> Cart Penghapusan Obat</h2>
+                    <div class="filter-block pull-right">    
+                        <a id="openwindowDaftarSBBM" href="<%=$this->constructURl('mutasibarang.ModalDaftarSBBM',true)%>" class="btn btn-info pull-right">
+                            <i class="fa fa-eye fa-lg"></i> Daftar SBBM
+                        </a>
+                    </div>
+                </header>
+                <div class="main-box-body clearfix">
+                    <div class="form-horizontal">               
+                        <div class="form-group" id="divAddBarcode">
+                            <label class="col-lg-2 control-label">Barcode :</label>
+                            <div class="col-lg-10">
+                                <div class="row">
+                                    <div class="col-lg-3 col-sm-6">
+                                        <com:TTextBox ID="txtAddBarcode" CssClass="form-control" /> 
+                                    </div>
+                                    <div class="col-lg-4 col-sm-6">
+                                        <com:TRequiredFieldValidator ID="FieldAddBarcodeValidator" ValidationGroup="sbbkcart" Display="Dynamic" ControlToValidate="txtAddBarcode" ErrorMessage="Isi Barcode" CssClass="has-error help-block">	
+                                            <prop:ClientSide.OnValidationError>
+                                                $('divAddBarcode').addClassName('has-error');
+                                                jQuery('#<%=$this->FieldAddBarcodeValidator->ClientID%>').removeAttr('style');
+                                            </prop:ClientSide.OnValidationError>
+                                            <prop:ClientSide.OnValidationSuccess>
+                                                $('divAddBarcode').removeClassName('has-error');
+                                            </prop:ClientSide.OnValidationSuccess>
+                                        </com:TRequiredFieldValidator>     
+                                        <com:TActiveCustomValidator ID="addNoBarcode" ControlToValidate="txtAddBarcode" Display="Dynamic" OnServerValidate="checkBarcode" ValidationGroup="sbbkcart" ErrorMessage="Nomor Barcode Yang Anda Inputkan Tidak Tersedia Ada" FocusOnError="true" CssClass="has-error help-block">
+                                            <prop:ClientSide.OnValidationError>
+                                                $('divAddBarcode').addClassName('has-error');
+                                                jQuery('#<%=$this->addNoBarcode->ClientID%>').removeAttr('style');
+                                            </prop:ClientSide.OnValidationError>
+                                            <prop:ClientSide.OnValidationSuccess>
+                                                $('divAddBarcode').removeClassName('has-error');
+                                            </prop:ClientSide.OnValidationSuccess>
+                                        </com:TActiveCustomValidator>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>    
+                        <div class="form-group">
+                            <div class="col-lg-offset-2 col-lg-10">
+                                <com:TActiveCustomButton ID="btnAddObat" CssClass="btn btn-primary" OnClick="addObat" ValidationGroup="sbbkcart">
+                                    <prop:Text><i class="fa fa-plus"></i> Tambah Obat</prop:Text>
+                                    <prop:ClientSide.OnPreDispatch>                                                                   
+                                        $('loading').show(); 
+                                        $('<%=$this->btnAddObat->ClientId%>').disabled='disabled';						                                                        
+                                    </prop:ClientSide.OnPreDispatch>
+                                    <prop:ClientSide.OnLoading>
+                                        $('<%=$this->btnAddObat->ClientId%>').disabled='disabled';						                                                        
+                                    </prop:ClientSide.OnLoading>
+                                    <prop:ClientSide.OnComplete>																	                                    						                                                                            
+                                        $('<%=$this->btnAddObat->ClientId%>').disabled='';                                                        
+                                        $('loading').hide(); 
+                                    </prop:ClientSide.OnComplete>
+                                </com:TActiveCustomButton>                                                
+                            </div>
+                        </div>  
+                    </div>
+                    <com:TActiveRepeater ID="RepeaterCart" DataKeyField="iddetail_sbbm" OnItemCreated="itemCreatedCart">
+                        <prop:HeaderTemplate>			
+                            <table class="table table-striped table-hover">	
+                                <thead>
+                                <tr>                                        
+                                    <th width="150"><span>KODE OBAT</span></th>
+                                    <th width="350"><span>NAMA OBAT</span></th>                                        
+                                    <th width="70"><span>KEMASAN</span></th>                                                                            
+                                    <th>TANGGAL EXPIRE</th>
+                                    <th>HARGA</th>
+                                    <th>QTY</th>
+                                    <th><span>PEMAKAIAN</span></th>                                                                                                            
+                                    <th><span>SISA</span></th>
+                                    <th width="150"></th>							
+                                </tr>									
+                                </thead>
+                                <tbody>
+                        </prop:HeaderTemplate>
+                        <prop:ItemTemplate>
+                            <tr>                                
+                                <td><%#$this->DataItem['kode_obat']%></td>
+                                <td><%#$this->DataItem['nama_obat']%></td>                                   
+                                <td><%#$this->DataItem['kemasan']%></td>
+                                <td><%#$this->DataItem['tanggal_expire']%></td>
+                                <td><%#$this->Page->Obat->toRupiah($this->DataItem['harga'])%></td>
+                                <td><%#$this->DataItem['qty']%></td>
+                                <td><%#$this->DataItem['pemakaian']%></td>
+                                <td><%#$this->DataItem['sisa']%></td>                                                                
+                                <td width="100">   
+                                    <com:TActiveLinkButton ID="btnView" ClientSide.PostState="false" CssClass="table-link" OnClick="Page.viewRecord" Attributes.Title="View data Obat" CommandParameter="<%#$this->DataItem['idobat']%>">
+                                        <prop:Text>
+                                            <span class="fa-stack">
+                                                <i class="fa fa-square fa-stack-2x"></i>
+                                                <i class="fa fa-search-plus fa-stack-1x fa-inverse"></i>
+                                            </span>
+                                        </prop:Text>
+                                        <prop:ClientSide.OnPreDispatch>
+                                            $('loading').show();                                             
+                                            $('<%=$this->btnView->ClientId%>').disabled='disabled';						
+                                        </prop:ClientSide.OnPreDispatch>
+                                        <prop:ClientSide.OnLoading>
+                                            $('<%=$this->btnView->ClientId%>').disabled='disabled';									                            
+                                        </prop:ClientSide.OnLoading>
+                                        <prop:ClientSide.onComplete>
+                                            $('loading').hide();                                                
+                                        </prop:ClientSide.OnComplete>
+                                    </com:TActiveLinkButton>                                                                      
+                                    <com:TActiveLinkButton ID="btnDelete" ClientSide.PostState="false" CssClass="table-link danger" OnClick="Page.deleteItem" Attributes.Title="Hapus Item">
+                                        <prop:Text>
+                                            <span class="fa-stack">
+                                                <i class="fa fa-square fa-stack-2x"></i>
+                                                <i class="fa fa-trash-o fa-stack-1x fa-inverse"></i>
+                                            </span>
+                                        </prop:Text>
+                                        <prop:ClientSide.OnPreDispatch>
+                                            $('loading').show();                                             
+                                            $('<%=$this->btnDelete->ClientId%>').disabled='disabled';						
+                                        </prop:ClientSide.OnPreDispatch>
+                                        <prop:ClientSide.OnLoading>
+                                            $('<%=$this->btnDelete->ClientId%>').disabled='disabled';									                            
+                                        </prop:ClientSide.OnLoading>
+                                        <prop:ClientSide.onComplete>
+                                            $('loading').hide();                                                
+                                        </prop:ClientSide.OnComplete>
+                                    </com:TActiveLinkButton>  
+                                </td>                                    
+                            </tr>
+                        </prop:ItemTemplate>				                
+                        <prop:FooterTemplate>               
+                            </tbody>
+                            </table>
+                            <div class="invoice-box-total clearfix">
+                                <div class="row">
+                                    <div class="col-sm-9 col-md-10 col-xs-6 text-right invoice-box-total-label">
+                                        Total QTY : <%=PenghapusanStock::$totalQTY%>
+                                    </div>                                                                                                     
+                                </div>
+                                <div class="row">                                    
+                                    <div class="col-sm-9 col-md-10 col-xs-6 text-right invoice-box-total-label">
+                                        Total Harga : <%=$this->Page->Obat->toRupiah(PenghapusanStock::$totalHARGA)%>
+                                    </div>                                    
+                                </div>
+                            </div>
+                        </prop:FooterTemplate>	
+                        <prop:EmptyTemplate>                                                       
+                            <div class="alert alert-info">
+                                <i class="fa fa-info-circle fa-fw fa-lg"></i>
+                                <strong>
+                                    Info!
+                                </strong>
+                                 Daftar Keranjang Obat belum ada.
+                            </div>
+                        </prop:EmptyTemplate>
+                    </com:TActiveRepeater>
+                </div>
+            </div>        
+        </div>
+    </div>    
+</com:TPanel>
+<com:TPanel Visible="<%= $this->getDefaultProcess() %>">             
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="main-box clearfix">
+                <header class="main-box-header clearfix">
+                    <h2 class="pull-left"><i class="fa fa-times-circle-o"></i> Daftar Stock Obat yang Telah di Hapus</h2>                     
+                    <div class="filter-block pull-right">
+                        <com:TLinkButton ID="add" CssClass="btn btn-primary pull-right" Text="<i class='fa  fa-plus-circle fa-lg'></i> Tambah Penghapusan" Attributes.Title="Tambah Penghapusan" OnClick="addProcess" CausesValidation="false" />                        
+                    </div>
+                </header>
+                <div class="main-box-body clearfix">
+                    <div class="table-responsive">
+                        <com:TActiveRepeater ID="RepeaterS" DataKeyField="idpenghapusan_stock" AllowPaging="true" PageSize="10" AllowCustomPaging="true" OnItemCreated="itemCreated">
+                            <prop:HeaderTemplate>			
+                                <table class="table table-striped table-hover">	
+                                    <thead>
+                                    <tr>
+                                        <th width="75"><span>NO</span></th>
+                                        <th width="150"><span>NOMOR BERITA ACARA</span></th>
+                                        <th><span>TANGGAL</span></th>
+                                        <th><span>JUMLAH ITEM</span></th>                                        
+                                        <th><span>TOTAL HARGA</span></th>
+                                        <th><span>STATUS</span></th>
+                                        <th width="150"><span>AKSI</span></th>
+                                    </tr>								
+                                    </thead>
+                                    <tbody>
+                            </prop:HeaderTemplate>
+                            <prop:ItemTemplate>
+                                <tr>
+                                    <td><%#$this->DataItem['no']%></td>                                    
+                                    <td><%#$this->DataItem['no_berita_acara']%></td>
+                                    <td><%#$this->Page->TGL->tanggal('d/m/Y',$this->DataItem['tanggal_penghapusan'])%></td>    
+                                    <td><%#$this->DataItem['jumlah_item']%></td>   
+                                    <td><%#$this->DataItem['total_harga']%></td> 
+                                    <td><%#$this->DataItem['status']%></td> 
+                                    <td>
+                                        <com:TActiveLinkButton ID="btnView" ClientSide.PostState="false" CssClass="table-link" OnClick="Page.viewRecord" Attributes.Title="View data SBBK">
+                                            <prop:Text>
+                                                <span class="fa-stack">
+                                                    <i class="fa fa-square fa-stack-2x"></i>
+                                                    <i class="fa fa-search-plus fa-stack-1x fa-inverse"></i>
+                                                </span>
+                                            </prop:Text>
+                                            <prop:ClientSide.OnPreDispatch>
+                                                $('loading').show();                                             
+                                                $('<%=$this->btnView->ClientId%>').disabled='disabled';						
+                                            </prop:ClientSide.OnPreDispatch>
+                                            <prop:ClientSide.OnLoading>
+                                                $('<%=$this->btnView->ClientId%>').disabled='disabled';									                            
+                                            </prop:ClientSide.OnLoading>
+                                            <prop:ClientSide.onComplete>
+                                                $('loading').hide();                                                
+                                            </prop:ClientSide.OnComplete>
+                                        </com:TActiveLinkButton>
+                                        <com:TActiveLinkButton ID="btnEdit" CssClass="table-link" OnClick="Page.editRecord" Attributes.Title="Ubah data SBBK">
+                                            <prop:Text>
+                                                <span class="fa-stack">
+                                                    <i class="fa fa-square fa-stack-2x"></i>
+                                                    <i class="fa fa-pencil fa-stack-1x fa-inverse"></i>
+                                                </span>
+                                            </prop:Text>
+                                            <prop:ClientSide.OnPreDispatch>
+                                                $('loading').show();                                             
+                                                $('<%=$this->btnEdit->ClientId%>').disabled='disabled';						
+                                            </prop:ClientSide.OnPreDispatch>
+                                            <prop:ClientSide.OnLoading>
+                                                $('<%=$this->btnEdit->ClientId%>').disabled='disabled';									                            
+                                            </prop:ClientSide.OnLoading>
+                                            <prop:ClientSide.onComplete>
+                                                $('loading').hide();                                                
+                                            </prop:ClientSide.OnComplete>
+                                        </com:TActiveLinkButton>
+                                        <com:TActiveLinkButton ID="btnDelete" ClientSide.PostState="false" CssClass="table-link danger" OnClick="Page.deleteRecord" Attributes.Title="Hapus data SBBK" CommandParameter="<%#$this->DataItem['idlpo_unit']%>">
+                                            <prop:Text>
+                                                <span class="fa-stack">
+                                                    <i class="fa fa-square fa-stack-2x"></i>
+                                                    <i class="fa fa-trash-o fa-stack-1x fa-inverse"></i>
+                                                </span>
+                                            </prop:Text>
+                                            <prop:ClientSide.OnPreDispatch>
+                                                $('loading').show();                                             
+                                                $('<%=$this->btnDelete->ClientId%>').disabled='disabled';						
+                                            </prop:ClientSide.OnPreDispatch>
+                                            <prop:ClientSide.OnLoading>
+                                                $('<%=$this->btnDelete->ClientId%>').disabled='disabled';									                            
+                                            </prop:ClientSide.OnLoading>
+                                            <prop:ClientSide.onComplete>
+                                                $('loading').hide();                                                
+                                            </prop:ClientSide.OnComplete>
+                                        </com:TActiveLinkButton> 
+                                    </td>
+                                </tr>
+                            </prop:ItemTemplate>				                
+                            <prop:FooterTemplate>               
+                                </tbody>
+                                </table>
+                            </prop:FooterTemplate>	
+                            <prop:EmptyTemplate>                                                       
+                                <div class="alert alert-info">
+                                    <i class="fa fa-info-circle fa-fw fa-lg"></i>
+                                    <strong>
+                                        Info!
+                                    </strong>
+                                     Data Obat pada SBBM belum ada.
+                                </div>
+                            </prop:EmptyTemplate>
+                        </com:TActiveRepeater>
+                        <%include Application.CustomPaging%>                                      
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>    
+</com:TPanel>
+<%include Application.layouts.ModalInfoObat%>
+</com:TContent>

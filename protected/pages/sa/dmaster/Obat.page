@@ -1,0 +1,936 @@
+<%@ Title="Data Master - Obat" %>
+<com:TContent ID="moduleheader">
+    <i class="fa fa-medkit"></i> Obat
+</com:TContent>
+<com:TContent ID="modulebreadcrumb">    
+    <li><a href="#">Data Master</a></li>
+    <li class="active"><span>Obat</span></li>
+</com:TContent>
+<com:TContent ID="csscontent">
+<link rel="stylesheet" href="<%=$this->Theme->baseUrl%>/css/libs/select2.css" type="text/css" />
+<link rel="stylesheet" type="text/css" href="<%=$this->Theme->baseUrl%>/css/libs/nifty-component.css"/>
+</com:TContent>
+<com:TContent ID="maincontent">
+<com:TPanel Visible="<%= $this->getEditProcess(false) %>" CssClass="row">   
+    <com:THiddenField ID="hiddenid" />     
+    <com:THiddenField ID="hiddenkode_obat" />
+    <com:THiddenField ID="hiddenno_reg" />
+    <div class="col-lg-12">
+        <div class="main-box">
+            <header class="main-box-header clearfix">
+                <h2 class="pull-left"><i class="fa fa-edit"></i> Ubah Data Obat</h2>
+                <div class="icon-box pull-right">                                       
+                    <a class="btn pull-left" href="<%=$this->constructUrl('dmaster.Obat',true)%>">
+                        <i class="fa fa-times"></i>
+                    </a>
+                </div>
+            </header> 
+            <div class="main-box-body clearfix">
+                <div class="form-horizontal">                    
+                    <div class="form-group" id="divEditKodeObat">
+                        <label class="col-lg-2 control-label">Kode Obat :</label>
+                        <div class="col-lg-10">
+                            <div class="row">
+                                <div class="col-lg-2">
+                                    <com:TTextBox ID="txtEditKodeObat" CssClass="form-control" MaxLength="10" /> 
+                                </div>
+                                <div class="col-lg-10">
+                                    <com:TRequiredFieldValidator ID="FieldEditKodeObatValidator" ValidationGroup="editobat" Display="Dynamic" ControlToValidate="txtEditKodeObat" ErrorMessage="Isi Kode Obat" CssClass="has-error help-block">	
+                                        <prop:ClientSide.OnValidationError>
+                                            $('divEditKodeObat').addClassName('has-error');
+                                            jQuery('#<%=$this->FieldEditKodeObatValidator->ClientID%>').removeAttr('style');
+                                        </prop:ClientSide.OnValidationError>
+                                        <prop:ClientSide.OnValidationSuccess>
+                                            $('divEditKodeObat').removeClassName('has-error');
+                                        </prop:ClientSide.OnValidationSuccess>
+                                    </com:TRequiredFieldValidator>
+                                    <com:TActiveCustomValidator ID="editKodeObat" ControlToValidate="txtEditKodeObat" Display="Dynamic" OnServerValidate="checkKodeObat" ValidationGroup="editobat" ErrorMessage="Kode Obat Yang Anda Inputkan Sudah Ada" FocusOnError="true" CssClass="has-error help-block">
+                                        <prop:ClientSide.OnValidationError>
+                                            $('divEditKodeObat').addClassName('has-error');
+                                            jQuery('#<%=$this->addKodeObat->ClientID%>').removeAttr('style');
+                                        </prop:ClientSide.OnValidationError>
+                                        <prop:ClientSide.OnValidationSuccess>
+                                            $('divEditKodeObat').removeClassName('has-error');
+                                        </prop:ClientSide.OnValidationSuccess>
+                                    </com:TActiveCustomValidator>
+                                </div>
+                            </div>
+                        </div>
+                    </div>                
+                    <div class="form-group" id="divEditNoRegPOM">
+                        <label class="col-lg-2 control-label">No. Reg. POM :</label>
+                        <div class="col-lg-10">
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <com:TTextBox ID="txtEditNoRegPOM" CssClass="form-control" MaxLength="75" /> 
+                                </div>
+                                <div class="col-lg-6">
+                                    <com:TRequiredFieldValidator ID="FieldEditNoRegPOMValidator" ValidationGroup="editobat" Display="Dynamic" ControlToValidate="txtEditNoRegPOM" ErrorMessage="Isi Nomor Registrasi Obat dari POM" CssClass="has-error help-block">	
+                                        <prop:ClientSide.OnValidationError>
+                                            $('divEditNoRegPOM').addClassName('has-error');
+                                            jQuery('#<%=$this->FieldEditNoRegPOMValidator->ClientID%>').removeAttr('style');
+                                        </prop:ClientSide.OnValidationError>
+                                        <prop:ClientSide.OnValidationSuccess>
+                                            $('divEditNoRegPOM').removeClassName('has-error');
+                                        </prop:ClientSide.OnValidationSuccess>
+                                    </com:TRequiredFieldValidator> 
+                                    <com:TActiveCustomValidator ID="editNoRegPOM" ControlToValidate="txtEditNoRegPOM" Display="Dynamic" OnServerValidate="checkNoRegPOM" ValidationGroup="editobat" ErrorMessage="Kode No Registrasi POM Yang Anda Inputkan Sudah Ada" FocusOnError="true" CssClass="has-error help-block">
+                                        <prop:ClientSide.OnValidationError>
+                                            $('divEditNoRegPOM').addClassName('has-error');
+                                            jQuery('#<%=$this->addNoRegPOM->ClientID%>').removeAttr('style');
+                                        </prop:ClientSide.OnValidationError>
+                                        <prop:ClientSide.OnValidationSuccess>
+                                            $('divEditNoRegPOM').removeClassName('has-error');
+                                        </prop:ClientSide.OnValidationSuccess>
+                                    </com:TActiveCustomValidator>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group" id="divEditNamaObat">
+                        <label class="col-lg-2 control-label">Nama Obat :</label>
+                        <div class="col-lg-10">
+                            <div class="row">
+                                <div class="col-lg-6 col-sm-6">
+                                    <com:TTextBox ID="txtEditNamaObat" CssClass="form-control" /> 
+                                </div>
+                                <div class="col-lg-4 col-sm-6">
+                                    <com:TRequiredFieldValidator ID="FieldEditNamaObatValidator" ValidationGroup="editobat" Display="Dynamic" ControlToValidate="txtEditNamaObat" ErrorMessage="Isi Nama Obat" CssClass="has-error help-block">	
+                                        <prop:ClientSide.OnValidationError>
+                                            $('divEditNamaObat').addClassName('has-error');
+                                            jQuery('#<%=$this->FieldEditNamaObatValidator->ClientID%>').removeAttr('style');
+                                        </prop:ClientSide.OnValidationError>
+                                        <prop:ClientSide.OnValidationSuccess>
+                                            $('divEditNamaObat').removeClassName('has-error');
+                                        </prop:ClientSide.OnValidationSuccess>
+                                    </com:TRequiredFieldValidator>     
+                                </div>
+                            </div>
+                        </div>
+                    </div>                   
+                    <div class="form-group" id="divEditMerekObat">
+                        <label class="col-lg-2 control-label">Merek Obat :</label>
+                        <div class="col-lg-5">
+                            <com:TTextBox ID="txtEditMerekObat" CssClass="form-control" Text="-" />                            
+                        </div>
+                    </div>
+                    <div class="form-group" id="divEditHargaObat">
+                        <label class="col-lg-2 control-label">Harga Obat :</label>
+                        <div class="col-lg-10">
+                            <div class="row">
+                                <div class="col-lg-2 col-sm-6">
+                                    <com:TTextBox ID="txtEditHargaObat" CssClass="form-control" Text="0" Attributes.OnKeyUp="formatangka(this)" /> 
+                                </div>
+                                <div class="col-lg-9 col-sm-6">
+                                    <com:TRequiredFieldValidator ID="FieldEditHargaObatValidator" ValidationGroup="editobat" Display="Dynamic" ControlToValidate="txtEditHargaObat" ErrorMessage="Isi Harga Obat" CssClass="has-error help-block">	
+                                        <prop:ClientSide.OnValidationError>
+                                            $('divEditHargaObat').addClassName('has-error');
+                                            jQuery('#<%=$this->FieldEditHargaObatValidator->ClientID%>').removeAttr('style');
+                                        </prop:ClientSide.OnValidationError>
+                                        <prop:ClientSide.OnValidationSuccess>
+                                            $('divEditHargaObat').removeClassName('has-error');
+                                        </prop:ClientSide.OnValidationSuccess>
+                                    </com:TRequiredFieldValidator>                                     
+                                </div>
+                            </div>
+                        </div>
+                    </div> 
+                    <div class="form-group" id="divEditSatuanObat">
+                        <label class="col-lg-2 control-label">Satuan :</label>
+                        <div class="col-lg-2">
+                            <com:TDropDownList ID="cmbEditSatuanObat" CssClass="form-control" />
+                            <com:TRequiredFieldValidator ID="FieldEditSatuanObatValidator" InitialValue="none" ValidationGroup="editobat" Display="Dynamic" ControlToValidate="cmbEditSatuanObat" ErrorMessage="Pilih Satuan Obat" CssClass="has-error help-block">	
+                                <prop:ClientSide.OnValidationError>
+                                    $('divEditSatuanObat').addClassName('has-error');
+                                    jQuery('#<%=$this->FieldEditSatuanObatValidator->ClientID%>').removeAttr('style');
+                                </prop:ClientSide.OnValidationError>
+                                <prop:ClientSide.OnValidationSuccess>
+                                    $('divEditSatuanObat').removeClassName('has-error');
+                                </prop:ClientSide.OnValidationSuccess>
+                            </com:TRequiredFieldValidator>    
+                        </div>
+                    </div>
+                    <div class="form-group" id="divEditGolonganObat" id="divEditGolonganObat">
+                        <label class="col-lg-2 control-label">Golongan :</label>
+                        <div class="col-lg-2">
+                            <com:TDropDownList ID="cmbEditGolonganObat" CssClass="form-control" />
+                            <com:TRequiredFieldValidator ID="FieldEditGolonganObatValidator" InitialValue="none" ValidationGroup="editobat" Display="Dynamic" ControlToValidate="cmbEditGolonganObat" ErrorMessage="Pilih Golongan Obat" CssClass="has-error help-block">	
+                                <prop:ClientSide.OnValidationError>
+                                    $('divEditGolonganObat').addClassName('has-error');
+                                    jQuery('#<%=$this->FieldEditGolonganObatValidator->ClientID%>').removeAttr('style');
+                                </prop:ClientSide.OnValidationError>
+                                <prop:ClientSide.OnValidationSuccess>
+                                    $('divEditGolonganObat').removeClassName('has-error');
+                                </prop:ClientSide.OnValidationSuccess>
+                            </com:TRequiredFieldValidator>    
+                        </div>
+                    </div>
+                    <div class="form-group form-group-select2" id="divEditBentukSediaan">
+                        <label class="col-lg-2 control-label">Bentuk Sediaan :</label>
+                        <div class="col-lg-4">
+                            <com:TDropDownList ID="cmbEditBentukSediaan" Width="300px" />
+                            <com:TRequiredFieldValidator ID="FieldEditBentukSediaanValidator" InitialValue="none" ValidationGroup="editobat" Display="Dynamic" ControlToValidate="cmbEditBentukSediaan" ErrorMessage="Pilih Bentuk Sediaan Obat" CssClass="has-error help-block">	
+                                <prop:ClientSide.OnValidationError>
+                                    $('divEditBentukSediaan').addClassName('has-error');
+                                    jQuery('#<%=$this->FieldEditBentukSediaanValidator->ClientID%>').removeAttr('style');
+                                </prop:ClientSide.OnValidationError>
+                                <prop:ClientSide.OnValidationSuccess>
+                                    $('divEditBentukSediaan').removeClassName('has-error');
+                                </prop:ClientSide.OnValidationSuccess>
+                            </com:TRequiredFieldValidator>    
+                        </div>
+                    </div>
+                    <div class="form-group" id="divEditTxtBentukSediaan">
+                        <label class="col-lg-2 control-label">Keterangan Sediaan :</label>
+                        <div class="col-lg-10">
+                            <div class="row">
+                                <div class="col-lg-6 col-sm-6">
+                                    <com:TTextBox ID="txtEditBentukSediaan" CssClass="form-control" /> 
+                                </div>
+                                <div class="col-lg-4 col-sm-6">
+                                    <com:TRequiredFieldValidator ID="FieldTxTEditBentukSediaanValidator" ValidationGroup="editobat" Display="Dynamic" ControlToValidate="txtEditBentukSediaan" ErrorMessage="Isi Keterangan Sediaan Obat" CssClass="has-error help-block">	
+                                        <prop:ClientSide.OnValidationError>
+                                            $('divEditTxtBentukSediaan').addClassName('has-error');
+                                            jQuery('#<%=$this->FieldTxTEditBentukSediaanValidator->ClientID%>').removeAttr('style');
+                                        </prop:ClientSide.OnValidationError>
+                                        <prop:ClientSide.OnValidationSuccess>
+                                            $('divEditTxtBentukSediaan').removeClassName('has-error');
+                                        </prop:ClientSide.OnValidationSuccess>
+                                    </com:TRequiredFieldValidator>     
+                                </div>
+                            </div>
+                        </div>
+                    </div> 
+                    <div class="form-group form-group-select2" id="divEditFarmaKologi">
+                        <label class="col-lg-2 control-label">Farmakologi :</label>
+                        <div class="col-lg-5">
+                            <com:TListBox ID="listEditFarmakologi" style="width:300px" SelectionMode="Multiple" />
+                            <com:TRequiredFieldValidator ID="FieldEditFarmakologiValidator" ControlToValidate="listEditFarmakologi" ErrorMessage="Pilih minimal satu dari farmakologi obat" Display="Dynamic" ValidationGroup="editobat" CssClass="has-error help-block">
+                                <prop:ClientSide.OnValidationError>
+                                    $('divEditFarmaKologi').addClassName('has-error');
+                                    jQuery('#<%=$this->FieldEditFarmakologiValidator->ClientID%>').removeAttr('style');
+                                </prop:ClientSide.OnValidationError>
+                                <prop:ClientSide.OnValidationSuccess>
+                                    $('divEditFarmaKologi').removeClassName('has-error');
+                                </prop:ClientSide.OnValidationSuccess>
+                            </com:TRequiredFieldValidator>
+                        </div>
+                    </div>
+                    <div class="form-group" id="divEditKomposisi">
+                        <label class="col-lg-2 control-label">Komposisi Obat :</label>
+                        <div class="col-lg-10">
+                            <div class="row">
+                                <div class="col-lg-6 col-sm-6">
+                                    <com:TTextBox ID="txtEditKomposisi" CssClass="form-control" /> 
+                                </div>
+                                <div class="col-lg-4 col-sm-6">
+                                    <com:TRequiredFieldValidator ID="FieldEditKomposisiValidator" ValidationGroup="editobat" Display="Dynamic" ControlToValidate="txtEditKomposisi" ErrorMessage="Isi Komposisi Obat" CssClass="has-error help-block">	
+                                        <prop:ClientSide.OnValidationError>
+                                            $('divEditKomposisi').addClassName('has-error');
+                                            jQuery('#<%=$this->FieldEditKomposisiValidator->ClientID%>').removeAttr('style');
+                                        </prop:ClientSide.OnValidationError>
+                                        <prop:ClientSide.OnValidationSuccess>
+                                            $('divEditKomposisi').removeClassName('has-error');
+                                        </prop:ClientSide.OnValidationSuccess>
+                                    </com:TRequiredFieldValidator>     
+                                </div>
+                            </div>
+                        </div>
+                    </div> 
+                    <div class="form-group" id="divEditKemasan">
+                        <label class="col-lg-2 control-label">Kemasan Obat :</label>
+                        <div class="col-lg-10">
+                            <div class="row">
+                                <div class="col-lg-6 col-sm-6">
+                                    <com:TTextBox ID="txtEditKemasan" CssClass="form-control" /> 
+                                </div>
+                                <div class="col-lg-4 col-sm-6">
+                                    <com:TRequiredFieldValidator ID="FieldEditKemasanValidator" ValidationGroup="editobat" Display="Dynamic" ControlToValidate="txtEditKemasan" ErrorMessage="Isi Kemasan Obat" CssClass="has-error help-block">	
+                                        <prop:ClientSide.OnValidationError>
+                                            $('divEditKemasan').addClassName('has-error');
+                                            jQuery('#<%=$this->FieldEditKemasanValidator->ClientID%>').removeAttr('style');
+                                        </prop:ClientSide.OnValidationError>
+                                        <prop:ClientSide.OnValidationSuccess>
+                                            $('divEditKemasan').removeClassName('has-error');
+                                        </prop:ClientSide.OnValidationSuccess>
+                                    </com:TRequiredFieldValidator>     
+                                </div>
+                            </div>
+                        </div>
+                    </div> 
+                    <div class="form-group form-group-select2" id="divEditProdusen">
+                        <label class="col-lg-2 control-label">Produsen :</label>
+                        <div class="col-lg-4">
+                            <com:TDropDownList ID="cmbEditProdusen" Width="300px" />
+                            <com:TRequiredFieldValidator ID="FieldEditProdusenValidator" InitialValue="none" ValidationGroup="editobat" Display="Dynamic" ControlToValidate="cmbEditProdusen" ErrorMessage="Pilih Produsen Obat" CssClass="has-error help-block">	
+                                <prop:ClientSide.OnValidationError>
+                                    $('divEditProdusen').addClassName('has-error');
+                                    jQuery('#<%=$this->FieldEditProdusenValidator->ClientID%>').removeAttr('style');
+                                </prop:ClientSide.OnValidationError>
+                                <prop:ClientSide.OnValidationSuccess>
+                                    $('divEditProdusen').removeClassName('has-error');
+                                </prop:ClientSide.OnValidationSuccess>
+                            </com:TRequiredFieldValidator>    
+                        </div>
+                    </div>
+                    <div class="form-group" id="divEditMinimumStock">
+                        <label class="col-lg-2 control-label">Minimum Stock :</label>
+                        <div class="col-lg-10">
+                            <div class="row">
+                                <div class="col-lg-1 col-sm-6">
+                                    <com:TTextBox ID="txtEditMinimumStock" CssClass="form-control" Text="0" Attributes.OnKeyUp="formatangka(this,true)" /> 
+                                </div>
+                                <div class="col-lg-4 col-sm-6">
+                                    <com:TRequiredFieldValidator ID="FieldEditMinimumStockValidator" ValidationGroup="" Display="Dynamic" ControlToValidate="txtEditMinimumStock" ErrorMessage="Isi Minimum Stock Obat" CssClass="has-error help-block">	
+                                        <prop:ClientSide.OnValidationError>
+                                            $('divEditMinimumStock').addClassName('has-error');
+                                            jQuery('#<%=$this->FieldEditMinimumStockValidator->ClientID%>').removeAttr('style');
+                                        </prop:ClientSide.OnValidationError>
+                                        <prop:ClientSide.OnValidationSuccess>
+                                            $('divEditMinimumStock').removeClassName('has-error');
+                                        </prop:ClientSide.OnValidationSuccess>
+                                    </com:TRequiredFieldValidator>  
+                                </div>
+                            </div>
+                        </div>
+                    </div> 
+                    <div class="form-group" id="divEditMaksimumStock">
+                        <label class="col-lg-2 control-label">Maksimum Stock :</label>
+                        <div class="col-lg-10">
+                            <div class="row">
+                                <div class="col-lg-1 col-sm-6">
+                                    <com:TTextBox ID="txtEditMaksimumStock" CssClass="form-control" Text="0" Attributes.OnKeyUp="formatangka(this,true)" /> 
+                                </div>
+                                <div class="col-lg-4 col-sm-6">
+                                    <com:TRequiredFieldValidator ID="FieldEditMaksimumStockValidator" ValidationGroup="" Display="Dynamic" ControlToValidate="txtEditMaksimumStock" ErrorMessage="Isi Maksimum Stock Obat" CssClass="has-error help-block">	
+                                        <prop:ClientSide.OnValidationError>
+                                            $('divEditMaksimumStock').addClassName('has-error');
+                                            jQuery('#<%=$this->FieldEditMaksimumStockValidator->ClientID%>').removeAttr('style');
+                                        </prop:ClientSide.OnValidationError>
+                                        <prop:ClientSide.OnValidationSuccess>
+                                            $('divEditMaksimumStock').removeClassName('has-error');
+                                        </prop:ClientSide.OnValidationSuccess>
+                                    </com:TRequiredFieldValidator> 
+                                    <com:TCompareValidator ValidationGroup="editobat" ControlToValidate="txtEditMaksimumStock" ControlToCompare="txtEditMinimumStock" DataType="Integer" Operator="GreaterThanEqual" Text="Nilai Maksimum stock tidak boleh dibawah minimum stock." />
+                                </div>
+                            </div>
+                        </div>
+                    </div> 
+                    <div class="form-group">
+                        <label class="col-lg-2 control-label">Status :</label>
+                        <div class="col-lg-2">
+                            <com:TDropDownList ID="cmbEditStatus" CssClass="form-control">                        
+                                <com:TListItem Text="Aktif" Value="1" />                                
+                                <com:TListItem Text="Non-Aktif" Value="0" />                                                                          
+                            </com:TDropDownList>                          
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-offset-2 col-lg-10">
+                            <com:TActiveCustomButton ID="btnUpdate" CssClass="btn btn-primary" OnClick="updateData" ValidationGroup="editobat">
+                                <prop:Text><i class="fa fa-save"></i> Simpan</prop:Text>
+                                <prop:ClientSide.OnPreDispatch>                                                                   
+                                    $('loading').show(); 
+                                    $('<%=$this->btnUpdate->ClientId%>').disabled='disabled';						
+                                </prop:ClientSide.OnPreDispatch>
+                                <prop:ClientSide.OnLoading>
+                                    $('<%=$this->btnUpdate->ClientId%>').disabled='disabled';						
+                                </prop:ClientSide.OnLoading>
+                                <prop:ClientSide.OnComplete>																	                                    						                                                                            
+                                    $('<%=$this->btnUpdate->ClientId%>').disabled='';
+                                    $('loading').hide(); 
+                                </prop:ClientSide.OnComplete>
+                            </com:TActiveCustomButton>
+                        </div>
+                    </div>                    
+                </div>                
+            </div>
+        </div>
+    </div>
+</com:TPanel>
+<com:TPanel Visible="<%= $this->getAddProcess(false) %>" CssClass="row">
+    <div class="col-lg-12">
+        <div class="main-box">
+            <header class="main-box-header clearfix">
+                <h2 class="pull-left"><i class="fa fa-plus"></i> Tambah Data Obat</h2>
+                <div class="icon-box pull-right">                                       
+                    <a class="btn pull-left" href="<%=$this->constructUrl('dmaster.Obat',true)%>">
+                        <i class="fa fa-times"></i>
+                    </a>
+                </div>
+            </header> 
+            <div class="main-box-body clearfix">
+                <div class="form-horizontal">                    
+                    <div class="form-group" id="divAddKodeObat">
+                        <label class="col-lg-2 control-label">Kode Obat :</label>
+                        <div class="col-lg-10">
+                            <div class="row">
+                                <div class="col-lg-2">
+                                    <com:TTextBox ID="txtAddKodeObat" CssClass="form-control" MaxLength="10" /> 
+                                </div>
+                                <div class="col-lg-10">
+                                    <com:TRequiredFieldValidator ID="FieldAddKodeObatValidator" ValidationGroup="addobat" Display="Dynamic" ControlToValidate="txtAddKodeObat" ErrorMessage="Isi Kode Obat" CssClass="has-error help-block">	
+                                        <prop:ClientSide.OnValidationError>
+                                            $('divAddKodeObat').addClassName('has-error');
+                                            jQuery('#<%=$this->FieldAddKodeObatValidator->ClientID%>').removeAttr('style');
+                                        </prop:ClientSide.OnValidationError>
+                                        <prop:ClientSide.OnValidationSuccess>
+                                            $('divAddKodeObat').removeClassName('has-error');
+                                        </prop:ClientSide.OnValidationSuccess>
+                                    </com:TRequiredFieldValidator>
+                                    <com:TActiveCustomValidator ID="addKodeObat" ControlToValidate="txtAddKodeObat" Display="Dynamic" OnServerValidate="checkKodeObat" ValidationGroup="addobat" ErrorMessage="Kode Obat Yang Anda Inputkan Sudah Ada" FocusOnError="true" CssClass="has-error help-block">
+                                        <prop:ClientSide.OnValidationError>
+                                            $('divAddKodeObat').addClassName('has-error');
+                                            jQuery('#<%=$this->addKodeObat->ClientID%>').removeAttr('style');
+                                        </prop:ClientSide.OnValidationError>
+                                        <prop:ClientSide.OnValidationSuccess>
+                                            $('divAddKodeObat').removeClassName('has-error');
+                                        </prop:ClientSide.OnValidationSuccess>
+                                    </com:TActiveCustomValidator>
+                                </div>
+                            </div>
+                        </div>
+                    </div>                
+                    <div class="form-group" id="divAddNoRegPOM">
+                        <label class="col-lg-2 control-label">No. Reg. POM :</label>
+                        <div class="col-lg-10">
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <com:TTextBox ID="txtAddNoRegPOM" CssClass="form-control" MaxLength="75" /> 
+                                </div>
+                                <div class="col-lg-6">
+                                    <com:TRequiredFieldValidator ID="FieldAddNoRegPOMValidator" ValidationGroup="addobat" Display="Dynamic" ControlToValidate="txtAddNoRegPOM" ErrorMessage="Isi Nomor Registrasi Obat dari POM" CssClass="has-error help-block">	
+                                        <prop:ClientSide.OnValidationError>
+                                            $('divAddNoRegPOM').addClassName('has-error');
+                                            jQuery('#<%=$this->FieldAddNoRegPOMValidator->ClientID%>').removeAttr('style');
+                                        </prop:ClientSide.OnValidationError>
+                                        <prop:ClientSide.OnValidationSuccess>
+                                            $('divAddNoRegPOM').removeClassName('has-error');
+                                        </prop:ClientSide.OnValidationSuccess>
+                                    </com:TRequiredFieldValidator> 
+                                    <com:TActiveCustomValidator ID="addNoRegPOM" ControlToValidate="txtAddNoRegPOM" Display="Dynamic" OnServerValidate="checkNoRegPOM" ValidationGroup="addobat" ErrorMessage="Kode No Registrasi POM Yang Anda Inputkan Sudah Ada" FocusOnError="true" CssClass="has-error help-block">
+                                        <prop:ClientSide.OnValidationError>
+                                            $('divAddNoRegPOM').addClassName('has-error');
+                                            jQuery('#<%=$this->addNoRegPOM->ClientID%>').removeAttr('style');
+                                        </prop:ClientSide.OnValidationError>
+                                        <prop:ClientSide.OnValidationSuccess>
+                                            $('divAddNoRegPOM').removeClassName('has-error');
+                                        </prop:ClientSide.OnValidationSuccess>
+                                    </com:TActiveCustomValidator>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group" id="divAddNamaObat">
+                        <label class="col-lg-2 control-label">Nama Obat :</label>
+                        <div class="col-lg-10">
+                            <div class="row">
+                                <div class="col-lg-6 col-sm-6">
+                                    <com:TTextBox ID="txtAddNamaObat" CssClass="form-control" /> 
+                                </div>
+                                <div class="col-lg-4 col-sm-6">
+                                    <com:TRequiredFieldValidator ID="FieldAddNamaObatValidator" ValidationGroup="addobat" Display="Dynamic" ControlToValidate="txtAddNamaObat" ErrorMessage="Isi Nama Obat" CssClass="has-error help-block">	
+                                        <prop:ClientSide.OnValidationError>
+                                            $('divAddNamaObat').addClassName('has-error');
+                                            jQuery('#<%=$this->FieldAddNamaObatValidator->ClientID%>').removeAttr('style');
+                                        </prop:ClientSide.OnValidationError>
+                                        <prop:ClientSide.OnValidationSuccess>
+                                            $('divAddNamaObat').removeClassName('has-error');
+                                        </prop:ClientSide.OnValidationSuccess>
+                                    </com:TRequiredFieldValidator>     
+                                </div>
+                            </div>
+                        </div>
+                    </div>                   
+                    <div class="form-group" id="divAddMerekObat">
+                        <label class="col-lg-2 control-label">Merek Obat :</label>
+                        <div class="col-lg-5">
+                            <com:TTextBox ID="txtAddMerekObat" CssClass="form-control" Text="-" />                            
+                        </div>
+                    </div>
+                    <div class="form-group" id="divAddHargaObat">
+                        <label class="col-lg-2 control-label">Harga Obat :</label>
+                        <div class="col-lg-10">
+                            <div class="row">
+                                <div class="col-lg-2 col-sm-6">
+                                    <com:TTextBox ID="txtAddHargaObat" CssClass="form-control" Text="0" Attributes.OnKeyUp="formatangka(this)" /> 
+                                </div>
+                                <div class="col-lg-9 col-sm-6">
+                                    <com:TRequiredFieldValidator ID="FieldAddHargaObatValidator" ValidationGroup="addobat" Display="Dynamic" ControlToValidate="txtAddHargaObat" ErrorMessage="Isi Harga Obat" CssClass="has-error help-block">	
+                                        <prop:ClientSide.OnValidationError>
+                                            $('divAddHargaObat').addClassName('has-error');
+                                            jQuery('#<%=$this->FieldAddHargaObatValidator->ClientID%>').removeAttr('style');
+                                        </prop:ClientSide.OnValidationError>
+                                        <prop:ClientSide.OnValidationSuccess>
+                                            $('divAddHargaObat').removeClassName('has-error');
+                                        </prop:ClientSide.OnValidationSuccess>
+                                    </com:TRequiredFieldValidator>                                     
+                                </div>
+                            </div>
+                        </div>
+                    </div> 
+                    <div class="form-group" id="divAddSatuanObat">
+                        <label class="col-lg-2 control-label">Satuan :</label>
+                        <div class="col-lg-2">
+                            <com:TDropDownList ID="cmbAddSatuanObat" CssClass="form-control" />
+                            <com:TRequiredFieldValidator ID="FieldAddSatuanObatValidator" InitialValue="none" ValidationGroup="addobat" Display="Dynamic" ControlToValidate="cmbAddSatuanObat" ErrorMessage="Pilih Satuan Obat" CssClass="has-error help-block">	
+                                <prop:ClientSide.OnValidationError>
+                                    $('divAddSatuanObat').addClassName('has-error');
+                                    jQuery('#<%=$this->FieldAddSatuanObatValidator->ClientID%>').removeAttr('style');
+                                </prop:ClientSide.OnValidationError>
+                                <prop:ClientSide.OnValidationSuccess>
+                                    $('divAddSatuanObat').removeClassName('has-error');
+                                </prop:ClientSide.OnValidationSuccess>
+                            </com:TRequiredFieldValidator>    
+                        </div>
+                    </div>
+                    <div class="form-group" id="divAddGolonganObat" id="divAddGolonganObat">
+                        <label class="col-lg-2 control-label">Golongan :</label>
+                        <div class="col-lg-2">
+                            <com:TDropDownList ID="cmbAddGolonganObat" CssClass="form-control" />
+                            <com:TRequiredFieldValidator ID="FieldAddGolonganObatValidator" InitialValue="none" ValidationGroup="addobat" Display="Dynamic" ControlToValidate="cmbAddGolonganObat" ErrorMessage="Pilih Golongan Obat" CssClass="has-error help-block">	
+                                <prop:ClientSide.OnValidationError>
+                                    $('divAddGolonganObat').addClassName('has-error');
+                                    jQuery('#<%=$this->FieldAddGolonganObatValidator->ClientID%>').removeAttr('style');
+                                </prop:ClientSide.OnValidationError>
+                                <prop:ClientSide.OnValidationSuccess>
+                                    $('divAddGolonganObat').removeClassName('has-error');
+                                </prop:ClientSide.OnValidationSuccess>
+                            </com:TRequiredFieldValidator>    
+                        </div>
+                    </div>
+                    <div class="form-group form-group-select2" id="divAddBentukSediaan">
+                        <label class="col-lg-2 control-label">Bentuk Sediaan :</label>
+                        <div class="col-lg-4">
+                            <com:TDropDownList ID="cmbAddBentukSediaan" Width="300px" />
+                            <com:TRequiredFieldValidator ID="FieldAddBentukSediaanValidator" InitialValue="none" ValidationGroup="addobat" Display="Dynamic" ControlToValidate="cmbAddBentukSediaan" ErrorMessage="Pilih Bentuk Sediaan Obat" CssClass="has-error help-block">	
+                                <prop:ClientSide.OnValidationError>
+                                    $('divAddBentukSediaan').addClassName('has-error');
+                                    jQuery('#<%=$this->FieldAddBentukSediaanValidator->ClientID%>').removeAttr('style');
+                                </prop:ClientSide.OnValidationError>
+                                <prop:ClientSide.OnValidationSuccess>
+                                    $('divAddBentukSediaan').removeClassName('has-error');
+                                </prop:ClientSide.OnValidationSuccess>
+                            </com:TRequiredFieldValidator>    
+                        </div>
+                    </div>
+                    <div class="form-group" id="divAddTxtBentukSediaan">
+                        <label class="col-lg-2 control-label">Keterangan Sediaan :</label>
+                        <div class="col-lg-10">
+                            <div class="row">
+                                <div class="col-lg-6 col-sm-6">
+                                    <com:TTextBox ID="txtAddBentukSediaan" CssClass="form-control" /> 
+                                </div>
+                                <div class="col-lg-4 col-sm-6">
+                                    <com:TRequiredFieldValidator ID="FieldTxTAddBentukSediaanValidator" ValidationGroup="addobat" Display="Dynamic" ControlToValidate="txtAddBentukSediaan" ErrorMessage="Isi Keterangan Sediaan Obat" CssClass="has-error help-block">	
+                                        <prop:ClientSide.OnValidationError>
+                                            $('divAddTxtBentukSediaan').addClassName('has-error');
+                                            jQuery('#<%=$this->FieldTxTAddBentukSediaanValidator->ClientID%>').removeAttr('style');
+                                        </prop:ClientSide.OnValidationError>
+                                        <prop:ClientSide.OnValidationSuccess>
+                                            $('divAddTxtBentukSediaan').removeClassName('has-error');
+                                        </prop:ClientSide.OnValidationSuccess>
+                                    </com:TRequiredFieldValidator>     
+                                </div>
+                            </div>
+                        </div>
+                    </div> 
+                    <div class="form-group form-group-select2" id="divAddFarmaKologi">
+                        <label class="col-lg-2 control-label">Farmakologi :</label>
+                        <div class="col-lg-5">
+                            <com:TListBox ID="listAddFarmakologi" style="width:300px" SelectionMode="Multiple" />
+                            <com:TRequiredFieldValidator ID="FieldAddFarmakologiValidator" ControlToValidate="listAddFarmakologi" ErrorMessage="Pilih minimal satu dari farmakologi obat" Display="Dynamic" ValidationGroup="addobat" CssClass="has-error help-block">
+                                <prop:ClientSide.OnValidationError>
+                                    $('divAddFarmaKologi').addClassName('has-error');
+                                    jQuery('#<%=$this->FieldAddFarmakologiValidator->ClientID%>').removeAttr('style');
+                                </prop:ClientSide.OnValidationError>
+                                <prop:ClientSide.OnValidationSuccess>
+                                    $('divAddFarmaKologi').removeClassName('has-error');
+                                </prop:ClientSide.OnValidationSuccess>
+                            </com:TRequiredFieldValidator>
+                        </div>
+                    </div>
+                    <div class="form-group" id="divAddKomposisi">
+                        <label class="col-lg-2 control-label">Komposisi Obat :</label>
+                        <div class="col-lg-10">
+                            <div class="row">
+                                <div class="col-lg-6 col-sm-6">
+                                    <com:TTextBox ID="txtAddKomposisi" CssClass="form-control" /> 
+                                </div>
+                                <div class="col-lg-4 col-sm-6">
+                                    <com:TRequiredFieldValidator ID="FieldAddKomposisiValidator" ValidationGroup="addobat" Display="Dynamic" ControlToValidate="txtAddKomposisi" ErrorMessage="Isi Komposisi Obat" CssClass="has-error help-block">	
+                                        <prop:ClientSide.OnValidationError>
+                                            $('divAddKomposisi').addClassName('has-error');
+                                            jQuery('#<%=$this->FieldAddKomposisiValidator->ClientID%>').removeAttr('style');
+                                        </prop:ClientSide.OnValidationError>
+                                        <prop:ClientSide.OnValidationSuccess>
+                                            $('divAddKomposisi').removeClassName('has-error');
+                                        </prop:ClientSide.OnValidationSuccess>
+                                    </com:TRequiredFieldValidator>     
+                                </div>
+                            </div>
+                        </div>
+                    </div> 
+                    <div class="form-group" id="divAddKemasan">
+                        <label class="col-lg-2 control-label">Kemasan Obat :</label>
+                        <div class="col-lg-10">
+                            <div class="row">
+                                <div class="col-lg-6 col-sm-6">
+                                    <com:TTextBox ID="txtAddKemasan" CssClass="form-control" /> 
+                                </div>
+                                <div class="col-lg-4 col-sm-6">
+                                    <com:TRequiredFieldValidator ID="FieldAddKemasanValidator" ValidationGroup="addobat" Display="Dynamic" ControlToValidate="txtAddKemasan" ErrorMessage="Isi Kemasan Obat" CssClass="has-error help-block">	
+                                        <prop:ClientSide.OnValidationError>
+                                            $('divAddKemasan').addClassName('has-error');
+                                            jQuery('#<%=$this->FieldAddKemasanValidator->ClientID%>').removeAttr('style');
+                                        </prop:ClientSide.OnValidationError>
+                                        <prop:ClientSide.OnValidationSuccess>
+                                            $('divAddKemasan').removeClassName('has-error');
+                                        </prop:ClientSide.OnValidationSuccess>
+                                    </com:TRequiredFieldValidator>     
+                                </div>
+                            </div>
+                        </div>
+                    </div>                     
+                    <div class="form-group form-group-select2" id="divAddProdusen">
+                        <label class="col-lg-2 control-label">Produsen :</label>
+                        <div class="col-lg-4">
+                            <com:TDropDownList ID="cmbAddProdusen" Width="300px" />
+                            <com:TRequiredFieldValidator ID="FieldAddProdusenValidator" InitialValue="none" ValidationGroup="addobat" Display="Dynamic" ControlToValidate="cmbAddProdusen" ErrorMessage="Pilih Produsen Obat" CssClass="has-error help-block">	
+                                <prop:ClientSide.OnValidationError>
+                                    $('divAddProdusen').addClassName('has-error');
+                                    jQuery('#<%=$this->FieldAddProdusenValidator->ClientID%>').removeAttr('style');
+                                </prop:ClientSide.OnValidationError>
+                                <prop:ClientSide.OnValidationSuccess>
+                                    $('divAddProdusen').removeClassName('has-error');
+                                </prop:ClientSide.OnValidationSuccess>
+                            </com:TRequiredFieldValidator>    
+                        </div>
+                    </div>
+                    <div class="form-group" id="divAddMinimumStock">
+                        <label class="col-lg-2 control-label">Minimum Stock :</label>
+                        <div class="col-lg-10">
+                            <div class="row">
+                                <div class="col-lg-1 col-sm-6">
+                                    <com:TTextBox ID="txtAddMinimumStock" CssClass="form-control" Text="0" Attributes.OnKeyUp="formatangka(this,true)" /> 
+                                </div>
+                                <div class="col-lg-4 col-sm-6">
+                                    <com:TRequiredFieldValidator ID="FieldAddMinimumStockValidator" ValidationGroup="addobat" Display="Dynamic" ControlToValidate="txtAddMinimumStock" ErrorMessage="Isi Minimum Stock Obat" CssClass="has-error help-block">	
+                                        <prop:ClientSide.OnValidationError>
+                                            $('divAddMinimumStock').addClassName('has-error');
+                                            jQuery('#<%=$this->FieldAddMinimumStockValidator->ClientID%>').removeAttr('style');
+                                        </prop:ClientSide.OnValidationError>
+                                        <prop:ClientSide.OnValidationSuccess>
+                                            $('divAddMinimumStock').removeClassName('has-error');
+                                        </prop:ClientSide.OnValidationSuccess>
+                                    </com:TRequiredFieldValidator>  
+                                </div>
+                            </div>
+                        </div>
+                    </div> 
+                    <div class="form-group" id="divAddMaksimumStock">
+                        <label class="col-lg-2 control-label">Maksimum Stock :</label>
+                        <div class="col-lg-10">
+                            <div class="row">
+                                <div class="col-lg-1 col-sm-6">
+                                    <com:TTextBox ID="txtAddMaksimumStock" CssClass="form-control" Text="0" Attributes.OnKeyUp="formatangka(this,true)" /> 
+                                </div>
+                                <div class="col-lg-4 col-sm-6">
+                                    <com:TRequiredFieldValidator ID="FieldAddMaksimumStockValidator" ValidationGroup="addobat" Display="Dynamic" ControlToValidate="txtAddMaksimumStock" ErrorMessage="Isi Maksimum Stock Obat" CssClass="has-error help-block">	
+                                        <prop:ClientSide.OnValidationError>
+                                            $('divAddMaksimumStock').addClassName('has-error');
+                                            jQuery('#<%=$this->FieldAddMaksimumStockValidator->ClientID%>').removeAttr('style');
+                                        </prop:ClientSide.OnValidationError>
+                                        <prop:ClientSide.OnValidationSuccess>
+                                            $('divAddMaksimumStock').removeClassName('has-error');
+                                        </prop:ClientSide.OnValidationSuccess>
+                                    </com:TRequiredFieldValidator> 
+                                    <com:TCompareValidator ValidationGroup="addobat" ControlToValidate="txtAddMaksimumStock" ControlToCompare="txtAddMinimumStock" DataType="Integer" Operator="GreaterThanEqual" Text="Nilai Maksimum stock tidak boleh dibawah minimum stock." />
+                                </div>
+                            </div>
+                        </div>
+                    </div> 
+                    <div class="form-group">
+                        <div class="col-lg-offset-2 col-lg-10">
+                            <com:TActiveCustomButton ID="btnSave" CssClass="btn btn-primary" OnClick="saveData" ValidationGroup="addobat">
+                                <prop:Text><i class="fa fa-save"></i> Simpan</prop:Text>
+                                <prop:ClientSide.OnPreDispatch>                                                                   
+                                    $('loading').show(); 
+                                    $('<%=$this->btnSave->ClientId%>').disabled='disabled';						
+                                </prop:ClientSide.OnPreDispatch>
+                                <prop:ClientSide.OnLoading>
+                                    $('<%=$this->btnSave->ClientId%>').disabled='disabled';						
+                                </prop:ClientSide.OnLoading>
+                                <prop:ClientSide.OnComplete>																	                                    						                                                                            
+                                    $('<%=$this->btnSave->ClientId%>').disabled='';
+                                    $('loading').hide(); 
+                                </prop:ClientSide.OnComplete>
+                            </com:TActiveCustomButton>
+                        </div>
+                    </div>                    
+                </div>                
+            </div>
+        </div>
+    </div>    
+</com:TPanel>
+<com:TPanel Visible="<%= $this->getDefaultProcess() %>">  
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="main-box">
+                <header class="main-box-header clearfix">
+                    <h2><i class="fa fa-search"></i> Pencarian Data</h2>
+                </header>
+                <div class="main-box-body clearfix">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-lg-3 control-label">Kriteria :</label>
+                            <div class="col-lg-5">
+                                <com:TDropDownList ID="cmbKriteria" CssClass="form-control">                                                           
+                                    <com:TListItem Text="Kode Obat" Value="kode" />
+                                    <com:TListItem Text="Nama Obat" Value="nama" />
+                                </com:TDropDownList>
+                            </div>
+                        </div>
+                        <div class="form-group" id="divtxtKriteria">
+                            <label class="col-lg-3 control-label">Isi Kriteria :</label>
+                            <div class="col-lg-6">
+                                <com:TActiveTextBox ID="txtKriteria" CssClass="form-control" />                                            
+                                <com:TRequiredFieldValidator ID="spanKriteriaValidator1" ValidationGroup="viewPegawai" Display="Dynamic" ControlToValidate="txtKriteria" ErrorMessage="Inputkan NIP." FocusOnError="true" CssClass="has-error help-block">	
+                                    <prop:ClientSide.OnValidationError>
+                                        $('divtxtKriteria').addClassName('has-error');
+                                        jQuery('#<%=$this->spanKriteriaValidator1->ClientID%>').removeAttr('style');                                
+                                    </prop:ClientSide.OnValidationError>
+                                    <prop:ClientSide.OnValidationSuccess>
+                                        $('divtxtKriteria').removeClassName('has-error');
+                                    </prop:ClientSide.OnValidationSuccess>
+                                </com:TRequiredFieldValidator>
+                                <com:TRequiredFieldValidator ID="spanKriteriaValidator2" ValidationGroup="filterForm" Display="Dynamic" ControlToValidate="txtKriteria" ErrorMessage="Input apa yang Anda cari, sesuai dengan kriteria yang Anda tentukan." FocusOnError="true" CssClass="has-error help-block">	
+                                    <prop:ClientSide.OnValidationError>
+                                        $('divtxtKriteria').addClassName('has-error');
+                                        jQuery('#<%=$this->spanKriteriaValidator2->ClientID%>').removeAttr('style');                                
+                                    </prop:ClientSide.OnValidationError>
+                                    <prop:ClientSide.OnValidationSuccess>
+                                        $('divtxtKriteria').removeClassName('has-error');
+                                    </prop:ClientSide.OnValidationSuccess>
+                                </com:TRequiredFieldValidator>                                         
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-lg-offset-3 col-lg-9">
+                                <com:TActiveCustomButton ID="btnSearch" CssClass="btn btn-info"  OnClick="Page.searchRecord" ValidationGroup="filterForm" Attributes.Title="Cari">
+                                    <prop:Text>                                        
+                                        <i class="fa fa-search"></i> Cari                                        
+                                    </prop:Text>
+                                    <prop:ClientSide.OnPreDispatch>         
+                                        $('loading').show();
+                                    </prop:ClientSide.OnPreDispatch>
+                                    <prop:ClientSide.OnLoading>
+                                        $('<%=$this->btnSearch->ClientId%>').disabled='disabled';						
+                                    </prop:ClientSide.OnLoading>
+                                    <prop:ClientSide.OnComplete>																	
+                                        $('<%=$this->btnSearch->ClientId%>').disabled='';						                               						                                        
+                                        $('loading').hide();
+                                    </prop:ClientSide.OnComplete>
+                                </com:TActiveCustomButton>  
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="main-box">
+                <header class="main-box-header clearfix">
+                    <h2><i class="fa fa-bookmark"></i> Filter Data</h2>
+                </header>
+                <div class="main-box-body clearfix">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-lg-3 control-label">Produsen :</label>
+                            <div class="col-lg-5">
+                                <com:TDropDownList ID="cmbFilterProdusen" Width="300px"/>
+                            </div>
+                        </div>    
+                        <div class="form-group">
+                            <div class="col-lg-offset-3 col-lg-10">
+                                <com:TActiveCustomButton ID="btnFilter" CssClass="btn btn-info"  OnClick="Page.filterRecord" Attributes.Title="Filter">
+                                    <prop:Text>                                        
+                                        <i class="fa fa-bookmark"></i> Filter
+                                    </prop:Text>
+                                    <prop:ClientSide.OnPreDispatch>         
+                                        $('loading').show();
+                                    </prop:ClientSide.OnPreDispatch>
+                                    <prop:ClientSide.OnLoading>
+                                        $('<%=$this->btnFilter->ClientId%>').disabled='disabled';						
+                                    </prop:ClientSide.OnLoading>
+                                    <prop:ClientSide.OnComplete>																	
+                                        $('<%=$this->btnFilter->ClientId%>').disabled='';						                               						                                        
+                                        $('loading').hide();
+                                    </prop:ClientSide.OnComplete>
+                                </com:TActiveCustomButton>  
+                            </div>
+                        </div>
+                        <br /><br /><br />
+                    </div>
+                </div>
+            </div>
+        </div>	
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="main-box clearfix">
+                <header class="main-box-header clearfix">
+                    <h2 class="pull-left"><i class="fa fa-medkit"></i> Daftar Obat</h2> 
+                    <div class="filter-block pull-right">                       
+                        <com:TActiveLinkButton ID="btnPrintOutDaftarObat" CssClass="btn btn-primary pull-left" OnClick="printOut" ClientSide.PostState="false" Attributes.Title="Print Out Laporan Daftar Obat">
+                            <prop:Text><i class="fa fa-print fa-lg"></i></prop:Text>
+                            <prop:ClientSide.OnPreDispatch>                                                                   
+                                $('loading').show(); 
+                                $('<%=$this->btnPrintOutDaftarObat->ClientId%>').disabled='disabled';						
+                            </prop:ClientSide.OnPreDispatch>
+                            <prop:ClientSide.OnLoading>
+                                $('<%=$this->btnPrintOutDaftarObat->ClientId%>').disabled='disabled';						
+                            </prop:ClientSide.OnLoading>
+                            <prop:ClientSide.OnComplete>																	                                    						                                                                            
+                                $('<%=$this->btnPrintOutDaftarObat->ClientId%>').disabled='';
+                                $('loading').hide(); 
+                            </prop:ClientSide.OnComplete>
+                        </com:TActiveLinkButton>
+                        <com:TLinkButton ID="add" CssClass="btn btn-primary pull-right" Text="<i class='fa  fa-plus-circle fa-lg'></i> Tambah Obat" Attributes.Title="Tambah Obat" OnClick="addProcess" CausesValidation="false" />                        
+                    </div>
+                </header>
+                <div class="main-box-body clearfix">
+                    <div class="table-responsive">
+                        <com:TActiveRepeater ID="RepeaterS" DataKeyField="idobat" AllowPaging="true" PageSize="10" AllowCustomPaging="true" OnItemCreated="itemCreated">
+                            <prop:HeaderTemplate>			
+                                <table class="table table-striped table-hover">	
+                                    <thead>
+                                    <tr>
+                                        <th width="10%"><span>KODE OBAT</span></th>
+                                        <th width="30%"><span>NAMA OBAT</span></th>
+                                        <th><span>KEMASAN</span></th>
+                                        <th><span>PRODUSEN</span></th>
+                                        <th><span>HARGA</span></th>
+                                        <th width="80"><span>STOCK</span></th>
+                                        <th width="150"></th>							
+                                    </tr>								
+                                    </thead>
+                                    <tbody>
+                            </prop:HeaderTemplate>
+                            <prop:ItemTemplate>
+                                <tr>
+                                    <td><%#$this->DataItem['kode_obat']%></td>
+                                    <td><%#$this->DataItem['nama_obat'] .' '.$this->DataItem['nama_bentuk']%></td>   
+                                    <td><%#$this->DataItem['kemasan']%></td>
+                                    <td><%#$this->DataItem['nama_produsen']%></td>
+                                    <td><%#$this->Page->Obat->toRupiah($this->DataItem['harga'])%></td>
+                                    <td><%#$this->DataItem['stock']%></td>                                    
+                                    <td>
+                                        <com:TActiveLinkButton ID="btnView" ClientSide.PostState="false" CssClass="table-link" OnClick="Page.viewRecord" Attributes.Title="View data Obat">
+                                            <prop:Text>
+                                                <span class="fa-stack">
+                                                    <i class="fa fa-square fa-stack-2x"></i>
+                                                    <i class="fa fa-search-plus fa-stack-1x fa-inverse"></i>
+                                                </span>
+                                            </prop:Text>
+                                            <prop:ClientSide.OnPreDispatch>
+                                                $('loading').show();                                             
+                                                $('<%=$this->btnView->ClientId%>').disabled='disabled';						
+                                            </prop:ClientSide.OnPreDispatch>
+                                            <prop:ClientSide.OnLoading>
+                                                $('<%=$this->btnView->ClientId%>').disabled='disabled';									                            
+                                            </prop:ClientSide.OnLoading>
+                                            <prop:ClientSide.onComplete>
+                                                $('loading').hide();                                                
+                                            </prop:ClientSide.OnComplete>
+                                        </com:TActiveLinkButton>
+                                        <com:TLinkButton CssClass="table-link" OnClick="Page.editRecord" Attributes.Title="Ubah data Obat">
+                                            <prop:Text>
+                                                <span class="fa-stack">
+                                                    <i class="fa fa-square fa-stack-2x"></i>
+                                                    <i class="fa fa-pencil fa-stack-1x fa-inverse"></i>
+                                                </span>
+                                            </prop:Text>
+                                        </com:TLinkButton>
+                                        <com:TActiveLinkButton ID="btnDelete" ClientSide.PostState="false" CssClass="table-link danger" OnClick="Page.deleteRecord" Attributes.Title="Hapus data Obat">
+                                            <prop:Text>
+                                                <span class="fa-stack">
+                                                    <i class="fa fa-square fa-stack-2x"></i>
+                                                    <i class="fa fa-trash-o fa-stack-1x fa-inverse"></i>
+                                                </span>
+                                            </prop:Text>
+                                            <prop:ClientSide.OnPreDispatch>
+                                                $('loading').show();                                             
+                                                $('<%=$this->btnDelete->ClientId%>').disabled='disabled';						
+                                            </prop:ClientSide.OnPreDispatch>
+                                            <prop:ClientSide.OnLoading>
+                                                $('<%=$this->btnDelete->ClientId%>').disabled='disabled';									                            
+                                            </prop:ClientSide.OnLoading>
+                                            <prop:ClientSide.onComplete>
+                                                $('loading').hide();                                                
+                                            </prop:ClientSide.OnComplete>
+                                        </com:TActiveLinkButton>                                        
+                                    </td>                                    
+                                </tr>
+                            </prop:ItemTemplate>				                
+                            <prop:FooterTemplate>               
+                                </tbody>
+                                </table>
+                            </prop:FooterTemplate>	
+                            <prop:EmptyTemplate>                                                       
+                                <div class="alert alert-info">
+                                    <i class="fa fa-info-circle fa-fw fa-lg"></i>
+                                    <strong>
+                                        Info!
+                                    </strong>
+                                     Data Obat belum ada.
+                                </div>
+                            </prop:EmptyTemplate>
+                        </com:TActiveRepeater>
+                        <%include Application.CustomPaging%>
+                        <%include Application.layouts.ModalInfoObat%>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>    
+</com:TPanel>
+<%include Application.layouts.ModalPrintOut%>
+</com:TContent>
+<com:TContent ID="jscontent">
+<script src="<%=$this->Theme->baseUrl%>/js/select2.min.js" type="text/javascript"></script>
+</com:TContent>
+<com:TContent ID="jsinlinecontent">
+<script type="text/javascript">
+    jQuery(function(jQuery) {     
+        var panelprocess="<%=$this->idProcess%>";
+        if (panelprocess == "add") {
+            var addprodusen = "#<%=$this->cmbAddProdusen->clientID%>";
+            var addbentuksediaan = "#<%=$this->cmbAddBentukSediaan->clientID%>";
+            var addlistfarmakologi = "#<%=$this->listAddFarmakologi->clientID%>";
+            //nice select boxes
+        
+            jQuery(addprodusen).select2();            
+            jQuery(addbentuksediaan).select2();            
+            jQuery(addlistfarmakologi).select2({
+                placeholder: 'Pilih Farmakologi',
+                allowClear: true
+            });         
+        }else if (panelprocess=="edit"){
+            var editprodusen = "#<%=$this->cmbEditProdusen->clientID%>";
+            var editbentuksediaan = "#<%=$this->cmbEditBentukSediaan->clientID%>";
+            var editlistfarmakologi = "#<%=$this->listEditFarmakologi->clientID%>";
+            
+            jQuery(editprodusen).select2();            
+            jQuery(editbentuksediaan).select2();            
+            jQuery(editlistfarmakologi).select2({
+                placeholder: 'Pilih Farmakologi',
+                allowClear: true
+            });         
+        }else{
+            var filterprodusen = "#<%=$this->cmbFilterProdusen->clientID%>";
+            jQuery(filterprodusen).select2(); 
+        }
+    });
+</script>
+</com:TContent>

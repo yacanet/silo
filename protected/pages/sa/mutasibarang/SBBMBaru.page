@@ -1,0 +1,713 @@
+<%@ Title="Mutasi Barang Masuk - SBBM" %>
+<com:TContent ID="moduleheader">
+    <i class="fa fa-file"></i> SBBM (Surat Bukti Barang Masuk)
+</com:TContent>
+<com:TContent ID="modulebreadcrumb">    
+    <li><a href="#">Mutasi Barang Masuk</a></li>
+    <li class="active">SBBM</li>
+</com:TContent>
+<com:TContent ID="csscontent">
+<link rel="stylesheet" href="<%=$this->Theme->baseUrl%>/css/libs/select2.css" type="text/css" />
+<link rel="stylesheet" type="text/css" href="<%=$this->Theme->baseUrl%>/css/libs/nifty-component.css"/>
+</com:TContent>
+<com:TContent ID="maincontent">
+<com:TActiveHiddenField ID="hiddenidobat" Visible="false" />
+<com:THiddenField ID="hiddenno_faktur" />
+<com:TPanel Visible="<%= $this->getEditProcess(false) %>" CssClass="row">
+    <div class="col-lg-12">
+        <div class="main-box clearfix">
+            <header class="main-box-header clearfix">
+                <h2 class="pull-left">No. SBBM : <%=$this->datasbbm['no_sbbm']%></h2>
+                <div class="filter-block pull-right">                                                
+                    <com:TActiveLinkButton ID="btnCloseEdit" CssClass="btn btn-warning pull-right" OnClick="closeSBBM" ValidationGroup="formNomorSBBM2">
+                        <prop:Text><i class="fa fa-times fa-lg"></i></prop:Text>
+                        <prop:ClientSide.OnPreDispatch>                                                                   
+                            $('loading').show(); 
+                            $('<%=$this->btnCloseEdit->ClientId%>').disabled='disabled';						
+                        </prop:ClientSide.OnPreDispatch>
+                        <prop:ClientSide.OnLoading>
+                            $('<%=$this->btnCloseEdit->ClientId%>').disabled='disabled';						
+                        </prop:ClientSide.OnLoading>
+                        <prop:ClientSide.OnComplete>																	                                    						                                                                            
+                            $('<%=$this->btnCloseEdit->ClientId%>').disabled='';
+                            $('loading').hide(); 
+                        </prop:ClientSide.OnComplete>
+                    </com:TActiveLinkButton>
+                </div>
+            </header>
+            <div class="main-box-body clearfix">
+                <div class="form-horizontal">                                                        
+                    <div class="form-group">
+                        <label class="col-lg-2 control-label">Tanggal SBBM :</label>
+                        <div class="col-lg-10">
+                            <com:TCustomDatePicker ID="cmbEditTanggalSBBM" DateFormat="dd-MMMM-yyyy" Culture="id"  FromYear="<%=$_SESSION['ta']%>" UpToYear="<%=$_SESSION['ta']%>" InputMode="DropDownList" />
+                        </div>
+                    </div>                    
+                    <div class="form-group form-group-select2" id="divEditPenyalur">
+                        <label class="col-lg-2 control-label">Penyalur :</label>
+                        <div class="col-lg-4">
+                            <com:TDropDownList ID="cmbEditPenyalur" Width="300px" />
+                            <com:TRequiredFieldValidator ID="FieldEditPenyalurValidator" InitialValue="none" ValidationGroup="editsbbm" Display="Dynamic" ControlToValidate="cmbEditPenyalur" ErrorMessage="Pilih Bentuk Sediaan Obat" CssClass="has-error help-block">	
+                                <prop:ClientSide.OnValidationError>
+                                    $('divEditPenyalur').addClassName('has-error');
+                                    jQuery('#<%=$this->FieldEditPenyalurValidator->ClientID%>').removeAttr('style');
+                                </prop:ClientSide.OnValidationError>
+                                <prop:ClientSide.OnValidationSuccess>
+                                    $('divEditPenyalur').removeClassName('has-error');
+                                </prop:ClientSide.OnValidationSuccess>
+                            </com:TRequiredFieldValidator>    
+                        </div>
+                    </div>                                                
+                    <div class="form-group" id="divEditNoFaktur">
+                        <label class="col-lg-2 control-label">No. Faktur :</label>
+                        <div class="col-lg-10">
+                            <div class="row">
+                                <div class="col-lg-3 col-sm-6">
+                                    <com:TTextBox ID="txtEditNoFaktur" CssClass="form-control" /> 
+                                </div>
+                                <div class="col-lg-4 col-sm-6">
+                                    <com:TRequiredFieldValidator ID="FieldEditNoFakturValidator" ValidationGroup="editsbbm" Display="Dynamic" ControlToValidate="txtEditNoFaktur" ErrorMessage="Isi No. Faktur" CssClass="has-error help-block">	
+                                        <prop:ClientSide.OnValidationError>
+                                            $('divEditNoFaktur').addClassName('has-error');
+                                            jQuery('#<%=$this->FieldEditNoFakturValidator->ClientID%>').removeAttr('style');
+                                        </prop:ClientSide.OnValidationError>
+                                        <prop:ClientSide.OnValidationSuccess>
+                                            $('divEditNoFaktur').removeClassName('has-error');
+                                        </prop:ClientSide.OnValidationSuccess>
+                                    </com:TRequiredFieldValidator>     
+                                    <com:TActiveCustomValidator ID="editNoFaktur" ControlToValidate="txtEditNoFaktur" Display="Dynamic" OnServerValidate="checkNoFaktur" ValidationGroup="editsbbm" ErrorMessage="Nomor Faktur Yang Anda Inputkan Sudah Ada" FocusOnError="true" CssClass="has-error help-block">
+                                        <prop:ClientSide.OnValidationError>
+                                            $('divEditNoFaktur').addClassName('has-error');
+                                            jQuery('#<%=$this->addNoFaktur->ClientID%>').removeAttr('style');
+                                        </prop:ClientSide.OnValidationError>
+                                        <prop:ClientSide.OnValidationSuccess>
+                                            $('divEditNoFaktur').removeClassName('has-error');
+                                        </prop:ClientSide.OnValidationSuccess>
+                                    </com:TActiveCustomValidator>
+                                </div>
+                            </div>
+                        </div>
+                    </div> 
+                    <div class="form-group">
+                        <label class="col-lg-2 control-label">Tanggal Faktur :</label>
+                        <div class="col-lg-10">
+                            <com:TCustomDatePicker ID="cmbEditTanggalFaktur" DateFormat="dd-MMMM-yyyy" Culture="id"  FromYear="<%=$_SESSION['ta']%>" InputMode="DropDownList" />
+                        </div>
+                    </div>
+                    <div class="form-group" id="divEditPenerima">
+                        <label class="col-lg-2 control-label">Penerima :</label>
+                        <div class="col-lg-10">
+                            <div class="row">
+                                <div class="col-lg-6 col-sm-6">
+                                    <com:TTextBox ID="txtEditPenerima" CssClass="form-control" /> 
+                                </div>
+                                <div class="col-lg-4 col-sm-6">
+                                    <com:TRequiredFieldValidator ID="FieldEditPenerimaValidator" ValidationGroup="editsbbm" Display="Dynamic" ControlToValidate="txtEditPenerima" ErrorMessage="Isi Penerima" CssClass="has-error help-block">	
+                                        <prop:ClientSide.OnValidationError>
+                                            $('divEditPenerima').addClassName('has-error');
+                                            jQuery('#<%=$this->FieldEditPenerimaValidator->ClientID%>').removeAttr('style');
+                                        </prop:ClientSide.OnValidationError>
+                                        <prop:ClientSide.OnValidationSuccess>
+                                            $('divEditPenerima').removeClassName('has-error');
+                                        </prop:ClientSide.OnValidationSuccess>
+                                    </com:TRequiredFieldValidator>     
+                                </div>
+                            </div>
+                        </div>
+                    </div>                       
+                    <div class="form-group">
+                        <div class="col-lg-offset-2 col-lg-10">
+                            <com:TActiveCustomButton ID="btnUpdate" CssClass="btn btn-primary" OnClick="updateData" ValidationGroup="editsbbm">
+                                <prop:Text><i class="fa fa-save"></i> Simpan</prop:Text>
+                                <prop:ClientSide.OnPreDispatch>                                                                   
+                                    $('loading').show(); 
+                                    $('<%=$this->btnUpdate->ClientId%>').disabled='disabled';						                                    
+                                </prop:ClientSide.OnPreDispatch>
+                                <prop:ClientSide.OnLoading>
+                                    $('<%=$this->btnUpdate->ClientId%>').disabled='disabled';						                                    
+                                </prop:ClientSide.OnLoading>
+                                <prop:ClientSide.OnComplete>																	                                    						                                                                            
+                                    $('<%=$this->btnUpdate->ClientId%>').disabled='';                                    
+                                    $('loading').hide(); 
+                                </prop:ClientSide.OnComplete>
+                            </com:TActiveCustomButton>                            
+                        </div>
+                    </div>                    
+                </div>                
+            </div>
+        </div>
+    </div>
+</com:TPanel>
+<com:TPanel Visible="<%= $this->getAddProcess(false) %>">    
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="main-box clearfix">
+                <header class="main-box-header clearfix">
+                    <h2 class="pull-left">No. SBBM : <%=$this->datasbbm['no_sbbm']%></h2>
+                    <div class="filter-block pull-right">                                                
+                        <com:TActiveLinkButton ID="btnCloseBuat" CssClass="btn btn-warning pull-right" OnClick="closeSBBM" ValidationGroup="formNomorSBBM2">
+                            <prop:Text><i class="fa fa-times fa-lg"></i></prop:Text>
+                            <prop:ClientSide.OnPreDispatch>                                                                   
+                                $('loading').show(); 
+                                $('<%=$this->btnCloseBuat->ClientId%>').disabled='disabled';						
+                            </prop:ClientSide.OnPreDispatch>
+                            <prop:ClientSide.OnLoading>
+                                $('<%=$this->btnCloseBuat->ClientId%>').disabled='disabled';						
+                            </prop:ClientSide.OnLoading>
+                            <prop:ClientSide.OnComplete>																	                                    						                                                                            
+                                $('<%=$this->btnCloseBuat->ClientId%>').disabled='';
+                                $('loading').hide(); 
+                            </prop:ClientSide.OnComplete>
+                        </com:TActiveLinkButton>
+                    </div>
+                </header>
+                <div class="main-box-body clearfix">
+                    <div class="form-horizontal">                                                        
+                        <div class="form-group">
+                            <label class="col-lg-2 control-label">Tanggal SBBM :</label>
+                            <div class="col-lg-10">
+                                <com:TCustomDatePicker ID="cmbAddTanggalSBBM" DateFormat="dd-MMMM-yyyy" Culture="id"  FromYear="<%=$_SESSION['ta']%>" UpToYear="<%=$_SESSION['ta']%>" InputMode="DropDownList" />
+                            </div>
+                        </div>
+                        <div class="form-group" id="divAddSumberDana">
+                            <label class="col-lg-2 control-label">Sumber Dana :</label>
+                            <div class="col-lg-2">
+                                <com:TDropDownList ID="cmbAddSumberDana" CssClass="form-control" />                                    
+                                <com:TRequiredFieldValidator ID="FieldAddSumberDanaValidator" InitialValue="none" ValidationGroup="addsbbm" Display="Dynamic" ControlToValidate="cmbAddSumberDana" ErrorMessage="Pilih Sumber Dana" CssClass="has-error help-block">	
+                                    <prop:ClientSide.OnValidationError>
+                                        $('divAddSumberDana').addClassName('has-error');
+                                        jQuery('#<%=$this->FieldAddSumberDanaValidator->ClientID%>').removeAttr('style');
+                                    </prop:ClientSide.OnValidationError>
+                                    <prop:ClientSide.OnValidationSuccess>
+                                        $('divAddSumberDana').removeClassName('has-error');
+                                    </prop:ClientSide.OnValidationSuccess>
+                                </com:TRequiredFieldValidator>    
+                            </div>
+                        </div>                                                               
+                        <div class="form-group" id="divAddProgram">
+                            <label class="col-lg-2 control-label">Obat Program :</label>
+                            <div class="col-lg-3">
+                                <com:TDropDownList ID="cmbAddProgram" CssClass="form-control" />                                                                    
+                                <com:TRequiredFieldValidator ID="FieldAddProgramValidator" InitialValue="none" ValidationGroup="addsbbm" Display="Dynamic" ControlToValidate="cmbAddProgram" ErrorMessage="Pilih Program Obat" CssClass="has-error help-block">	
+                                    <prop:ClientSide.OnValidationError>
+                                        $('divAddProgram').addClassName('has-error');
+                                        jQuery('#<%=$this->FieldAddProgramValidator->ClientID%>').removeAttr('style');
+                                    </prop:ClientSide.OnValidationError>
+                                    <prop:ClientSide.OnValidationSuccess>
+                                        $('divAddProgram').removeClassName('has-error');
+                                    </prop:ClientSide.OnValidationSuccess>
+                                </com:TRequiredFieldValidator>    
+                            </div>
+                        </div>                                                               
+                        <div class="form-group form-group-select2" id="divAddPenyalur">
+                            <label class="col-lg-2 control-label">Penyalur :</label>
+                            <div class="col-lg-4">
+                                <com:TDropDownList ID="cmbAddPenyalur" Width="300px" />
+                                <com:TRequiredFieldValidator ID="FieldAddPenyalurValidator" InitialValue="none" ValidationGroup="addsbbm" Display="Dynamic" ControlToValidate="cmbAddPenyalur" ErrorMessage="Pilih Bentuk Sediaan Obat" CssClass="has-error help-block">	
+                                    <prop:ClientSide.OnValidationError>
+                                        $('divAddPenyalur').addClassName('has-error');
+                                        jQuery('#<%=$this->FieldAddPenyalurValidator->ClientID%>').removeAttr('style');
+                                    </prop:ClientSide.OnValidationError>
+                                    <prop:ClientSide.OnValidationSuccess>
+                                        $('divAddPenyalur').removeClassName('has-error');
+                                    </prop:ClientSide.OnValidationSuccess>
+                                </com:TRequiredFieldValidator>    
+                            </div>
+                        </div>                                                
+                        <div class="form-group" id="divAddNoFaktur">
+                            <label class="col-lg-2 control-label">No. Faktur :</label>
+                            <div class="col-lg-10">
+                                <div class="row">
+                                    <div class="col-lg-3 col-sm-6">
+                                        <com:TTextBox ID="txtAddNoFaktur" CssClass="form-control" /> 
+                                    </div>
+                                    <div class="col-lg-4 col-sm-6">
+                                        <com:TRequiredFieldValidator ID="FieldAddNoFakturValidator" ValidationGroup="addsbbm" Display="Dynamic" ControlToValidate="txtAddNoFaktur" ErrorMessage="Isi No. Faktur" CssClass="has-error help-block">	
+                                            <prop:ClientSide.OnValidationError>
+                                                $('divAddNoFaktur').addClassName('has-error');
+                                                jQuery('#<%=$this->FieldAddNoFakturValidator->ClientID%>').removeAttr('style');
+                                            </prop:ClientSide.OnValidationError>
+                                            <prop:ClientSide.OnValidationSuccess>
+                                                $('divAddNoFaktur').removeClassName('has-error');
+                                            </prop:ClientSide.OnValidationSuccess>
+                                        </com:TRequiredFieldValidator>     
+                                        <com:TActiveCustomValidator ID="addNoFaktur" ControlToValidate="txtAddNoFaktur" Display="Dynamic" OnServerValidate="checkNoFaktur" ValidationGroup="addsbbm" ErrorMessage="Nomor Faktur Yang Anda Inputkan Sudah Ada" FocusOnError="true" CssClass="has-error help-block">
+                                            <prop:ClientSide.OnValidationError>
+                                                $('divAddNoFaktur').addClassName('has-error');
+                                                jQuery('#<%=$this->addNoFaktur->ClientID%>').removeAttr('style');
+                                            </prop:ClientSide.OnValidationError>
+                                            <prop:ClientSide.OnValidationSuccess>
+                                                $('divAddNoFaktur').removeClassName('has-error');
+                                            </prop:ClientSide.OnValidationSuccess>
+                                        </com:TActiveCustomValidator>
+                                    </div>
+                                </div>
+                            </div>
+                        </div> 
+                        <div class="form-group">
+                            <label class="col-lg-2 control-label">Tanggal Faktur :</label>
+                            <div class="col-lg-10">
+                                <com:TCustomDatePicker ID="cmbAddTanggalFaktur" DateFormat="dd-MMMM-yyyy" Culture="id"  FromYear="<%=$_SESSION['ta']%>" InputMode="DropDownList" />
+                            </div>
+                        </div>
+                        <div class="form-group" id="divAddPenerima">
+                            <label class="col-lg-2 control-label">Penerima :</label>
+                            <div class="col-lg-10">
+                                <div class="row">
+                                    <div class="col-lg-6 col-sm-6">
+                                        <com:TTextBox ID="txtAddPenerima" CssClass="form-control" /> 
+                                    </div>
+                                    <div class="col-lg-4 col-sm-6">
+                                        <com:TRequiredFieldValidator ID="FieldAddPenerimaValidator" ValidationGroup="addsbbm" Display="Dynamic" ControlToValidate="txtAddPenerima" ErrorMessage="Isi Penerima" CssClass="has-error help-block">	
+                                            <prop:ClientSide.OnValidationError>
+                                                $('divAddPenerima').addClassName('has-error');
+                                                jQuery('#<%=$this->FieldAddPenerimaValidator->ClientID%>').removeAttr('style');
+                                            </prop:ClientSide.OnValidationError>
+                                            <prop:ClientSide.OnValidationSuccess>
+                                                $('divAddPenerima').removeClassName('has-error');
+                                            </prop:ClientSide.OnValidationSuccess>
+                                        </com:TRequiredFieldValidator>     
+                                    </div>
+                                </div>
+                            </div>
+                        </div>   
+                        <div class="form-group" id="divAddTotalQTY">
+                            <label class="col-lg-2 control-label">Total QTY :</label>
+                            <div class="col-lg-10">
+                                <div class="row">
+                                    <div class="col-lg-1 col-sm-11">
+                                        <p class="form-control-static"><%=SBBMBaru::$totalQTY%></p>
+                                        <com:THiddenField ID="hiddenTotalQTY" Value="<%=SBBMBaru::$totalQTY%>" />
+                                    </div>
+                                    <div class="col-lg-10 col-sm-2">
+                                        <com:TCompareValidator ValidationGroup="addsbbm" ControlToValidate="hiddenTotalQTY" ValueToCompare="0" DataType="Integer" Operator="GreaterThan" Text="Jumlah Quantity keranjang obat harus lebih besar dari 0." />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>                     
+                        <div class="form-group">
+                            <div class="col-lg-offset-2 col-lg-10">
+                                <com:TActiveCustomButton ID="btnSave" CssClass="btn btn-primary" OnClick="saveData" ValidationGroup="addsbbm">
+                                    <prop:Text><i class="fa fa-save"></i> Simpan</prop:Text>
+                                    <prop:ClientSide.OnPreDispatch>                                                                   
+                                        $('loading').show(); 
+                                        $('<%=$this->btnSave->ClientId%>').disabled='disabled';						
+                                        $('<%=$this->btnCheckout->ClientId%>').disabled='disabled';
+                                    </prop:ClientSide.OnPreDispatch>
+                                    <prop:ClientSide.OnLoading>
+                                        $('<%=$this->btnSave->ClientId%>').disabled='disabled';						
+                                        $('<%=$this->btnCheckout->ClientId%>').disabled='disabled';
+                                    </prop:ClientSide.OnLoading>
+                                    <prop:ClientSide.OnComplete>																	                                    						                                                                            
+                                        $('<%=$this->btnSave->ClientId%>').disabled='';
+                                        $('<%=$this->btnCheckout->ClientId%>').disabled='';
+                                        $('loading').hide(); 
+                                    </prop:ClientSide.OnComplete>
+                                </com:TActiveCustomButton>
+                                <com:TActiveCustomButton ID="btnCheckout" CssClass="btn btn-success" OnClick="checkOut" ValidationGroup="addsbbm">
+                                    <prop:Text><i class="fa fa-shopping-cart"></i> Checkout</prop:Text>
+                                    <prop:ClientSide.OnPreDispatch>                                                                   
+                                        $('loading').show(); 
+                                        $('<%=$this->btnSave->ClientId%>').disabled='disabled';
+                                        $('<%=$this->btnCheckout->ClientId%>').disabled='disabled';						
+                                    </prop:ClientSide.OnPreDispatch>
+                                    <prop:ClientSide.OnLoading>
+                                        $('<%=$this->btnSave->ClientId%>').disabled='disabled';
+                                        $('<%=$this->btnCheckout->ClientId%>').disabled='disabled';						
+                                    </prop:ClientSide.OnLoading>
+                                    <prop:ClientSide.OnComplete>																	                                    						                                                                            
+                                        $('<%=$this->btnSave->ClientId%>').disabled='';
+                                        $('<%=$this->btnCheckout->ClientId%>').disabled='';
+                                        $('loading').hide(); 
+                                    </prop:ClientSide.OnComplete>
+                                </com:TActiveCustomButton>
+                                <com:TActiveCustomButton ID="btnBatal" CssClass="btn btn-trash btn-danger" OnClick="batalSBBM" Attributes.OnClick="if(!confirm('Anda ingin membatalkan (menghapus) data SBBM ini ?')) return false;">
+                                    <prop:Text><i class="fa fa-times"></i> Batal</prop:Text>
+                                    <prop:ClientSide.OnPreDispatch>                                                                   
+                                        $('loading').show(); 
+                                        $('<%=$this->btnBatal->ClientId%>').disabled='disabled';						
+                                    </prop:ClientSide.OnPreDispatch>
+                                    <prop:ClientSide.OnLoading>
+                                        $('<%=$this->btnBatal->ClientId%>').disabled='disabled';						
+                                    </prop:ClientSide.OnLoading>
+                                    <prop:ClientSide.OnComplete>																	                                    						                                                                            
+                                        $('<%=$this->btnBatal->ClientId%>').disabled='';
+                                        $('loading').hide(); 
+                                    </prop:ClientSide.OnComplete>
+                                </com:TActiveCustomButton>
+                            </div>
+                        </div>                    
+                    </div>                
+                </div>
+            </div>
+        </div>
+    </div>    
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="main-box clearfix">
+                <header class="main-box-header clearfix">
+                    <h2 class="pull-left"><i class="fa fa-shopping-cart"></i> Keranjang Obat dari Penyalur</h2>
+                    <div class="filter-block pull-right">                                                
+                        <com:TActiveLinkButton ID="btnClear" CssClass="btn btn-warning pull-right" OnClick="clearCart" ValidationGroup="formNomorSBBM2">
+                            <prop:Text><i class="fa fa-trash-o fa-lg"></i> Kosongkan</prop:Text>
+                            <prop:ClientSide.OnPreDispatch>                                                                   
+                                $('loading').show(); 
+                                $('<%=$this->btnClear->ClientId%>').disabled='disabled';						
+                            </prop:ClientSide.OnPreDispatch>
+                            <prop:ClientSide.OnLoading>
+                                $('<%=$this->btnClear->ClientId%>').disabled='disabled';						
+                            </prop:ClientSide.OnLoading>
+                            <prop:ClientSide.OnComplete>																	                                    						                                                                            
+                                $('<%=$this->btnClear->ClientId%>').disabled='';
+                                $('loading').hide(); 
+                            </prop:ClientSide.OnComplete>
+                        </com:TActiveLinkButton>
+                    </div>
+                </header>
+                <div class="main-box-body clearfix">
+                    <com:TActiveRepeater ID="RepeaterCart" DataKeyField="idcart" OnItemCreated="itemCreatedCart">
+                        <prop:HeaderTemplate>			
+                            <table class="table table-striped table-hover">	
+                                <thead>
+                                <tr>
+                                    <th width="240"><span>NAMA OBAT</span></th>                                        
+                                    <th width="90"><span>KEMASAN</span></th>                                                                            
+                                    <th width="70">HARGA</th>
+                                    <th width="90"><span>QTY</span></th>
+                                    <th width="330"><span>TGL. EXPIRE</span></th>
+                                    <th width="120"><span>NO.BATCH</span></th>
+                                    <th width="100px"></th>							
+                                </tr>									
+                                </thead>
+                                <tbody>
+                        </prop:HeaderTemplate>
+                        <prop:ItemTemplate>
+                            <tr>
+                                <td><%#$this->DataItem['nama_obat']%></td>                                   
+                                <td><%#$this->DataItem['kemasan']%></td>
+                                <td><%#$this->Page->Obat->toRupiah($this->DataItem['harga'])%></td>
+                                <td>
+                                    <com:TTextBox ID="txtQTY" CssClass="form-control" Attributes.OnKeyUp="formatangka(this,true)" Text="<%#$this->DataItem['qty']%>" Width="60px" />
+                                    <com:TRequiredFieldValidator ValidationGroup="addsbbm" Display="Dynamic" ControlToValidate="txtQTY" ErrorMessage="Isi QTY Obat." FocusOnError="true" CssClass="has-error help-block" />	                                        
+                                </td>
+                                <td><com:TCustomDatePicker ID="cmbAddExpire" DateFormat="dd-MMMM-yyyy" Culture="id"  FromYear="<%#date('Y')%>" UpToYear="<%#date('Y')+10%>" InputMode="DropDownList" ShowCalendar="false" /></td>
+                                <td>
+                                    <com:TTextBox ID="txtNoBatch" CssClass="form-control" Width="120px" Text="<%#$this->DataItem['no_batch']%>" />
+                                    <com:TRequiredFieldValidator ValidationGroup="addsbbm" Display="Dynamic" ControlToValidate="txtNoBatch" ErrorMessage="Isi No Batch." FocusOnError="true" CssClass="has-error help-block" />	                                        
+                                </td>
+                                <td width="100">                                       
+                                    <com:TActiveLinkButton ID="btnAddProductRepeater" CssClass="table-link" OnClick="Page.saveItem" Attributes.Title="simpan">
+                                        <prop:Text>
+                                            <span class="fa-stack">
+                                                <i class="fa fa-square fa-stack-2x"></i>
+                                                <i class="fa fa-save fa-stack-1x fa-inverse"></i>
+                                            </span>
+                                        </prop:Text>
+                                        <prop:ClientSide.OnPreDispatch>
+                                            $('loading').show();                                             
+                                            $('<%=$this->btnAddProductRepeater->ClientId%>').disabled='disabled';						
+                                        </prop:ClientSide.OnPreDispatch>
+                                        <prop:ClientSide.OnLoading>
+                                            $('<%=$this->btnAddProductRepeater->ClientId%>').disabled='disabled';									                            
+                                        </prop:ClientSide.OnLoading>
+                                        <prop:ClientSide.onComplete>
+                                            $('loading').hide();                                                
+                                        </prop:ClientSide.OnComplete>
+                                    </com:TActiveLinkButton>        
+                                    <com:TActiveLinkButton ID="btnDelete" ClientSide.PostState="false" CssClass="table-link danger" OnClick="Page.deleteItem" Attributes.Title="Hapus Item" Attributes.OnClick="if(!confirm('Anda ingin menghapus item ini ?')) return false;">
+                                        <prop:Text>
+                                            <span class="fa-stack">
+                                                <i class="fa fa-square fa-stack-2x"></i>
+                                                <i class="fa fa-trash-o fa-stack-1x fa-inverse"></i>
+                                            </span>
+                                        </prop:Text>
+                                        <prop:ClientSide.OnPreDispatch>
+                                            $('loading').show();                                             
+                                            $('<%=$this->btnDelete->ClientId%>').disabled='disabled';						
+                                        </prop:ClientSide.OnPreDispatch>
+                                        <prop:ClientSide.OnLoading>
+                                            $('<%=$this->btnDelete->ClientId%>').disabled='disabled';									                            
+                                        </prop:ClientSide.OnLoading>
+                                        <prop:ClientSide.onComplete>
+                                            $('loading').hide();                                                
+                                        </prop:ClientSide.OnComplete>
+                                    </com:TActiveLinkButton>  
+                                </td>                                    
+                            </tr>
+                        </prop:ItemTemplate>				                
+                        <prop:FooterTemplate>               
+                            </tbody>
+                            </table>
+                            <div class="invoice-box-total clearfix">
+                                <div class="row">
+                                    <div class="col-sm-9 col-md-10 col-xs-6 text-right invoice-box-total-label">
+                                        <strong>Total QTY :</strong> <%=SBBMBaru::$totalQTY%>
+                                    </div>                                                                                                     
+                                </div>
+                                <div class="row">                                    
+                                    <div class="col-sm-9 col-md-10 col-xs-6 text-right invoice-box-total-label">
+                                        <strong>Total Harga :</strong> <%=$this->Page->Obat->toRupiah(SBBMBaru::$totalHARGA)%>
+                                    </div>                                    
+                                </div>
+                            </div>
+                        </prop:FooterTemplate>	
+                        <prop:EmptyTemplate>                                                       
+                            <div class="alert alert-info">
+                                <i class="fa fa-info-circle fa-fw fa-lg"></i>
+                                <strong>
+                                    Info!
+                                </strong>
+                                 Data Obat dari Penyalur belum ada.
+                            </div>
+                        </prop:EmptyTemplate>
+                    </com:TActiveRepeater>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="main-box clearfix">
+                <header class="main-box-header clearfix">
+                    <div class="filter-block pull-left">
+                    </div>
+                    <div class="filter-block pull-right">
+                    </div>
+                </header>
+                <div class="main-box-body clearfix">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-lg-3 control-label">Kriteria :</label>
+                                    <div class="col-lg-5">
+                                        <com:TDropDownList ID="cmbKriteria" CssClass="form-control">                                                           
+                                            <com:TListItem Text="Kode Obat" Value="kode" />
+                                            <com:TListItem Text="Nama Obat" Value="nama" />
+                                        </com:TDropDownList>
+                                    </div>
+                                </div>
+                                <div class="form-group" id="divtxtKriteria">
+                                    <label class="col-lg-3 control-label">Isi Kriteria :</label>
+                                    <div class="col-lg-6">
+                                        <com:TActiveTextBox ID="txtKriteria" CssClass="form-control" />                                        
+                                        <com:TRequiredFieldValidator ID="spanKriteriaValidator2" ValidationGroup="filterForm" Display="Dynamic" ControlToValidate="txtKriteria" ErrorMessage="Input apa yang Anda cari, sesuai dengan kriteria yang Anda tentukan." FocusOnError="true" CssClass="has-error help-block">	
+                                            <prop:ClientSide.OnValidationError>
+                                                $('divtxtKriteria').addClassName('has-error');
+                                                jQuery('#<%=$this->spanKriteriaValidator2->ClientID%>').removeAttr('style');                                
+                                            </prop:ClientSide.OnValidationError>
+                                            <prop:ClientSide.OnValidationSuccess>
+                                                $('divtxtKriteria').removeClassName('has-error');
+                                            </prop:ClientSide.OnValidationSuccess>
+                                        </com:TRequiredFieldValidator>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-lg-offset-3 col-lg-10">
+                                        <com:TActiveCustomButton ID="btnSearch" CssClass="btn btn-info"  OnClick="Page.searchRecord" ValidationGroup="filterForm" Attributes.Title="Cari">
+                                            <prop:Text>                                        
+                                                <i class="fa fa-search"></i> Cari                                        
+                                            </prop:Text>
+                                            <prop:ClientSide.OnPreDispatch>         
+                                                $('loading').show();
+                                            </prop:ClientSide.OnPreDispatch>
+                                            <prop:ClientSide.OnLoading>
+                                                $('<%=$this->btnSearch->ClientId%>').disabled='disabled';						
+                                            </prop:ClientSide.OnLoading>
+                                            <prop:ClientSide.OnComplete>																	
+                                                $('<%=$this->btnSearch->ClientId%>').disabled='';						                               						                                        
+                                                $('loading').hide();
+                                            </prop:ClientSide.OnComplete>
+                                        </com:TActiveCustomButton>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-lg-3 control-label">Produsen :</label>
+                                    <div class="col-lg-5">
+                                        <com:TDropDownList ID="cmbFilterProdusen" Width="300px"/>                                    
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-lg-offset-3 col-lg-10">
+                                        <com:TActiveCustomButton ID="btnFilter" CssClass="btn btn-info"  OnClick="Page.filterRecord" Attributes.Title="Filter">
+                                            <prop:Text>                                        
+                                                <i class="fa fa-bookmark"></i> Filter
+                                            </prop:Text>
+                                            <prop:ClientSide.OnPreDispatch>         
+                                                $('loading').show();
+                                            </prop:ClientSide.OnPreDispatch>
+                                            <prop:ClientSide.OnLoading>
+                                                $('<%=$this->btnFilter->ClientId%>').disabled='disabled';						
+                                            </prop:ClientSide.OnLoading>
+                                            <prop:ClientSide.OnComplete>																	
+                                                $('<%=$this->btnFilter->ClientId%>').disabled='';						                               						                                        
+                                                $('loading').hide();
+                                            </prop:ClientSide.OnComplete>
+                                        </com:TActiveCustomButton>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <com:TActiveRepeater ID="RepeaterS" DataKeyField="idobat" AllowPaging="true" PageSize="10" AllowCustomPaging="true">
+                            <prop:HeaderTemplate>			
+                                <table class="table table-striped table-hover">	
+                                    <thead>
+                                    <tr>
+                                        <th width="250"><span>NAMA OBAT</span></th>                                        
+                                        <th width="90"><span>KEMASAN</span></th>                                        
+                                        <th width="90"><span>HARGA</span></th>
+                                        <th width="70"><span>STOCK</span></th>                                        
+                                        <th width="90"><span>QTY</span></th>
+                                        <th width="330"><span>TGL. EXPIRE</span></th>
+                                        <th width="120"><span>N0. BATCH</span></th>
+                                        <th width="100px"></th>							
+                                    </tr>								
+                                    </thead>
+                                    <tbody>
+                            </prop:HeaderTemplate>
+                            <prop:ItemTemplate>
+                                <tr>
+                                    <td><%#$this->DataItem['nama_obat']%></td>                                       
+                                    <td><%#$this->DataItem['kemasan']%></td>                                    
+                                    <td><%#$this->Page->Obat->toRupiah($this->DataItem['harga'])%></td>
+                                    <td><%#$this->DataItem['stock']%></td>                                    
+                                    <td><com:TTextBox ID="txtQTY" CssClass="form-control" Attributes.OnKeyUp="formatangka(this,true)" Width="60px" /></td>
+                                    <td><com:TCustomDatePicker ID="cmbAddExpire" DateFormat="dd-MMMM-yyyy" Culture="id"  FromYear="<%#date('Y')%>" UpToYear="<%#date('Y')+10%>" InputMode="DropDownList" ShowCalendar="false" /></td>
+                                    <td><com:TTextBox ID="txtNoBatch" CssClass="form-control" Width="120px" /></td>
+                                    <td>
+                                        <com:TActiveLinkButton ID="btnView" ClientSide.PostState="false" CssClass="table-link" OnClick="Page.viewRecord" Attributes.Title="View data Obat">
+                                            <prop:Text>
+                                                <span class="fa-stack">
+                                                    <i class="fa fa-square fa-stack-2x"></i>
+                                                    <i class="fa fa-search-plus fa-stack-1x fa-inverse"></i>
+                                                </span>
+                                            </prop:Text>
+                                            <prop:ClientSide.OnPreDispatch>
+                                                $('loading').show();                                             
+                                                $('<%=$this->btnView->ClientId%>').disabled='disabled';						
+                                            </prop:ClientSide.OnPreDispatch>
+                                            <prop:ClientSide.OnLoading>
+                                                $('<%=$this->btnView->ClientId%>').disabled='disabled';									                            
+                                            </prop:ClientSide.OnLoading>
+                                            <prop:ClientSide.onComplete>
+                                                $('loading').hide();                                                
+                                            </prop:ClientSide.OnComplete>
+                                        </com:TActiveLinkButton>                                       
+                                        <com:TActiveLinkButton ID="btnAddProductRepeater" CssClass="table-link" OnClick="Page.addProductRepeater" Attributes.Title="simpan">
+                                            <prop:Text>
+                                                <span class="fa-stack">
+                                                    <i class="fa fa-square fa-stack-2x"></i>
+                                                    <i class="fa fa-plus fa-stack-1x fa-inverse"></i>
+                                                </span>
+                                            </prop:Text>
+                                            <prop:ClientSide.OnPreDispatch>
+                                                $('loading').show();                                             
+                                                $('<%=$this->btnAddProductRepeater->ClientId%>').disabled='disabled';						
+                                            </prop:ClientSide.OnPreDispatch>
+                                            <prop:ClientSide.OnLoading>
+                                                $('<%=$this->btnAddProductRepeater->ClientId%>').disabled='disabled';									                            
+                                            </prop:ClientSide.OnLoading>
+                                            <prop:ClientSide.onComplete>
+                                                $('loading').hide();                                                
+                                            </prop:ClientSide.OnComplete>
+                                        </com:TActiveLinkButton>                                        
+                                    </td>                                    
+                                </tr>
+                            </prop:ItemTemplate>				                
+                            <prop:FooterTemplate>               
+                                </tbody>
+                                </table>
+                            </prop:FooterTemplate>	
+                            <prop:EmptyTemplate>                                                       
+                                <div class="alert alert-info">
+                                    <i class="fa fa-info-circle fa-fw fa-lg"></i>
+                                    <strong>
+                                        Info!
+                                    </strong>
+                                     Data Obat belum ada.
+                                </div>
+                            </prop:EmptyTemplate>
+                        </com:TActiveRepeater>
+                        <%include Application.CustomPaging%>
+                        <%include Application.layouts.ModalInfoObat%>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>    
+</com:TPanel>
+<com:TPanel Visible="<%= $this->getDefaultProcess() %>" CssClass="row">		    				
+    <div class="col-lg-12">
+        <div class="main-box clearfix">
+            <header class="main-box-header clearfix">                
+                <div class="pull-left">
+                    <label>Nomor SBBM : </label>
+                    <com:TTextBox ID="txtNoSBBMBaru" CssClass="form-control" Attributes.autofocus="true" />
+                    <com:TRequiredFieldValidator ValidationGroup="formNomorSBBM1" Display="Dynamic" ControlToValidate="txtNoSBBMBaru" ErrorMessage="Isi Nomor SBBM" CssClass="has-error help-block" />	
+                    <com:TActiveCustomValidator ControlToValidate="txtNoSBBMBaru" Display="Dynamic" OnServerValidate="checkBuatSBBMBaru" ValidationGroup="formNomorSBBM1" ErrorMessage="Nomor SBBM Yang Anda Inputkan Sudah Ada" FocusOnError="true" CssClass="has-error help-block" />                    
+                    <com:TRequiredFieldValidator ValidationGroup="formNomorSBBM2" Display="Dynamic" ControlToValidate="txtNoSBBMBaru" ErrorMessage="Isi Nomor SBBM" CssClass="has-error help-block" />	
+                    <com:TActiveCustomValidator ControlToValidate="txtNoSBBMBaru" Display="Dynamic" OnServerValidate="checkUbahSBBMBaru" ValidationGroup="formNomorSBBM2" ErrorMessage="Nomor SBBM Yang Anda Inputkan Sudah Ada" FocusOnError="true" CssClass="has-error help-block" />                    
+                </div>
+                <div class="filter-block pull-right">
+                    <br />                                        
+                    <com:TActiveLinkButton ID="btnUbahSBBM" CssClass="btn btn-primary pull-right" OnClick="ubahSBBM" ValidationGroup="formNomorSBBM2">
+                        <prop:Text><i class="fa fa-pencil fa-lg"></i> Ubah SBBM</prop:Text>
+                        <prop:ClientSide.OnPreDispatch>                                                                   
+                            $('loading').show(); 
+                            $('<%=$this->btnUbahSBBM->ClientId%>').disabled='disabled';						
+                        </prop:ClientSide.OnPreDispatch>
+                        <prop:ClientSide.OnLoading>
+                            $('<%=$this->btnUbahSBBM->ClientId%>').disabled='disabled';						
+                        </prop:ClientSide.OnLoading>
+                        <prop:ClientSide.OnComplete>																	                                    						                                                                            
+                            $('<%=$this->btnUbahSBBM->ClientId%>').disabled='';
+                            $('loading').hide(); 
+                        </prop:ClientSide.OnComplete>
+                    </com:TActiveLinkButton>                         
+                    <com:TActiveLinkButton ID="btnBuatSBBM" CssClass="btn btn-primary pull-right" OnClick="buatSBBM" ValidationGroup="formNomorSBBM1">
+                        <prop:Text><i class="fa fa-plus-circle fa-lg"></i> Buat SBBM</prop:Text>
+                        <prop:ClientSide.OnPreDispatch>                                                                   
+                            $('loading').show(); 
+                            $('<%=$this->btnBuatSBBM->ClientId%>').disabled='disabled';						
+                        </prop:ClientSide.OnPreDispatch>
+                        <prop:ClientSide.OnLoading>
+                            $('<%=$this->btnBuatSBBM->ClientId%>').disabled='disabled';						
+                        </prop:ClientSide.OnLoading>
+                        <prop:ClientSide.OnComplete>																	                                    						                                                                            
+                            $('<%=$this->btnBuatSBBM->ClientId%>').disabled='';
+                            $('loading').hide(); 
+                        </prop:ClientSide.OnComplete>
+                    </com:TActiveLinkButton>                    
+                </div>
+            </header>
+            <div class="main-box-body clearfix">
+            </div>
+        </div>
+    </div>
+</com:TPanel>		
+</com:TContent>
+<com:TContent ID="jscontent">
+<script src="<%=$this->Theme->baseUrl%>/js/select2.min.js" type="text/javascript"></script>
+<script type="text/javascript">
+    jQuery(function(jQuery) {     
+        var panelprocess="<%=$this->idProcess%>";
+        if (panelprocess == "add") {
+            var addpenyalur = "#<%=$this->cmbAddPenyalur->clientID%>";           
+            //nice select boxes        
+            jQuery(addpenyalur).select2();          
+            var filterprodusen = "#<%=$this->cmbFilterProdusen->clientID%>";
+            jQuery(filterprodusen).select2();   
+        }else {
+            var editpenyalur = "#<%=$this->cmbEditPenyalur->clientID%>";           
+            //nice select boxes        
+            jQuery(editpenyalur).select2();                      
+        }
+    });
+</script>
+</com:TContent>

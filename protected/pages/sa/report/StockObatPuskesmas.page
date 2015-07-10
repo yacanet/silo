@@ -1,0 +1,331 @@
+<%@ Title="Report - Stock Obat Puskesmas" %>
+<com:TContent ID="moduleheader">
+    <i class="fa fa-briefcase"></i> Stock Obat Puskesmas
+</com:TContent>
+<com:TContent ID="modulebreadcrumb">    
+    <li><a href="#">Report</a></li>
+    <li class="active"><span>Stock Obat Puskesmas</span></li>
+</com:TContent>
+<com:TContent ID="csscontent">
+<link rel="stylesheet" type="text/css" href="<%=$this->Theme->baseUrl%>/css/libs/nifty-component.css"/>
+</com:TContent>
+<com:TContent ID="maincontent">
+<com:TPanel Visible="<%= $this->getViewProcess(false) %>">  
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="main-box clearfix">
+                <header class="main-box-header clearfix">
+                    <h2 class="pull-left">Data Puskesmas</h2>
+                    <div class="filter-block pull-right">                        
+                        <com:TActiveLinkButton ID="btnClose" CssClass="btn btn-warning pull-right" OnClick="closeStockObatPuskesmas">
+                            <prop:Text><i class="fa fa-times fa-lg"></i></prop:Text>
+                            <prop:ClientSide.OnPreDispatch>                                                                   
+                                $('loading').show(); 
+                                $('<%=$this->btnClose->ClientId%>').disabled='disabled';						
+                            </prop:ClientSide.OnPreDispatch>
+                            <prop:ClientSide.OnLoading>
+                                $('<%=$this->btnClose->ClientId%>').disabled='disabled';						
+                            </prop:ClientSide.OnLoading>
+                            <prop:ClientSide.OnComplete>																	                                    						                                                                            
+                                $('<%=$this->btnClose->ClientId%>').disabled='';
+                                $('loading').hide(); 
+                            </prop:ClientSide.OnComplete>
+                        </com:TActiveLinkButton>                        
+                    </div>
+                </header>
+                <div class="main-box-body clearfix">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label"><strong>Kode Puskesmas: </strong></label>
+                                    <div class="col-sm-7">
+                                        <p class="form-control-static">
+                                            <%=$this->datapuskesmas['idpuskesmas']%>
+                                        </p>
+                                    </div>                            
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label"><strong>Nama Puskesmas: </strong></label>
+                                    <div class="col-sm-7">
+                                        <p class="form-control-static">
+                                            <%=$this->datapuskesmas['nama_puskesmas']%>
+                                        </p>
+                                    </div>                            
+                                </div>                                
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label"><strong>NIP Kepala Puskesmas: </strong></label>
+                                    <div class="col-sm-7">
+                                        <p class="form-control-static">
+                                            <%=$this->setup->nipFormat($this->datapuskesmas['nip_ka'])%>
+                                        </p>
+                                    </div>                            
+                                </div>                                
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label"><strong>Kepala Puskesmas: </strong></label>
+                                    <div class="col-sm-7">
+                                        <p class="form-control-static">
+                                            <%=$this->datapuskesmas['nama_ka']%>
+                                        </p>
+                                    </div>                            
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="main-box">
+                <header class="main-box-header clearfix">
+                    <h2><i class="fa fa-bookmark"></i> Filter Data</h2>
+                </header>
+                <div class="main-box-body clearfix">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-lg-2 control-label">Bulan :</label>
+                            <div class="col-lg-8">
+                                <com:TCustomDatePicker ID="cmbDetailFilterBulan" DateFormat="MMMM" Culture="id"  FromYear="<%=$_SESSION['ta']%>" UpToYear="<%=$_SESSION['ta']%>" InputMode="DropDownList" ShowCalendar="false" />
+                            </div>
+                        </div>    
+                        <div class="form-group">
+                            <div class="col-lg-offset-2 col-lg-10">
+                                <com:TActiveCustomButton ID="btnFilterDetail" CssClass="btn btn-info"  OnClick="Page.filterRecord" Attributes.Title="Filter">
+                                    <prop:Text>                                        
+                                        <i class="fa fa-bookmark"></i> Filter
+                                    </prop:Text>
+                                    <prop:ClientSide.OnPreDispatch>         
+                                        $('loading').show();
+                                    </prop:ClientSide.OnPreDispatch>
+                                    <prop:ClientSide.OnLoading>
+                                        $('<%=$this->btnFilterDetail->ClientId%>').disabled='disabled';						
+                                    </prop:ClientSide.OnLoading>
+                                    <prop:ClientSide.OnComplete>																	
+                                        $('<%=$this->btnFilterDetail->ClientId%>').disabled='';						                               						                                        
+                                        $('loading').hide();
+                                    </prop:ClientSide.OnComplete>
+                                </com:TActiveCustomButton>  
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="main-box clearfix">
+                <header class="main-box-header clearfix">
+                    <h2 class="pull-left"><i class="fa fa-plane"></i> Daftar Stock Obat Puskesmas Bulan <com:TActiveLabel ID="lblDetailBulanTahun" /></h2>                     
+                    <div class="filter-block pull-right">                                                
+                        <com:TActiveLinkButton ID="btnPrintOutDetailStockObatPuskesmas" CssClass="btn btn-primary pull-left" OnClick="printOut" ClientSide.PostState="false" Attributes.Title="Print Out Laporan Detail Distribusi Obat ">
+                            <prop:Text><i class="fa fa-print fa-lg"></i></prop:Text>
+                            <prop:ClientSide.OnPreDispatch>                                                                   
+                                $('loading').show(); 
+                                $('<%=$this->btnPrintOutDetailStockObatPuskesmas->ClientId%>').disabled='disabled';						
+                            </prop:ClientSide.OnPreDispatch>
+                            <prop:ClientSide.OnLoading>
+                                $('<%=$this->btnPrintOutDetailStockObatPuskesmas->ClientId%>').disabled='disabled';						
+                            </prop:ClientSide.OnLoading>
+                            <prop:ClientSide.OnComplete>																	                                    						                                                                            
+                                $('<%=$this->btnPrintOutDetailStockObatPuskesmas->ClientId%>').disabled='';
+                                $('loading').hide(); 
+                            </prop:ClientSide.OnComplete>
+                        </com:TActiveLinkButton>
+                    </div>
+                </header>
+                <div class="main-box-body clearfix">
+                    <div class="table-responsive">
+                        <com:TActiveRepeater ID="RepeaterStockObatPuskesmas" DataKeyField="idobat_puskesmas">
+                            <prop:HeaderTemplate>			
+                                <table class="table table-striped table-hover">	
+                                    <thead>
+                                    <tr>                                        
+                                        <th width="350"><span>NAMA OBAT</span></th>
+                                        <th width="90"><span>SATUAN</span></th>
+                                        <th width="90"><span>HARGA</span></th>                                        
+                                        <th><span>JUMLAH KELUAR</span></th>                                        
+                                        <th><span>JUMLAH RUPIAH</span></th>
+                                    </tr>					                                    
+                                    </thead>
+                                    <tbody>
+                            </prop:HeaderTemplate>
+                            <prop:ItemTemplate>
+                                <tr>                                    
+                                    <td><%#$this->DataItem['nama_obat']%></td>
+                                    <td><%#$this->DataItem['nama_satuan']%></td>   
+                                    <td><%#$this->Page->Obat->toRupiah($this->DataItem['harga'])%></td>                                    
+                                    <td><%#$this->DataItem['pengeluaran']%></td>
+                                    <td><%#$this->Page->Obat->toRupiah($this->DataItem['jumlah_rupiah'])%></td>
+                                </tr>
+                            </prop:ItemTemplate>				                
+                            <prop:FooterTemplate>               
+                                </tbody>
+                                </table>
+                            </prop:FooterTemplate>	
+                            <prop:EmptyTemplate>                                                       
+                                <div class="alert alert-info">
+                                    <i class="fa fa-info-circle fa-fw fa-lg"></i>
+                                    <strong>
+                                        Info!
+                                    </strong>
+                                     Data Obat belum ada.
+                                </div>
+                            </prop:EmptyTemplate>
+                        </com:TActiveRepeater>
+                        <%include Application.CustomPaging%>                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>  
+</com:TPanel>
+<com:TPanel Visible="<%= $this->getDefaultProcess() %>">  
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="main-box">
+                <header class="main-box-header clearfix">
+                    <h2><i class="fa fa-bookmark"></i> Filter Data</h2>
+                </header>
+                <div class="main-box-body clearfix">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-lg-2 control-label">Bulan :</label>
+                            <div class="col-lg-8">
+                                <com:TCustomDatePicker ID="cmbFilterBulan" DateFormat="MMMM" Culture="id"  FromYear="<%=$_SESSION['ta']%>" UpToYear="<%=$_SESSION['ta']%>" InputMode="DropDownList" ShowCalendar="false" />
+                            </div>
+                        </div>    
+                        <div class="form-group">
+                            <div class="col-lg-offset-2 col-lg-10">
+                                <com:TActiveCustomButton ID="btnFilter" CssClass="btn btn-info"  OnClick="Page.filterRecord" Attributes.Title="Filter">
+                                    <prop:Text>                                        
+                                        <i class="fa fa-bookmark"></i> Filter
+                                    </prop:Text>
+                                    <prop:ClientSide.OnPreDispatch>         
+                                        $('loading').show();
+                                    </prop:ClientSide.OnPreDispatch>
+                                    <prop:ClientSide.OnLoading>
+                                        $('<%=$this->btnFilter->ClientId%>').disabled='disabled';						
+                                    </prop:ClientSide.OnLoading>
+                                    <prop:ClientSide.OnComplete>																	
+                                        $('<%=$this->btnFilter->ClientId%>').disabled='';						                               						                                        
+                                        $('loading').hide();
+                                    </prop:ClientSide.OnComplete>
+                                </com:TActiveCustomButton>  
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="main-box clearfix">
+                <header class="main-box-header clearfix">
+                    <h2 class="pull-left"><i class="fa fa-briefcase"></i> Stock Obat Puskesmas s.d Bulan <com:TActiveLabel ID="lblBulanTahun" /></h2>                     
+                    <div class="filter-block pull-right">                                                
+                        <com:TActiveLinkButton ID="btnPrintOutRekapStockObatPuskesmas" CssClass="btn btn-primary pull-left" OnClick="printOut" ClientSide.PostState="false" Attributes.Title="Print Out Laporan Rekapitulasi Distribusi Obat">
+                            <prop:Text><i class="fa fa-print fa-lg"></i></prop:Text>
+                            <prop:ClientSide.OnPreDispatch>                                                                   
+                                $('loading').show(); 
+                                $('<%=$this->btnPrintOutRekapStockObatPuskesmas->ClientId%>').disabled='disabled';						
+                            </prop:ClientSide.OnPreDispatch>
+                            <prop:ClientSide.OnLoading>
+                                $('<%=$this->btnPrintOutRekapStockObatPuskesmas->ClientId%>').disabled='disabled';						
+                            </prop:ClientSide.OnLoading>
+                            <prop:ClientSide.OnComplete>																	                                    						                                                                            
+                                $('<%=$this->btnPrintOutRekapStockObatPuskesmas->ClientId%>').disabled='';
+                                $('loading').hide(); 
+                            </prop:ClientSide.OnComplete>
+                        </com:TActiveLinkButton>
+                    </div>
+                </header>
+                <div class="main-box-body clearfix">
+                    <com:TActiveRepeater ID="RepeaterS" DataKeyField="idpuskesmas" OnItemCreated="itemCreated">
+                        <prop:HeaderTemplate>			
+                            <table class="table table-striped table-hover">	
+                                <thead>
+                                <tr>
+                                    <th width="150"><span>KODE</span></th>
+                                    <th width="250"><span>NAMA</span></th>       
+                                    <th><span>DISTRIBUSI OBAT <br/ >BERDASARKAN SBBK</span></th>
+                                    <th><span>TOTAL PENERIMAAN</span></th>
+                                    <th><span>PEMAKAIAN</span></th>
+                                    <th><span>SISA OBAT</span></th>
+                                    <th><span>JUMLAH RUPIAH</span></th>
+                                    <th width="100"></th>							
+                                </tr>								
+                                </thead>
+                                <tbody>
+                        </prop:HeaderTemplate>
+                        <prop:ItemTemplate>
+                            <tr>                                    
+                                <td><%#$this->DataItem['idpuskesmas']%></td>   
+                                <td><%#$this->DataItem['nama_puskesmas']%></td>                                       
+                                <td><%#$this->DataItem['distribusi_obat']%></td>
+                                <td><%#$this->DataItem['total_penerimaan']%></td>
+                                <td><%#$this->DataItem['total_pemakaian']%></td>
+                                <td><%#$this->DataItem['sisa_obat']%></td>
+                                <td><%#$this->Page->Obat->toRupiah($this->DataItem['jumlah_rupiah'])%></td>
+                                <td>
+                                    <com:TActiveLinkButton ID="btnView" CssClass="table-link" ClientSide.PostState="false" OnClick="Page.viewRecord" Attributes.Title="Detail Data Distribusi Obat">
+                                        <prop:Text>
+                                            <span class="fa-stack">
+                                                <i class="fa fa-square fa-stack-2x"></i>
+                                                <i class="fa fa-eye fa-stack-1x fa-inverse"></i>
+                                            </span>
+                                        </prop:Text>
+                                        <prop:ClientSide.OnPreDispatch>
+                                            $('loading').show();                                             
+                                            $('<%=$this->btnView->ClientId%>').disabled='disabled';						
+                                        </prop:ClientSide.OnPreDispatch>
+                                        <prop:ClientSide.OnLoading>
+                                            $('<%=$this->btnView->ClientId%>').disabled='disabled';									                            
+                                        </prop:ClientSide.OnLoading>
+                                        <prop:ClientSide.onComplete>
+                                            $('loading').hide();                                                
+                                        </prop:ClientSide.OnComplete>
+                                    </com:TActiveLinkButton>                                                                                
+                                </td>                                    
+                            </tr>
+                        </prop:ItemTemplate>				                
+                        <prop:FooterTemplate>               
+                            </tbody>
+                            </table>
+                            <div class="invoice-box-total clearfix">
+                                <div class="row">
+                                    <div class="col-sm-9 col-md-10 col-xs-6 text-right invoice-box-total-label">
+                                        Total QTY : <%=StockObatPuskesmas::$totalQTY%>
+                                    </div>                                                                                                     
+                                </div>
+                                <div class="row">                                    
+                                    <div class="col-sm-9 col-md-10 col-xs-6 text-right invoice-box-total-label">
+                                        Total Harga : <%=$this->Page->Obat->toRupiah(StockObatPuskesmas::$totalHARGA)%>
+                                    </div>                                    
+                                </div>
+                            </div>
+                        </prop:FooterTemplate>	
+                        <prop:EmptyTemplate>                                                       
+                            <div class="alert alert-info">
+                                <i class="fa fa-info-circle fa-fw fa-lg"></i>
+                                <strong>
+                                    Info!
+                                </strong>
+                                 Data Puskesmas belum ada.
+                            </div>
+                        </prop:EmptyTemplate>
+                    </com:TActiveRepeater>   
+                </div>
+            </div>
+        </div>
+    </div>    
+</com:TPanel>
+<%include Application.layouts.ModalPrintOut%>
+</com:TContent>

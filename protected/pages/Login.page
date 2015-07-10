@@ -1,0 +1,60 @@
+<%@ Title="SILO - Login" %>
+<com:TContent ID="content">      
+    <com:TRequiredFieldValidator ValidationGroup="userlogin" Display="Dynamic" ControlToValidate="txtUsername" FocusOnError="true" ErrorMessage="Isi Username">
+        <prop:ClientSide.OnValidationError>
+            $('divUsername').addClassName('alert alert-danger');            
+        </prop:ClientSide.OnValidationError>
+        <prop:ClientSide.OnValidationSuccess>
+            $('divUsername').removeClassName('alert alert-danger');
+        </prop:ClientSide.OnValidationSuccess>
+    </com:TRequiredFieldValidator>
+    <div class="input-group" id="divUsername">
+        <span class="input-group-addon"><i class="fa fa-user"></i></span>
+        <com:TTextBox ID="txtUsername" CssClass="form-control" Attributes.placeholder="Username" Attributes.autofocus="true" />               
+    </div>
+    <com:TRequiredFieldValidator ValidationGroup="userlogin" Display="Dynamic" ControlToValidate="txtPassword" FocusOnError="true" ErrorMessage="Isi Password">                        
+        <prop:ClientSide.OnValidationError>
+            $('divPassword').addClassName('alert alert-danger');            
+        </prop:ClientSide.OnValidationError>
+        <prop:ClientSide.OnValidationSuccess>
+            $('divPassword').removeClassName('alert alert-danger');
+        </prop:ClientSide.OnValidationSuccess>
+    </com:TRequiredFieldValidator>                                
+    <div class="input-group" id="divPassword">
+        <span class="input-group-addon"><i class="fa fa-key"></i></span>
+        <com:TTextBox ID="txtPassword" Attributes.placeholder="Password" CssClass="form-control" TextMode="Password" />                     
+    </div>
+    <div id="remember-me-wrapper">
+        <div class="row">
+            <div class="col-xs-6">
+                &nbsp;
+            </div>
+            <a href="forgot-password-full.html" id="login-forget-link" class="col-xs-6">
+                Lupa Password?
+            </a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">            
+            <com:TActiveCustomButton ID="btnLogin" CssClass="btn btn-success col-xs-12" ValidationGroup="userlogin" Onclick="doLogin">                            
+                <prop:Text>
+                     <i class="fa fa-key"></i> Login
+                </prop:Text>
+                <prop:ClientSide.OnPreDispatch>    
+                    $('loading').show();
+                    $('<%=$this->btnLogin->ClientId%>').disabled='disabled';						
+                </prop:ClientSide.OnPreDispatch>
+                <prop:ClientSide.OnLoading>
+                    $('<%=$this->btnLogin->ClientId%>').disabled='disabled';									                            
+                </prop:ClientSide.OnLoading>
+                <prop:ClientSide.onComplete>                                    
+                    $('<%=$this->btnLogin->ClientId%>').disabled='';																								                                                                                
+                    $('loading').hide();
+                </prop:ClientSide.OnComplete>
+            </com:TActiveCustomButton>
+            <com:TActiveCustomValidator ControlToValidate="txtUsername" Display="Dynamic" OnServerValidate="checkUsernameAndPassword" CssClass="has-error help-block" ValidationGroup="userlogin">                                
+                
+            </com:TActiveCustomValidator>
+        </div>
+    </div>    				    
+</com:TContent>
