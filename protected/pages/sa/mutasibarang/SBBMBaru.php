@@ -117,11 +117,14 @@ class SBBMBaru extends MainPageSA {
             $this->cmbEditPenyalur->DataSource=$this->DMaster->getListPenyalur();
             $this->cmbEditPenyalur->DataBind();
             
-            $this->cmbEditTanggalSBBM->Text=$this->TGL->tanggal('d-m-Y',$this->datasbbm['tanggal_sbbm']);            
+            $this->cmbEditTanggalSBBM->Text=$this->TGL->tanggal('d-m-Y',$this->datasbbm['tanggal_sbbm']);    
+            $tahunCMB = $this->TGL->tanggal('Y',$this->datasbbm['tanggal_sbbm'])+1;
+            $this->cmbEditTanggalSBBM->UpToYear=$tahunCMB;            
             $this->cmbEditPenyalur->Text=$this->datasbbm['idpenyalur'];
             $this->txtEditNoFaktur->Text=$this->datasbbm['no_faktur'];
             $this->hiddenno_faktur->Value=$this->datasbbm['no_faktur'];
             $this->cmbEditTanggalFaktur->Text=$this->TGL->tanggal('d-m-Y',$this->datasbbm['tanggal_faktur']);
+            $this->cmbEditTanggalFaktur->UpToYear=$tahunCMB;
             $this->txtEditPenerima->Text=$this->datasbbm['penerima'];;
         }        
     }
@@ -454,13 +457,14 @@ class SBBMBaru extends MainPageSA {
             $datasbbm=$_SESSION['currentPageSBBMBaru']['datasbbm'];
             $idsbbm=$datasbbm['idsbbm'];            
             $tanggal_sbbm = date('Y-m-d',$this->cmbEditTanggalSBBM->TimeStamp);            
+            $tahun=date('Y',$this->cmbEditTanggalSBBM->TimeStamp);            
             $idpenyalur=$this->cmbEditPenyalur->Text;
             $nama_penyalur=$this->DMaster->getNamaPenyalurByID($idpenyalur);
             $no_faktur=addslashes($this->txtEditNoFaktur->Text);
             $tanggal_faktur = date('Y-m-d',$this->cmbEditTanggalFaktur->TimeStamp);
             $penerima=addslashes($this->txtEditPenerima->Text);
             
-            $str = "UPDATE master_sbbm SET tanggal_sbbm='$tanggal_sbbm',idpenyalur=$idpenyalur,nama_penyalur='$nama_penyalur',no_faktur='$no_faktur',tanggal_faktur='$tanggal_faktur',penerima='$penerima',date_modified=NOW() WHERE idsbbm=$idsbbm";
+            $str = "UPDATE master_sbbm SET tanggal_sbbm='$tanggal_sbbm',idpenyalur=$idpenyalur,nama_penyalur='$nama_penyalur',no_faktur='$no_faktur',tanggal_faktur='$tanggal_faktur',penerima='$penerima',tahun=$tahun,date_modified=NOW() WHERE idsbbm=$idsbbm";
             $this->DB->updateRecord($str);
             
             unset($_SESSION['currentPageSBBMBaru']['datasbbm']);

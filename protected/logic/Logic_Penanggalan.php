@@ -87,5 +87,33 @@ class Logic_Penanggalan extends Logic_Global {
           }
           return $lastmonthyear;
     }
+    /**
+     * digunakan untuk melakukan komparasi tanggal
+     * @return type date
+     */
+    public function compareDate($date1,$date2,$mode='all')	{		      
+        $datetime1 = new DateTime($date1, new DateTimeZone('Asia/Jakarta'));
+        $datetime2 = new DateTime($date2, new DateTimeZone('Asia/Jakarta'));
+        
+        $bool=false;
+		switch ($mode) {
+			case 'greater' :
+				$bool = ($datetime1 > $datetime2);
+			break;									
+            case 'greaterthan' :
+				$bool = ($datetime1 >= $datetime2);
+			break;									
+            case 'less' :
+				$bool = ($datetime1 < $datetime2);
+			break;					
+            case 'lessthan' :
+				$bool = ($datetime1 <= $datetime2);
+			break;					
+            case 'equal' :
+				$bool = ($datetime1 == $datetime2);
+			break;									
+		}        
+        return $bool;
+	}
 }
 ?>

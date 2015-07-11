@@ -2306,8 +2306,13 @@ class Logic_Report extends Logic_Obat {
         $sumberdana=$this->DMaster->removeIdFromArray($this->DMaster->getListSumberDana(),'none');
         $listsumber_dana=$sumberdana;
         $sumberdana['none']='JUMLAH';
-        $sumberdana['total']='TOTAL';     
-        $bulantahun=$this->tgl->tanggal ('Y-m',$this->dataReport['bulantahun']);
+        $sumberdana['total']='TOTAL';    
+        
+        $ta=$this->dataReport['tahun'];
+        $semester=$this->dataReport['semester'];        
+        $str_sbbm=$semester == 1 ? " msb.tanggal_sbbm >= '$ta-01-01' AND msb.tanggal_sbbm < '$ta-07-01'" :  " msb.tanggal_sbbm >= '$ta-07-01' AND  msb.tanggal_sbbm <= '$ta-12-31'";        
+        $str_sbbk=$semester == 1 ? " msk.tanggal_sbbk >= '$ta-01-01' AND msk.tanggal_sbbk < '$ta-07-01'" :  " msk.tanggal_sbbk >= '$ta-07-01' AND  msk.tanggal_sbbk <= '$ta-12-31'";        
+        
         switch ($this->getDriver()) {
             case 'excel2003' :               
             case 'excel2007' :                        
@@ -2336,8 +2341,8 @@ class Logic_Report extends Logic_Obat {
                 $sheet->setCellValue("A$row",'KABUPATEN');                
                 $sheet->setCellValue("C$row",': BINTAN');                
                 $sheet->setCellValue("X$row",'SEMESTER');                
-                $semester=$this->dataReport['semester'] == 1 ? 'I (Januari - Juni)' : 'II (Juli - Desember)';
-                $sheet->setCellValue("Y$row",": $semester");                            
+                $keterangan_semester=$this->dataReport['semester'] == 1 ? 'I (Januari - Juni)' : 'II (Juli - Desember)';
+                $sheet->setCellValue("Y$row",": $keterangan_semester");                            
                 $sheet->getStyle("A$row")->applyFromArray($styleArray);
                 $sheet->getStyle("X$row")->applyFromArray($styleArray);
                 $row+=1;
@@ -2345,7 +2350,7 @@ class Logic_Report extends Logic_Obat {
                 $sheet->setCellValue("A$row",'PROPINSI');                
                 $sheet->setCellValue("C$row",': KEPULAUAN RIAU');                                
                 $sheet->setCellValue("X$row",'TAHUN');                
-                $sheet->setCellValue("Y$row",': '.$this->dataReport['tahun']);                
+                $sheet->setCellValue("Y$row",": $ta");                
                 $sheet->getStyle("A$row")->applyFromArray($styleArray);
                 $sheet->getStyle("X$row")->applyFromArray($styleArray);              
                 
@@ -2471,10 +2476,6 @@ class Logic_Report extends Logic_Obat {
                 $totalAllHargaPengeluaran=$jumlah_awal;
                 $totalAllHargaStockAkhir=$jumlah_awal;
                 
-                $ta=$this->dataReport['tahun'];
-                $semester=$this->dataReport['semester'];        
-                $str_sbbm=$semester == 1 ? " msb.tanggal_sbbm >= '$ta-01-01' AND msb.tanggal_sbbm < '$ta-07-01'" :  " msb.tanggal_sbbm >= '$ta-07-01' AND  msb.tanggal_sbbm <= '$ta-12-31'";        
-                $str_sbbk=$semester == 1 ? " msk.tanggal_sbbk >= '$ta-01-01' AND msk.tanggal_sbbk < '$ta-07-01'" :  " msk.tanggal_sbbk >= '$ta-07-01' AND  msk.tanggal_sbbk <= '$ta-12-31'";        
                 while (list($k,$v)=each($r)) {
                     $idobat=$v['idobat'];
                     $penerimaan[1]=0;
@@ -2547,7 +2548,7 @@ class Logic_Report extends Logic_Obat {
                         $sheet->setCellValue("D$row",$this->DMaster->getNamaSatuanObat($v['idsatuan_obat']));
                         $sheet->setCellValueExplicit("E$row",$this->toRupiah($v['harga']),PHPExcel_Cell_DataType::TYPE_STRING);
                         
-                        $awalstock=$this->getFirstStockSemester($idobat, $this->dataReport['tahun'], $this->dataReport['semester'], $harga, 'sumberdana');
+                        $awalstock=$this->getFirstStockSemester($idobat, $ta, $semester, $harga, 'sumberdana');
                         $sheet->setCellValue("F$row",$awalstock[1]);                    
                         $sheet->setCellValueExplicit("G$row",$this->toRupiah($awalstock[1]*$harga),PHPExcel_Cell_DataType::TYPE_STRING);                                                
                         $sheet->setCellValue("H$row",$awalstock[2]);
@@ -2572,7 +2573,7 @@ class Logic_Report extends Logic_Obat {
                         $total=$jumlah_awalstock*$harga;                        
                         $sheet->setCellValueExplicit("O$row",$this->toRupiah($total),PHPExcel_Cell_DataType::TYPE_STRING);                                                
                         
-                        $str_penerimaan="SELECT msb.idsumber_dana,SUM(dsb.qty) AS jumlah FROM master_sbbm msb,detail_sbbm dsb WHERE msb.idsbbm=dsb.idsbbm AND dsb.idobat=$idobat AND harga=$harga AND msb.status='complete' AND DATE_FORMAT(msb.tanggal_sbbm,'%Y-%m')='$bulantahun' GROUP BY msb.idsumber_dana ORDER BY msb.idsumber_dana ASC";
+                        $str_penerimaan="SELECT msb.idsumber_dana,SUM(dsb.qty) AS jumlah FROM master_sbbm msb,detail_sbbm dsb WHERE msb.idsbbm=dsb.idsbbm AND dsb.idobat=$idobat AND harga=$harga AND msb.status='complete' AND $str_sbbm GROUP BY msb.idsumber_dana ORDER BY msb.idsumber_dana ASC";
                         $this->db->setFieldTable(array('idsumber_dana','jumlah'));
                         $r_penerimaan=$this->db->getRecord($str_penerimaan);
                         
@@ -2584,89 +2585,89 @@ class Logic_Report extends Logic_Obat {
                                 $jumlah_penerimaan+=$n['jumlah'];
                             }                                           
                         }
-//                        $sheet->setCellValue("P$row",$penerimaan[1]);    
-//                        $sheet->setCellValueExplicit("Q$row",$this->toRupiah($penerimaan[1]*$harga),PHPExcel_Cell_DataType::TYPE_STRING);                                                
-//                        $sheet->setCellValue("R$row",$penerimaan[2]);    
-//                        $sheet->setCellValueExplicit("S$row",$this->toRupiah($penerimaan[2]*$harga),PHPExcel_Cell_DataType::TYPE_STRING);                                                
-//                        $sheet->setCellValue("T$row",$penerimaan[3]);    
-//                        $sheet->setCellValueExplicit("U$row",$this->toRupiah($penerimaan[3]*$harga),PHPExcel_Cell_DataType::TYPE_STRING);                                                
-//                        $sheet->setCellValue("V$row",$penerimaan[4]);    
-//                        $sheet->setCellValueExplicit("W$row",$this->toRupiah($penerimaan[4]*$harga),PHPExcel_Cell_DataType::TYPE_STRING);                                                                        
-//
-//                        $sheet->setCellValue("X$row",$jumlah_penerimaan);
-//                        $total_penerimaan=$harga*$jumlah_penerimaan;
-//                        $totalAllItemPenerimaan[1]+=$penerimaan[1];
-//                        $totalAllItemPenerimaan[2]+=$penerimaan[2];
-//                        $totalAllItemPenerimaan[3]+=$penerimaan[3];
-//                        $totalAllItemPenerimaan[4]+=$penerimaan[4];
-//                        
-//                        $totalAllHargaPenerimaan[1]+=$penerimaan[1]*$harga;
-//                        $totalAllHargaPenerimaan[2]+=$penerimaan[2]*$harga;
-//                        $totalAllHargaPenerimaan[3]+=$penerimaan[3]*$harga;
-//                        $totalAllHargaPenerimaan[4]+=$penerimaan[4]*$harga;
-//
-//                        $sheet->setCellValueExplicit("Y$row",$this->toRupiah($total_penerimaan),PHPExcel_Cell_DataType::TYPE_STRING);                                                
-//                        
-//                        $str_pengeluaran="SELECT msb.idsumber_dana,COUNT(ks.idkartu_stock) AS jumlah FROM master_sbbk msk,detail_sbbk dsb,kartu_stock ks,master_sbbm msb WHERE msk.idsbbk=dsb.idsbbk AND ks.idobat=$idobat AND ks.iddetail_sbbk=dsb.iddetail_sbbk AND ks.idsbbm=msb.idsbbm AND dsb.harga=$harga AND status='complete' AND DATE_FORMAT(msk.tanggal_sbbk,'%Y-%m')='$bulantahun' AND ks.isdestroyed=0 GROUP BY msb.idsumber_dana ORDER BY msb.idsumber_dana ASC";                        
-//                        $this->db->setFieldTable(array('idsumber_dana','jumlah'));
-//                        $r_pengeluaran=$this->db->getRecord($str_pengeluaran);
-//                        
-//                        foreach ($r_pengeluaran as $s) {
-//                            $pengeluaran[$s['idsumber_dana']]=$s['jumlah'];                            
-//                            $jumlah_pengeluaran+=$s['jumlah'];
-//                        }
-//                        
-//                        $sheet->setCellValue("Z$row",$pengeluaran[1]);                            
-//                        $sheet->setCellValueExplicit("AA$row",$this->toRupiah($harga*$pengeluaran[1]),PHPExcel_Cell_DataType::TYPE_STRING);
-//                        $sheet->setCellValue("AB$row",$pengeluaran[2]);                            ;    
-//                        $sheet->setCellValueExplicit("AC$row",$this->toRupiah($harga*$pengeluaran[2]),PHPExcel_Cell_DataType::TYPE_STRING);
-//                        $sheet->setCellValue("AD$row",$pengeluaran[3]);                            
-//                        $sheet->setCellValueExplicit("AE$row",$this->toRupiah($harga*$pengeluaran[3]),PHPExcel_Cell_DataType::TYPE_STRING);
-//                        $sheet->setCellValue("AF$row",$pengeluaran[4]);    
-//                        $sheet->setCellValueExplicit("AG$row",$this->toRupiah($harga*$pengeluaran[4]),PHPExcel_Cell_DataType::TYPE_STRING); 
-//                                                
-//                        $sheet->setCellValue("AH$row",$jumlah_pengeluaran);
-//                        $total_pengeluaran=$harga*$jumlah_pengeluaran;
-//                        $totalAllItemPengeluaran[1]+=$pengeluaran[1];
-//                        $totalAllItemPengeluaran[2]+=$pengeluaran[2];
-//                        $totalAllItemPengeluaran[3]+=$pengeluaran[3];
-//                        $totalAllItemPengeluaran[4]+=$pengeluaran[4];
-//                        
-//                        $totalAllHargaPengeluaran[1]+=$pengeluaran[1]*$harga;
-//                        $totalAllHargaPengeluaran[2]+=$pengeluaran[2]*$harga;
-//                        $totalAllHargaPengeluaran[3]+=$pengeluaran[3]*$harga;
-//                        $totalAllHargaPengeluaran[4]+=$pengeluaran[4]*$harga;
-//                        $sheet->setCellValueExplicit("AI$row",$this->toRupiah($total_pengeluaran),PHPExcel_Cell_DataType::TYPE_STRING);                        
-//                        
-//                        $stockakhir[1]=($awalstock[1]+$penerimaan[1])-$pengeluaran[1];
-//                        $stockakhir[2]=($awalstock[2]+$penerimaan[2])-$pengeluaran[2];
-//                        $stockakhir[3]=($awalstock[3]+$penerimaan[3])-$pengeluaran[3];
-//                        $stockakhir[4]=($awalstock[4]+$penerimaan[4])-$pengeluaran[4];
-//                        
-//                        $sheet->setCellValue("AJ$row",$stockakhir[1]);                            
-//                        $sheet->setCellValueExplicit("AK$row",$this->toRupiah($harga*$stockakhir[1]),PHPExcel_Cell_DataType::TYPE_STRING);
-//                        $sheet->setCellValue("AL$row",$stockakhir[2]);    
-//                        $sheet->setCellValueExplicit("AM$row",$this->toRupiah($harga*$stockakhir[2]),PHPExcel_Cell_DataType::TYPE_STRING);
-//                        $sheet->setCellValue("AN$row",$stockakhir[3]);                            
-//                        $sheet->setCellValueExplicit("AO$row",$this->toRupiah($harga*$stockakhir[3]),PHPExcel_Cell_DataType::TYPE_STRING);
-//                        $sheet->setCellValue("AP$row",$stockakhir[4]);    
-//                        $sheet->setCellValueExplicit("AQ$row",$this->toRupiah($harga*$stockakhir[4]),PHPExcel_Cell_DataType::TYPE_STRING);
-//                        
-//                        $jumlah_stockakhir=$stockakhir[1]+$stockakhir[2]+$stockakhir[3]+$stockakhir[4];                       
-//                        $sheet->setCellValue("AR$row",$jumlah_stockakhir);                        
-//                        $total_stockakhir=$harga*$jumlah_stockakhir;
-//                        
-//                        $totalAllItemStockAkhir[1]+=$stockakhir[1];
-//                        $totalAllItemStockAkhir[2]+=$stockakhir[2];
-//                        $totalAllItemStockAkhir[3]+=$stockakhir[3];
-//                        $totalAllItemStockAkhir[4]+=$stockakhir[4];
-//                        
-//                        $totalAllHargaStockAkhir[1]+=$stockakhir[1]*$harga;
-//                        $totalAllHargaStockAkhir[2]+=$stockakhir[2]*$harga;
-//                        $totalAllHargaStockAkhir[3]+=$stockakhir[3]*$harga;
-//                        $totalAllHargaStockAkhir[4]+=$stockakhir[4]*$harga;
-//
-//                        $sheet->setCellValueExplicit("AS$row",$this->toRupiah($total_stockakhir),PHPExcel_Cell_DataType::TYPE_STRING);                                                                                                
+                        $sheet->setCellValue("P$row",$penerimaan[1]);    
+                        $sheet->setCellValueExplicit("Q$row",$this->toRupiah($penerimaan[1]*$harga),PHPExcel_Cell_DataType::TYPE_STRING);                                                
+                        $sheet->setCellValue("R$row",$penerimaan[2]);    
+                        $sheet->setCellValueExplicit("S$row",$this->toRupiah($penerimaan[2]*$harga),PHPExcel_Cell_DataType::TYPE_STRING);                                                
+                        $sheet->setCellValue("T$row",$penerimaan[3]);    
+                        $sheet->setCellValueExplicit("U$row",$this->toRupiah($penerimaan[3]*$harga),PHPExcel_Cell_DataType::TYPE_STRING);                                                
+                        $sheet->setCellValue("V$row",$penerimaan[4]);    
+                        $sheet->setCellValueExplicit("W$row",$this->toRupiah($penerimaan[4]*$harga),PHPExcel_Cell_DataType::TYPE_STRING);                                                                        
+
+                        $sheet->setCellValue("X$row",$jumlah_penerimaan);
+                        $total_penerimaan=$harga*$jumlah_penerimaan;
+                        $totalAllItemPenerimaan[1]+=$penerimaan[1];
+                        $totalAllItemPenerimaan[2]+=$penerimaan[2];
+                        $totalAllItemPenerimaan[3]+=$penerimaan[3];
+                        $totalAllItemPenerimaan[4]+=$penerimaan[4];
+                        
+                        $totalAllHargaPenerimaan[1]+=$penerimaan[1]*$harga;
+                        $totalAllHargaPenerimaan[2]+=$penerimaan[2]*$harga;
+                        $totalAllHargaPenerimaan[3]+=$penerimaan[3]*$harga;
+                        $totalAllHargaPenerimaan[4]+=$penerimaan[4]*$harga;
+
+                        $sheet->setCellValueExplicit("Y$row",$this->toRupiah($total_penerimaan),PHPExcel_Cell_DataType::TYPE_STRING);                                                
+                        
+                        $str_pengeluaran="SELECT msb.idsumber_dana,COUNT(ks.idkartu_stock) AS jumlah FROM master_sbbk msk,detail_sbbk dsb,kartu_stock ks,master_sbbm msb WHERE msk.idsbbk=dsb.idsbbk AND ks.idobat=$idobat AND ks.iddetail_sbbk=dsb.iddetail_sbbk AND ks.idsbbm=msb.idsbbm AND dsb.harga=$harga AND msk.status='complete' AND $str_sbbk AND ks.isdestroyed=0 GROUP BY msb.idsumber_dana ORDER BY msb.idsumber_dana ASC";                        
+                        $this->db->setFieldTable(array('idsumber_dana','jumlah'));
+                        $r_pengeluaran=$this->db->getRecord($str_pengeluaran);
+                        
+                        foreach ($r_pengeluaran as $s) {
+                            $pengeluaran[$s['idsumber_dana']]=$s['jumlah'];                            
+                            $jumlah_pengeluaran+=$s['jumlah'];
+                        }
+                        
+                        $sheet->setCellValue("Z$row",$pengeluaran[1]);                            
+                        $sheet->setCellValueExplicit("AA$row",$this->toRupiah($harga*$pengeluaran[1]),PHPExcel_Cell_DataType::TYPE_STRING);
+                        $sheet->setCellValue("AB$row",$pengeluaran[2]);                            ;    
+                        $sheet->setCellValueExplicit("AC$row",$this->toRupiah($harga*$pengeluaran[2]),PHPExcel_Cell_DataType::TYPE_STRING);
+                        $sheet->setCellValue("AD$row",$pengeluaran[3]);                            
+                        $sheet->setCellValueExplicit("AE$row",$this->toRupiah($harga*$pengeluaran[3]),PHPExcel_Cell_DataType::TYPE_STRING);
+                        $sheet->setCellValue("AF$row",$pengeluaran[4]);    
+                        $sheet->setCellValueExplicit("AG$row",$this->toRupiah($harga*$pengeluaran[4]),PHPExcel_Cell_DataType::TYPE_STRING); 
+                                                
+                        $sheet->setCellValue("AH$row",$jumlah_pengeluaran);
+                        $total_pengeluaran=$harga*$jumlah_pengeluaran;
+                        $totalAllItemPengeluaran[1]+=$pengeluaran[1];
+                        $totalAllItemPengeluaran[2]+=$pengeluaran[2];
+                        $totalAllItemPengeluaran[3]+=$pengeluaran[3];
+                        $totalAllItemPengeluaran[4]+=$pengeluaran[4];
+                        
+                        $totalAllHargaPengeluaran[1]+=$pengeluaran[1]*$harga;
+                        $totalAllHargaPengeluaran[2]+=$pengeluaran[2]*$harga;
+                        $totalAllHargaPengeluaran[3]+=$pengeluaran[3]*$harga;
+                        $totalAllHargaPengeluaran[4]+=$pengeluaran[4]*$harga;
+                        $sheet->setCellValueExplicit("AI$row",$this->toRupiah($total_pengeluaran),PHPExcel_Cell_DataType::TYPE_STRING);                        
+                        
+                        $stockakhir[1]=($awalstock[1]+$penerimaan[1])-$pengeluaran[1];
+                        $stockakhir[2]=($awalstock[2]+$penerimaan[2])-$pengeluaran[2];
+                        $stockakhir[3]=($awalstock[3]+$penerimaan[3])-$pengeluaran[3];
+                        $stockakhir[4]=($awalstock[4]+$penerimaan[4])-$pengeluaran[4];
+                        
+                        $sheet->setCellValue("AJ$row",$stockakhir[1]);                            
+                        $sheet->setCellValueExplicit("AK$row",$this->toRupiah($harga*$stockakhir[1]),PHPExcel_Cell_DataType::TYPE_STRING);
+                        $sheet->setCellValue("AL$row",$stockakhir[2]);    
+                        $sheet->setCellValueExplicit("AM$row",$this->toRupiah($harga*$stockakhir[2]),PHPExcel_Cell_DataType::TYPE_STRING);
+                        $sheet->setCellValue("AN$row",$stockakhir[3]);                            
+                        $sheet->setCellValueExplicit("AO$row",$this->toRupiah($harga*$stockakhir[3]),PHPExcel_Cell_DataType::TYPE_STRING);
+                        $sheet->setCellValue("AP$row",$stockakhir[4]);    
+                        $sheet->setCellValueExplicit("AQ$row",$this->toRupiah($harga*$stockakhir[4]),PHPExcel_Cell_DataType::TYPE_STRING);
+                        
+                        $jumlah_stockakhir=$stockakhir[1]+$stockakhir[2]+$stockakhir[3]+$stockakhir[4];                       
+                        $sheet->setCellValue("AR$row",$jumlah_stockakhir);                        
+                        $total_stockakhir=$harga*$jumlah_stockakhir;
+                        
+                        $totalAllItemStockAkhir[1]+=$stockakhir[1];
+                        $totalAllItemStockAkhir[2]+=$stockakhir[2];
+                        $totalAllItemStockAkhir[3]+=$stockakhir[3];
+                        $totalAllItemStockAkhir[4]+=$stockakhir[4];
+                        
+                        $totalAllHargaStockAkhir[1]+=$stockakhir[1]*$harga;
+                        $totalAllHargaStockAkhir[2]+=$stockakhir[2]*$harga;
+                        $totalAllHargaStockAkhir[3]+=$stockakhir[3]*$harga;
+                        $totalAllHargaStockAkhir[4]+=$stockakhir[4]*$harga;
+
+                        $sheet->setCellValueExplicit("AS$row",$this->toRupiah($total_stockakhir),PHPExcel_Cell_DataType::TYPE_STRING);                                                                                                
                     }
                     $sheet->getRowDimension($row)->setRowHeight(21);
                     $row+=1;

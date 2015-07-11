@@ -35,7 +35,7 @@ class ModalDaftarSBBM extends MainPageSA {
         $this->populateData();
 	}
     protected function populateData ($search=false) {                
-        $str = "SELECT tanggal_sbbm,no_sbbm,kode_obat,nama_obat,harga,kemasan,nama_produsen,qty,tanggal_expire,nama_penyalur,barcode FROM master_sbbm ms,detail_sbbm ds WHERE ms.idsbbm=ds.idsbbm AND ms.status='complete'";        
+        $str = "SELECT tanggal_sbbm,no_sbbm,kode_obat,nama_obat,harga,kemasan,nama_produsen,qty,tanggal_expire,nama_penyalur,barcode FROM master_sbbm ms,detail_sbbm ds WHERE ms.idsbbm=ds.idsbbm AND ms.status='complete' AND tanggal_sbbm <= NOW()";        
         if ($search) {            
             $txtsearch=$this->txtKriteria->Text;
             switch ($this->cmbKriteria->Text) {

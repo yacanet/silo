@@ -175,8 +175,8 @@ class SBBKBaru extends MainPageSA {
         $barcode=$param->Value;		
         if ($barcode != '') {
             try {                
-                $str = "SELECT iddetail_sbbm,nama_obat,harga,qty FROM detail_sbbm dsb,master_sbbm msb WHERE dsb.idsbbm=msb.idsbbm AND barcode='$barcode' AND status='complete'";
-                $this->DB->setFieldTable(array('iddetail_sbbm','nama_obat','harga','qty'));
+                $str = "SELECT iddetail_sbbm,nama_obat,harga,qty,tanggal_sbbm FROM detail_sbbm dsb,master_sbbm msb WHERE dsb.idsbbm=msb.idsbbm AND barcode='$barcode' AND status='complete'";
+                $this->DB->setFieldTable(array('iddetail_sbbm','nama_obat','harga','qty','tanggal_sbbm'));
                 $r=$this->DB->getRecord($str);  
                 if (isset($r[1])) {
                     $iddetail_sbbm=$r[1]['iddetail_sbbm'];
@@ -186,6 +186,9 @@ class SBBKBaru extends MainPageSA {
                     $jumlah_keluar=$this->DB->getCountRowsOfTable ("kartu_stock WHERE iddetail_sbbm=$iddetail_sbbm AND mode='keluar' AND isdestroyed=0",'idkartu_stock');		
                     if ($jumlah_keluar >= $qty) {
                         throw new Exception ("Nama Obat ($nama_obat) yang harga $harga telah habis stocknya.");		
+                    }
+                    if ($this->TGL->compareDate($r[1]['tanggal_sbbm'],date('Y-m-d'),'greaterthan')) {                        
+                        throw new Exception ("Tanggal SBBM dari barcode ($barcode) melampaui tanggal hari ini, mohon diubah di Daftar SBBM menjadi tanggal sebelumnya.");		
                     }
                 }else {
                     throw new Exception ("Barcode ($barcode) tidak ada di database silahkan ganti dengan yang lain.");		

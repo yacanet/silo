@@ -268,10 +268,10 @@
                             <label class="col-lg-2 control-label">Barcode :</label>
                             <div class="col-lg-10">
                                 <div class="row">
-                                    <div class="col-lg-3 col-sm-6">
+                                    <div class="col-lg-3">
                                         <com:TTextBox ID="txtAddBarcode" CssClass="form-control" /> 
                                     </div>
-                                    <div class="col-lg-4 col-sm-6">
+                                    <div class="col-lg-9">
                                         <com:TRequiredFieldValidator ID="FieldAddBarcodeValidator" ValidationGroup="sbbkcart" Display="Dynamic" ControlToValidate="txtAddBarcode" ErrorMessage="Isi Barcode" CssClass="has-error help-block">	
                                             <prop:ClientSide.OnValidationError>
                                                 $('divAddBarcode').addClassName('has-error');

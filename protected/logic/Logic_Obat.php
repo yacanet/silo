@@ -187,8 +187,8 @@ class Logic_Obat extends Logic_Global {
                 $awalstock=($pengeluaran < $penerimaan) ? $penerimaan - $pengeluaran:0;                
             break;
             default :
-                $penerimaan=$this->db->getSumRowsOfTable('qty',"master_sbbm msb,detail_sbbm dsb WHERE msb.idsbbm=dsb.idsbbm AND dsb.idobat=$idobat AND harga=$harga AND msb.tahun=$tahun AND status='complete' AND DATE_FORMAT(msb.tanggal_sbbm,'%Y-%m')<='$monthyear'");            
-                $pengeluaran=$this->db->getSumRowsOfTable('pemberian',"master_sbbk msk,detail_sbbk dsk WHERE msk.idsbbk=dsk.idsbbk AND dsk.idobat=$idobat AND harga=$harga AND msk.tahun=$tahun AND msk.status='complete' AND  DATE_FORMAT(msk.tanggal_sbbk,'%Y-%m')='$monthyear'");            
+                $penerimaan=$this->db->getSumRowsOfTable('qty',"master_sbbm msb,detail_sbbm dsb WHERE msb.idsbbm=dsb.idsbbm AND dsb.idobat=$idobat AND harga=$harga AND status='complete' AND DATE_FORMAT(msb.tanggal_sbbm,'%Y-%m')<='$monthyear'");            
+                $pengeluaran=$this->db->getSumRowsOfTable('pemberian',"master_sbbk msk,detail_sbbk dsk WHERE msk.idsbbk=dsk.idsbbk AND dsk.idobat=$idobat AND harga=$harga AND msk.status='complete' AND  DATE_FORMAT(msk.tanggal_sbbk,'%Y-%m')='$monthyear'");            
                 $awalstock=($pengeluaran < $penerimaan) ? $penerimaan - $pengeluaran:0;
         }
         return $awalstock;                    

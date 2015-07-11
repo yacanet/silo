@@ -62,7 +62,7 @@ class DaftarSBBM extends MainPageSA {
         $ta=$_SESSION['ta'];        
         if ($search) {            
             $txtsearch=$this->txtKriteria->Text;
-            $str = "SELECT ms.idsbbm,ms.no_sbbm,ms.tanggal_sbbm,ms.sumber_dana,ps.nama_penyalur,ms.no_faktur,penerima,status,date_modified FROM master_sbbm ms LEFT JOIN penyalur_sbbm ps ON (ms.idsbbm=ps.idsbbm)";        
+            $str = "SELECT ms.idsbbm,ms.no_sbbm,ms.tanggal_sbbm,ms.sumber_dana,ps.nama_penyalur,ms.no_faktur,penerima,status,tanggal_faktur,date_modified FROM master_sbbm ms LEFT JOIN penyalur_sbbm ps ON (ms.idsbbm=ps.idsbbm)";        
             switch ($this->cmbKriteria->Text) {
                 case 'kode' :
                     $cluasa=" WHERE no_sbbm='$txtsearch'";
@@ -76,7 +76,7 @@ class DaftarSBBM extends MainPageSA {
                 break;
             }
         }else {
-            $str = "SELECT ms.idsbbm,ms.no_sbbm,ms.tanggal_sbbm,ms.sumber_dana,ps.nama_penyalur,ms.no_faktur,penerima,status,date_modified FROM master_sbbm ms LEFT JOIN penyalur_sbbm ps ON (ms.idsbbm=ps.idsbbm) WHERE status='$status' AND tahun=$ta";        
+            $str = "SELECT ms.idsbbm,ms.no_sbbm,ms.tanggal_sbbm,ms.sumber_dana,ps.nama_penyalur,ms.no_faktur,penerima,status,tanggal_faktur,date_modified FROM master_sbbm ms LEFT JOIN penyalur_sbbm ps ON (ms.idsbbm=ps.idsbbm) WHERE status='$status' AND tahun=$ta";        
             $jumlah_baris=$this->DB->getCountRowsOfTable ("master_sbbm WHERE status='$status' AND tahun=$ta",'no_sbbm');		
         }		
         $this->RepeaterS->CurrentPageIndex=$_SESSION['currentPageDaftarSBBM']['page_num'];
