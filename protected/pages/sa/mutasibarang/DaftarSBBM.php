@@ -94,6 +94,7 @@ class DaftarSBBM extends MainPageSA {
 		$r=$this->DB->getRecord($str,$offset+1);          
         $data_r=array();
         while (list($k,$v)=each($r)) {
+            $idsbbm=$v['idsbbm'];            
             if ($v['status'] == 'none') {
                 $v['tanggal_sbbm']='-';
                 $v['sumber_dana']='-';                    
@@ -105,6 +106,11 @@ class DaftarSBBM extends MainPageSA {
                 $v['tanggal_sbbm']=$this->TGL->tanggal('d/m/Y',$v['tanggal_sbbm']);
                 $v['tanggal_faktur']=$this->TGL->tanggal('d/m/Y',$v['tanggal_faktur']);;
             }
+            $str = "SELECT COUNT(iddetail_sbbm) AS jumlah_nama_obat,SUM(qty) AS jumlah_obat FROM detail_sbbm WHERE idsbbm=$idsbbm";
+            $this->DB->setFieldTable(array('jumlah_nama_obat','jumlah_obat'));
+            $jumlah_obat=$this->DB->getRecord($str);          
+            $v['jumlah_nama_obat'] = $jumlah_obat[1]['jumlah_nama_obat'];
+            $v['jumlah_obat'] = $jumlah_obat[1]['jumlah_obat'];
             $data_r[$k]=$v;
         }
 		$this->RepeaterS->DataSource=$data_r;

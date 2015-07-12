@@ -1174,7 +1174,7 @@ class Logic_Report extends Logic_Obat {
 
                         $sheet->setCellValueExplicit("Y$row",$this->toRupiah($total_penerimaan),PHPExcel_Cell_DataType::TYPE_STRING);                                                
                         
-                        $str_pengeluaran="SELECT msb.idsumber_dana,COUNT(ks.idkartu_stock) AS jumlah FROM master_sbbk msk,detail_sbbk dsb,kartu_stock ks,master_sbbm msb WHERE msk.idsbbk=dsb.idsbbk AND ks.idobat=$idobat AND ks.iddetail_sbbk=dsb.iddetail_sbbk AND ks.idsbbm=msb.idsbbm AND dsb.harga=$harga AND status='complete' AND DATE_FORMAT(msk.tanggal_sbbk,'%Y-%m')='$bulantahun' AND ks.isdestroyed=0 GROUP BY msb.idsumber_dana ORDER BY msb.idsumber_dana ASC";                        
+                        $str_pengeluaran="SELECT msb.idsumber_dana,COUNT(ks.idkartu_stock) AS jumlah FROM master_sbbk msk,detail_sbbk dsb,kartu_stock ks,master_sbbm msb WHERE msk.idsbbk=dsb.idsbbk AND ks.idobat=$idobat AND ks.iddetail_sbbk=dsb.iddetail_sbbk AND ks.idsbbm=msb.idsbbm AND dsb.harga=$harga AND msk.status='complete' AND DATE_FORMAT(msk.tanggal_sbbk,'%Y-%m')='$bulantahun' AND ks.isdestroyed=0 GROUP BY msb.idsumber_dana ORDER BY msb.idsumber_dana ASC";                        
                         $this->db->setFieldTable(array('idsumber_dana','jumlah'));
                         $r_pengeluaran=$this->db->getRecord($str_pengeluaran);
                         
@@ -2093,7 +2093,7 @@ class Logic_Report extends Logic_Obat {
                         $total=$jumlah_awalstock*$harga;                                                
                         $sheet->setCellValueExplicit("O$row",$this->toRupiah($total),PHPExcel_Cell_DataType::TYPE_STRING);                                                
                         
-                        $str_penerimaan="SELECT msb.idsumber_dana,SUM(dsb.qty) AS jumlah FROM master_sbbm msb,detail_sbbm dsb WHERE msb.idsbbm=dsb.idsbbm AND dsb.idobat=$idobat AND harga=$harga AND DATE_FORMAT(msb.tanggal_sbbm,'%Y')='$tahun' GROUP BY msb.idsumber_dana ORDER BY msb.idsumber_dana ASC";
+                        $str_penerimaan="SELECT msb.idsumber_dana,SUM(dsb.qty) AS jumlah FROM master_sbbm msb,detail_sbbm dsb WHERE msb.idsbbm=dsb.idsbbm AND dsb.idobat=$idobat AND harga=$harga AND msb.status='complete' AND DATE_FORMAT(msb.tanggal_sbbm,'%Y')='$tahun' GROUP BY msb.idsumber_dana ORDER BY msb.idsumber_dana ASC";
                         $this->db->setFieldTable(array('idsumber_dana','jumlah'));
                         $r_penerimaan=$this->db->getRecord($str_penerimaan);
                         
@@ -2128,7 +2128,7 @@ class Logic_Report extends Logic_Obat {
                         
                         $sheet->setCellValueExplicit("Y$row",$this->toRupiah($total_penerimaan),PHPExcel_Cell_DataType::TYPE_STRING);                                                
                         
-                        $str_pengeluaran="SELECT msb.idsumber_dana,COUNT(ks.idkartu_stock) AS jumlah FROM master_sbbk msk,detail_sbbk dsb,kartu_stock ks,master_sbbm msb WHERE msk.idsbbk=dsb.idsbbk AND ks.idobat=$idobat AND ks.iddetail_sbbk=dsb.iddetail_sbbk AND ks.idsbbm=msb.idsbbm AND dsb.harga=$harga AND DATE_FORMAT(msk.tanggal_sbbk,'%Y')='$tahun' AND ks.isdestroyed=0 GROUP BY msb.idsumber_dana ORDER BY msb.idsumber_dana ASC";                        
+                        $str_pengeluaran="SELECT msb.idsumber_dana,COUNT(ks.idkartu_stock) AS jumlah FROM master_sbbk msk,detail_sbbk dsb,kartu_stock ks,master_sbbm msb WHERE msk.idsbbk=dsb.idsbbk AND ks.idobat=$idobat AND ks.iddetail_sbbk=dsb.iddetail_sbbk AND ks.idsbbm=msb.idsbbm AND dsb.harga=$harga AND msk.status='complete' AND DATE_FORMAT(msk.tanggal_sbbk,'%Y')='$tahun' AND ks.isdestroyed=0 GROUP BY msb.idsumber_dana ORDER BY msb.idsumber_dana ASC";                        
                         $this->db->setFieldTable(array('idsumber_dana','jumlah'));
                         $r_pengeluaran=$this->db->getRecord($str_pengeluaran);
                         

@@ -12,6 +12,7 @@ class Variables extends MainPageSA {
 		}
 	}    
     public function populateData () {       
+        $this->txtAwalTahun->Text=$this->setup->getSettingValue('awal_tahun_sistem');        
         $this->txtNIPKadis->Text=$this->setup->getSettingValue('nip_kadis');        
         $this->txtNamaKadis->Text=$this->setup->getSettingValue('nama_kadis');        
         $this->txtNIPKAGudang->Text=$this->setup->getSettingValue('nip_ka_gudang');        
@@ -19,9 +20,15 @@ class Variables extends MainPageSA {
     }
     public function saveData ($sender,$param) {
         if ($this->IsValid) {
+            $awaltahun=  addslashes($this->txtAwalTahun->Text);
+            $str = "UPDATE setting SET value='$awaltahun' WHERE setting_id=11";            
+            $this->DB->updateRecord($str);
+            $_SESSION['awal_tahun_sistem']=$awaltahun;
+            
             $nipkadis=  addslashes($this->txtNIPKadis->Text);
             $str = "UPDATE setting SET value='$nipkadis' WHERE setting_id=5";            
             $this->DB->updateRecord($str);
+            
             $namakadis=  addslashes($this->txtNamaKadis->Text);
             $str = "UPDATE setting SET value='$namakadis' WHERE setting_id=6";            
             $this->DB->updateRecord($str);

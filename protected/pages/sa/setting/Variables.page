@@ -10,6 +10,52 @@
 <com:TPanel Visible="<%= $this->getDefaultProcess() %>">   
     <div class="row">
         <div class="col-lg-12">
+            <div class="main-box">
+                <header class="main-box-header clearfix">
+                    <h2 class="pull-left"><i class="fa fa-cogs"></i> Setting Umum</h2>                 
+                </header>
+                <div class="main-box-body clearfix">
+                    <div class="form-horizontal">
+                        <div class="form-group" id="divAwalTahunSistem">
+                            <label class="col-lg-2 control-label">Awal Tahun Sistem :</label>
+                            <div class="col-lg-3">
+                                <com:TTextBox ID="txtAwalTahun" CssClass="form-control" Width="70px" />
+                                <com:TRequiredFieldValidator ID="FieldAwalTahunValidator" ValidationGroup="settinggeneralumum" Display="Dynamic" ControlToValidate="txtAwalTahun" ErrorMessage="Isi Awal Tahun dari Sistem" CssClass="has-error help-block">	
+                                    <prop:ClientSide.OnValidationError>
+                                        $('divAwalTahunSistem').addClassName('has-error');
+                                        jQuery('#<%=$this->FieldAwalTahunValidator->ClientID%>').removeAttr('style');
+                                    </prop:ClientSide.OnValidationError>
+                                    <prop:ClientSide.OnValidationSuccess>
+                                        $('divAwalTahunSistem').removeClassName('has-error');
+                                    </prop:ClientSide.OnValidationSuccess>
+                                </com:TRequiredFieldValidator>     
+                            </div>
+                        </div>                                            
+                        <div class="form-group">
+                            <div class="col-lg-offset-2 col-lg-10">
+                                <com:TActiveCustomButton ID="btnSaveSettingUmum" CssClass="btn btn-primary" OnClick="saveData" ValidationGroup="settinggeneralumum">
+                                    <prop:Text><i class="fa fa-save"></i> Simpan</span></prop:Text>
+                                    <prop:ClientSide.OnPreDispatch>                                                                   
+                                        $('loading').show(); 
+                                        $('<%=$this->btnSaveSettingUmum->ClientId%>').disabled='disabled';						
+                                    </prop:ClientSide.OnPreDispatch>
+                                    <prop:ClientSide.OnLoading>
+                                        $('<%=$this->btnSaveSettingUmum->ClientId%>').disabled='disabled';						
+                                    </prop:ClientSide.OnLoading>
+                                    <prop:ClientSide.OnComplete>																	                                    						                                                                            
+                                        $('<%=$this->btnSaveSettingUmum->ClientId%>').disabled='';
+                                        $('loading').hide(); 
+                                    </prop:ClientSide.OnComplete>
+                                </com:TActiveCustomButton>
+                            </div>
+                        </div>                    
+                    </div>
+                </div>
+            </div>
+        </div>    
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
             <div class="main-box clearfix">
                 <header class="main-box-header clearfix">
                     <h2 class="pull-left"><i class="fa fa-users"></i> Jabatan</h2>                 
@@ -22,7 +68,7 @@
                                     <label class="col-lg-4 control-label">NIP Kepala Dinas :</label>
                                     <div class="col-lg-4">
                                         <com:TTextBox ID="txtNIPKadis" CssClass="form-control" />
-                                        <com:TRequiredFieldValidator ID="FieldNIPKadisValidator" ValidationGroup="settinggeneral" Display="Dynamic" ControlToValidate="txtNIPKadis" ErrorMessage="Isi NIP Kepala Dinas Kesehatan" CssClass="has-error help-block">	
+                                        <com:TRequiredFieldValidator ID="FieldNIPKadisValidator" ValidationGroup="settinggeneraljabatan" Display="Dynamic" ControlToValidate="txtNIPKadis" ErrorMessage="Isi NIP Kepala Dinas Kesehatan" CssClass="has-error help-block">	
                                             <prop:ClientSide.OnValidationError>
                                                 $('divNIPKadis').addClassName('has-error');
                                                 jQuery('#<%=$this->FieldNIPKadisValidator->ClientID%>').removeAttr('style');
@@ -37,7 +83,7 @@
                                     <label class="col-lg-4 control-label">Nama Kepala Dinas :</label>
                                     <div class="col-lg-8">
                                         <com:TTextBox ID="txtNamaKadis" CssClass="form-control" />
-                                        <com:TRequiredFieldValidator ID="FieldNamaKadisValidator" ValidationGroup="settinggeneral" Display="Dynamic" ControlToValidate="txtNamaKadis" ErrorMessage="Isi Nama Kepala Dinas Kesehatan" CssClass="has-error help-block">	
+                                        <com:TRequiredFieldValidator ID="FieldNamaKadisValidator" ValidationGroup="settinggeneraljabatan" Display="Dynamic" ControlToValidate="txtNamaKadis" ErrorMessage="Isi Nama Kepala Dinas Kesehatan" CssClass="has-error help-block">	
                                             <prop:ClientSide.OnValidationError>
                                                 $('divNamaKadis').addClassName('has-error');
                                                 jQuery('#<%=$this->FieldNamaKadisValidator->ClientID%>').removeAttr('style');
@@ -56,7 +102,7 @@
                                     <label class="col-lg-4 control-label">NIP Kepala Gudang :</label>
                                     <div class="col-lg-4">
                                         <com:TTextBox ID="txtNIPKAGudang" CssClass="form-control" />
-                                        <com:TRequiredFieldValidator ID="FieldNIPKAGudangValidator" ValidationGroup="settinggeneral" Display="Dynamic" ControlToValidate="txtNIPKAGudang" ErrorMessage="Isi NIP Kepala Gudang Obat" CssClass="has-error help-block">	
+                                        <com:TRequiredFieldValidator ID="FieldNIPKAGudangValidator" ValidationGroup="settinggeneraljabatan" Display="Dynamic" ControlToValidate="txtNIPKAGudang" ErrorMessage="Isi NIP Kepala Gudang Obat" CssClass="has-error help-block">	
                                             <prop:ClientSide.OnValidationError>
                                                 $('divNIPKAGudang').addClassName('has-error');
                                                 jQuery('#<%=$this->FieldNIPKAGudangValidator->ClientID%>').removeAttr('style');
@@ -71,7 +117,7 @@
                                     <label class="col-lg-4 control-label">Nama Kepala Gudang :</label>
                                     <div class="col-lg-8">
                                         <com:TTextBox ID="txtNamaKAGudang" CssClass="form-control" />
-                                        <com:TRequiredFieldValidator ID="FieldNamaKAGudangValidator" ValidationGroup="settinggeneral" Display="Dynamic" ControlToValidate="txtNamaKAGudang" ErrorMessage="Isi Nama Kepala Gudang Obat" CssClass="has-error help-block">	
+                                        <com:TRequiredFieldValidator ID="FieldNamaKAGudangValidator" ValidationGroup="settinggeneraljabatan" Display="Dynamic" ControlToValidate="txtNamaKAGudang" ErrorMessage="Isi Nama Kepala Gudang Obat" CssClass="has-error help-block">	
                                             <prop:ClientSide.OnValidationError>
                                                 $('divNamaKAGudang').addClassName('has-error');
                                                 jQuery('#<%=$this->FieldNamaKAGudangValidator->ClientID%>').removeAttr('style');
@@ -88,17 +134,17 @@
                     </div>                    
                     <div class="form-group">
                         <div class="col-lg-offset-2 col-lg-10">
-                            <com:TActiveCustomButton ID="btnSave" CssClass="btn btn-primary" OnClick="saveData" ValidationGroup="settinggeneral">
+                            <com:TActiveCustomButton ID="btnSaveJabatan" CssClass="btn btn-primary" OnClick="saveData" ValidationGroup="settinggeneraljabatan">
                                 <prop:Text><i class="fa fa-save"></i> Simpan</span></prop:Text>
                                 <prop:ClientSide.OnPreDispatch>                                                                   
                                     $('loading').show(); 
-                                    $('<%=$this->btnSave->ClientId%>').disabled='disabled';						
+                                    $('<%=$this->btnSaveJabatan->ClientId%>').disabled='disabled';						
                                 </prop:ClientSide.OnPreDispatch>
                                 <prop:ClientSide.OnLoading>
-                                    $('<%=$this->btnSave->ClientId%>').disabled='disabled';						
+                                    $('<%=$this->btnSaveJabatan->ClientId%>').disabled='disabled';						
                                 </prop:ClientSide.OnLoading>
                                 <prop:ClientSide.OnComplete>																	                                    						                                                                            
-                                    $('<%=$this->btnSave->ClientId%>').disabled='';
+                                    $('<%=$this->btnSaveJabatan->ClientId%>').disabled='';
                                     $('loading').hide(); 
                                 </prop:ClientSide.OnComplete>
                             </com:TActiveCustomButton>

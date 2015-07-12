@@ -119,12 +119,14 @@ class SBBMBaru extends MainPageSA {
             
             $this->cmbEditTanggalSBBM->Text=$this->TGL->tanggal('d-m-Y',$this->datasbbm['tanggal_sbbm']);    
             $tahunCMB = $this->TGL->tanggal('Y',$this->datasbbm['tanggal_sbbm'])+1;
+            $this->cmbEditTanggalSBBM->FromYear=$_SESSION['awal_tahun_sistem'];
             $this->cmbEditTanggalSBBM->UpToYear=$tahunCMB;            
             $this->cmbEditPenyalur->Text=$this->datasbbm['idpenyalur'];
             $this->txtEditNoFaktur->Text=$this->datasbbm['no_faktur'];
             $this->hiddenno_faktur->Value=$this->datasbbm['no_faktur'];
             $this->cmbEditTanggalFaktur->Text=$this->TGL->tanggal('d-m-Y',$this->datasbbm['tanggal_faktur']);
             $this->cmbEditTanggalFaktur->UpToYear=$tahunCMB;
+            $this->cmbEditTanggalFaktur->FromYear=$_SESSION['awal_tahun_sistem'];
             $this->txtEditPenerima->Text=$this->datasbbm['penerima'];;
         }        
     }

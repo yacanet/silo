@@ -247,7 +247,7 @@
                         <div class="form-group">
                             <label class="col-lg-2 control-label">Tanggal Faktur :</label>
                             <div class="col-lg-10">
-                                <com:TCustomDatePicker ID="cmbAddTanggalFaktur" DateFormat="dd-MMMM-yyyy" Culture="id"  FromYear="<%=$_SESSION['ta']%>" InputMode="DropDownList" />
+                                <com:TCustomDatePicker ID="cmbAddTanggalFaktur" DateFormat="dd-MMMM-yyyy" Culture="id"  FromYear="<%=$_SESSION['ta']%>" UpToYear="<%=$_SESSION['ta']+1%>" InputMode="DropDownList" />
                             </div>
                         </div>
                         <div class="form-group" id="divAddPenerima">

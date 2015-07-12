@@ -89,10 +89,10 @@ class MutasiObatTahunan extends MainPageSA {
                 $stock_awal=$this->Obat->getFirstStockTahunan($idobat,$tahun_sebelumnya,$harga);
                 $v['stock_awal']=$stock_awal;                
                 $v['harga_stock_awal']=$this->Obat->toRupiah($stock_awal*$harga);                
-                $penerimaan=$this->DB->getSumRowsOfTable('qty',"master_sbbm msb,detail_sbbm dsb WHERE msb.idsbbm=dsb.idsbbm AND dsb.idobat=$idobat AND harga=$harga AND DATE_FORMAT(msb.tanggal_sbbm,'%Y')='$tahun'");
+                $penerimaan=$this->DB->getSumRowsOfTable('qty',"master_sbbm msb,detail_sbbm dsb WHERE msb.idsbbm=dsb.idsbbm AND dsb.idobat=$idobat AND msb.status='complete' AND harga=$harga AND DATE_FORMAT(msb.tanggal_sbbm,'%Y')='$tahun'");
                 $v['penerimaan']=$penerimaan;
                 $v['harga_penerimaan']=$this->Obat->toRupiah($penerimaan*$harga);                
-                $pengeluaran=$this->DB->getSumRowsOfTable('pemberian',"master_sbbk msk,detail_sbbk dsk WHERE msk.idsbbk=dsk.idsbbk AND dsk.idobat=$idobat AND harga=$harga AND DATE_FORMAT(msk.tanggal_sbbk,'%Y')='$tahun'");
+                $pengeluaran=$this->DB->getSumRowsOfTable('pemberian',"master_sbbk msk,detail_sbbk dsk WHERE msk.idsbbk=dsk.idsbbk AND dsk.idobat=$idobat AND msk.status='complete' AND harga=$harga AND DATE_FORMAT(msk.tanggal_sbbk,'%Y')='$tahun'");
                 $v['pengeluaran']=$pengeluaran;
                 $v['harga_pengeluaran']=$this->Obat->toRupiah($pengeluaran*$harga);                
                 $stock_akhir=($stock_awal+$penerimaan)-$pengeluaran;

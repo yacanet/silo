@@ -109,7 +109,7 @@ class Logic_Obat extends Logic_Global {
         $tahun=$tahun[0];
         switch ($groupby) {
             case 'sumberdana' :
-                $str = "SELECT idsumber_dana,SUM(qty) AS jumlah FROM master_sbbm msb,detail_sbbm dsb WHERE msb.idsbbm=dsb.idsbbm AND dsb.idobat=$idobat AND dsb.harga=$harga AND msb.tahun=$tahun AND status='complete' AND DATE_FORMAT(msb.tanggal_sbbm,'%Y-%m')<='$monthyear' GROUP BY idsumber_dana ORDER BY idsumber_dana ASC";                
+                $str = "SELECT idsumber_dana,SUM(qty) AS jumlah FROM master_sbbm msb,detail_sbbm dsb WHERE msb.idsbbm=dsb.idsbbm AND dsb.idobat=$idobat AND dsb.harga=$harga AND msb.status='complete' AND DATE_FORMAT(msb.tanggal_sbbm,'%Y-%m')<='$monthyear' GROUP BY idsumber_dana ORDER BY idsumber_dana ASC";                
                 $this->db->setFieldTable(array('idsumber_dana','jumlah'));
                 $r=$this->db->getRecord($str);  
                 $awalstock=$this->DMaster->removeIdFromArray($this->DMaster->getListSumberDana (),'none');
@@ -123,7 +123,7 @@ class Logic_Obat extends Logic_Global {
                 foreach ($r as $k=>$v) {
                     $awalstock_penerimaan[$v['idsumber_dana']]=$v['jumlah'];
                 }
-                $str = "SELECT msb.idsumber_dana,COUNT(ks.idkartu_stock) AS jumlah FROM master_sbbk msk,detail_sbbk dsb,kartu_stock ks,master_sbbm msb WHERE msk.idsbbk=dsb.idsbbk AND ks.idobat=$idobat AND ks.iddetail_sbbk=dsb.iddetail_sbbk AND ks.idsbbm=msb.idsbbm AND dsb.harga=$harga AND msb.tahun=$tahun AND DATE_FORMAT(msk.tanggal_sbbk,'%Y-%m')<='$monthyear' AND ks.isdestroyed=0 GROUP BY msb.idsumber_dana ORDER BY msb.idsumber_dana ASC";                
+                $str = "SELECT msb.idsumber_dana,COUNT(ks.idkartu_stock) AS jumlah FROM master_sbbk msk,detail_sbbk dsb,kartu_stock ks,master_sbbm msb WHERE msk.idsbbk=dsb.idsbbk AND ks.idobat=$idobat AND ks.iddetail_sbbk=dsb.iddetail_sbbk AND ks.idsbbm=msb.idsbbm AND dsb.harga=$harga AND msk.status='complete' AND DATE_FORMAT(msk.tanggal_sbbk,'%Y-%m')<='$monthyear' AND ks.isdestroyed=0 GROUP BY msb.idsumber_dana ORDER BY msb.idsumber_dana ASC";                
                 $this->db->setFieldTable(array('idsumber_dana','jumlah'));
                 $r=$this->db->getRecord($str);  
                 $awalstock_pengeluaran[1]=0;
@@ -253,7 +253,7 @@ class Logic_Obat extends Logic_Global {
     public function getFirstStockTahunan($idobat,$year,$harga,$groupby=nulll) {        
         switch ($groupby) {
             case 'sumberdana' :
-                $str = "SELECT idsumber_dana,SUM(qty) AS jumlah FROM master_sbbm msb,detail_sbbm dsb WHERE msb.idsbbm=dsb.idsbbm AND dsb.idobat=$idobat AND harga=$harga AND DATE_FORMAT(msb.tanggal_sbbm,'%Y')='$year' GROUP BY idsumber_dana ORDER BY idsumber_dana ASC";                                
+                $str = "SELECT idsumber_dana,SUM(qty) AS jumlah FROM master_sbbm msb,detail_sbbm dsb WHERE msb.idsbbm=dsb.idsbbm AND dsb.idobat=$idobat AND harga=$harga AND msb.status='complete' AND DATE_FORMAT(msb.tanggal_sbbm,'%Y')<='$year' GROUP BY idsumber_dana ORDER BY idsumber_dana ASC";                                
                 $this->db->setFieldTable(array('idsumber_dana','jumlah'));
                 $r=$this->db->getRecord($str);  
                 $awalstock=$this->DMaster->removeIdFromArray($this->DMaster->getListSumberDana (),'none');
@@ -267,7 +267,7 @@ class Logic_Obat extends Logic_Global {
                 foreach ($r as $k=>$v) {
                     $awalstock_penerimaan[$v['idsumber_dana']]=$v['jumlah'];
                 }
-                $str = "SELECT msb.idsumber_dana,COUNT(ks.idkartu_stock) AS jumlah FROM master_sbbk msk,detail_sbbk dsb,kartu_stock ks,master_sbbm msb WHERE msk.idsbbk=dsb.idsbbk AND ks.idobat=$idobat AND ks.iddetail_sbbk=dsb.iddetail_sbbk AND ks.idsbbm=msb.idsbbm AND dsb.harga=$harga AND DATE_FORMAT(msk.tanggal_sbbk,'%Y')='$year' AND ks.isdestroyed=0 GROUP BY msb.idsumber_dana ORDER BY msb.idsumber_dana ASC";                
+                $str = "SELECT msb.idsumber_dana,COUNT(ks.idkartu_stock) AS jumlah FROM master_sbbk msk,detail_sbbk dsb,kartu_stock ks,master_sbbm msb WHERE msk.idsbbk=dsb.idsbbk AND ks.idobat=$idobat AND ks.iddetail_sbbk=dsb.iddetail_sbbk AND ks.idsbbm=msb.idsbbm AND dsb.harga=$harga AND msk.status='complete' AND DATE_FORMAT(msk.tanggal_sbbk,'%Y')<='$year' AND ks.isdestroyed=0 GROUP BY msb.idsumber_dana ORDER BY msb.idsumber_dana ASC";                
                 $this->db->setFieldTable(array('idsumber_dana','jumlah'));
                 $r=$this->db->getRecord($str);  
                 $awalstock_pengeluaran[1]=0;
@@ -286,8 +286,8 @@ class Logic_Obat extends Logic_Global {
                 }                
             break;
             default :
-                $penerimaan=$this->db->getSumRowsOfTable('qty',"master_sbbm msb,detail_sbbm dsb WHERE msb.idsbbm=dsb.idsbbm AND dsb.idobat=$idobat AND harga=$harga AND DATE_FORMAT(msb.tanggal_sbbm,'%Y')='$year'");            
-                $pengeluaran=$this->db->getSumRowsOfTable('pemberian',"master_sbbk msk,detail_sbbk dsk WHERE msk.idsbbk=dsk.idsbbk AND dsk.idobat=$idobat AND harga=$harga AND DATE_FORMAT(msk.tanggal_sbbk,'%Y')='$year'");            
+                $penerimaan=$this->db->getSumRowsOfTable('qty',"master_sbbm msb,detail_sbbm dsb WHERE msb.idsbbm=dsb.idsbbm AND dsb.idobat=$idobat AND harga=$harga AND msb.status='complete' AND DATE_FORMAT(msb.tanggal_sbbm,'%Y')<='$year'");            
+                $pengeluaran=$this->db->getSumRowsOfTable('pemberian',"master_sbbk msk,detail_sbbk dsk WHERE msk.idsbbk=dsk.idsbbk AND dsk.idobat=$idobat AND harga=$harga AND msk.status='complete' AND DATE_FORMAT(msk.tanggal_sbbk,'%Y')<='$year'");            
                 $awalstock=($pengeluaran < $penerimaan) ? $penerimaan - $pengeluaran:0;
         }
         return $awalstock;                    

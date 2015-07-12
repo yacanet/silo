@@ -272,8 +272,10 @@
                                         <th style="width:15%"><span>NOMOR FAKTUR</span></th>
                                         <th style="width:7%"><span>TANGGAL FAKTUR</span></th>
                                         <th><span>PENERIMA</span></th>
-                                        <th><span>PENYALUR</span></th>                                                                                                                      
-                                        <th style="width:15%"></th>							
+                                        <th><span>PENYALUR</span></th>
+                                        <th><span>JUMLAH <br />NAMA OBAT</span></th>
+                                        <th><span>JUMLAH <br />OBAT</span></th>
+                                        <th style="width:13%"></th>							
                                     </tr>								
                                     </thead>
                                     <tbody>
@@ -287,6 +289,8 @@
                                     <td><%#$this->DataItem['tanggal_faktur']%></td>   
                                     <td><%#$this->DataItem['penerima']%></td>
                                     <td><%#$this->DataItem['nama_penyalur']%></td>
+                                    <td><%#$this->DataItem['jumlah_nama_obat']%></td>
+                                    <td><%#$this->DataItem['jumlah_obat']%></td>
                                     <td>
                                         <com:TActiveLinkButton ID="btnView" ClientSide.PostState="false" CssClass="table-link" OnClick="Page.viewRecord" Attributes.Title="View data SBBM">
                                             <prop:Text>

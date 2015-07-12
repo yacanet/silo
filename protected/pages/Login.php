@@ -34,9 +34,16 @@ class Login extends MainPage {
         if ($this->IsValid) {                        
             $pengguna=$this->getLogic('Users');
             $_SESSION['ta']=date('Y');
-            $_SESSION['foto']= $pengguna->getDataUser('foto');
+            $foto = $pengguna->getDataUser('foto');
+            $lokasi = BASEPATH . $this->setup->getSettingValue('dir_userimages');            
+            if (!is_file("$lokasi/$foto")) {
+                $foto='no_photo.png';
+            }
+            $_SESSION['foto']= $foto;
             $userid=$pengguna->getDataUser('userid');
             $this->DB->updateRecord("UPDATE user SET logintime=NOW() WHERE userid=$userid");                                    
+            
+            $_SESSION['awal_tahun_sistem']=$this->setup->getSettingValue('awal_tahun_sistem');
             $this->redirect('Home',true);
         }
     }

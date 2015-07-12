@@ -76,7 +76,7 @@
                             <ul class="dropdown-menu">
                                 <li class="item">
                                     <span class="pull-left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
-                                    <com:TActiveCustomDatePicker ID="cmbSettingUmumTahun" DateFormat="yyyy" Culture="id"  FromYear="2014" UpToYear="<%=date('Y')+1%>" InputMode="DropDownList" OnCallBack="changeSettingUmumTahun" ShowCalendar="false">
+                                <com:TActiveCustomDatePicker ID="cmbSettingUmumTahun" DateFormat="yyyy" Culture="id"  FromYear="<%=$_SESSION['awal_tahun_sistem']%>" UpToYear="<%=date('Y')+1%>" InputMode="DropDownList" OnCallBack="changeSettingUmumTahun" ShowCalendar="false">
                                         <prop:ClientSide.OnPreDispatch>                                                                   
                                             $('loading').show(); 
                                             $('<%=$this->cmbSettingUmumTahun->ClientId%>').disabled='disabled';						
