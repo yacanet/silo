@@ -11,7 +11,7 @@
 	<link rel="stylesheet" type="text/css" href="<%=$this->Page->Theme->baseUrl%>/css/libs/nanoscroller.css" />
 	<!-- global styles -->
 	<link rel="stylesheet" type="text/css" href="<%=$this->Page->Theme->baseUrl%>/css/compiled/theme_styles.css" />
-	<!-- this page specific styles -->
+	<link type="image/x-icon" href="resources/favicon.png" rel="shortcut icon"/>
 	<!-- google font libraries -->
     <link href='//fonts.googleapis.com/css?family=Open+Sans:400,600,700,300|Titillium+Web:200,300,400' rel='stylesheet' type='text/css'>
 	<!--[if lt IE 9]>

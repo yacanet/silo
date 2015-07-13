@@ -13,6 +13,7 @@
 	<link rel="stylesheet" type="text/css" href="<%=$this->Page->Theme->baseUrl%>/css/compiled/theme_styles.css" />
 	<!-- this page specific styles -->
 	<com:TContentPlaceHolder ID="csscontent" />   	
+    <link type="image/x-icon" href="resources/favicon.png" rel="shortcut icon"/>
 	<!-- google font libraries -->
 	<link href='//fonts.googleapis.com/css?family=Open+Sans:400,600,700,300|Titillium+Web:200,300,400' rel='stylesheet' type='text/css'>
 	<!--[if lt IE 9]>
@@ -678,7 +679,7 @@
                 </div>					
                 <footer id="footer-bar" class="row">
                     <p id="footer-copyright" class="col-xs-12">                        
-                        Sistem informasi Logistik Obat (SILO) Powered by <a href="http://www.yacanet.com">Yacanet.</a>
+                        Sistem informasi Logistik Obat (SILO) Powered by <a href="http://www.yacanet.com">Yacanet.com</a>
                         <com:TJavascriptLogger />
                     </p>
                 </footer>

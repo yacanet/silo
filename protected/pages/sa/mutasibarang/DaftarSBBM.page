@@ -222,6 +222,7 @@
                             <label class="col-lg-3 control-label">Status SBBM :</label>
                             <div class="col-lg-6">
                                 <com:TDropDownList ID="cmbFilterStatus" CssClass="form-control">
+                                    <com:TListItem Value="seluruh" Text="Keseluruhan" />
                                     <com:TListItem Value="complete" Text="Complete" /> 
                                     <com:TListItem Value="draft" Text="Draft" /> 
                                     <com:TListItem Value="none" Text="Belum Selesai di Input" /> 
@@ -282,7 +283,7 @@
                             </prop:HeaderTemplate>
                             <prop:ItemTemplate>
                                 <tr>
-                                    <td><%#$this->DataItem['no_sbbm']%></td>
+                                    <td><%#$this->DataItem['no_sbbm']%> <br/><small><span class="label label-info"><%#$this->DataItem['status']%></span></small></td>
                                     <td><%#$this->DataItem['tanggal_sbbm']%></td>   
                                     <td><%#$this->DataItem['sumber_dana']%></td>
                                     <td><%#$this->DataItem['no_faktur']%></td>                                    

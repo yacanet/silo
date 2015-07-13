@@ -332,15 +332,16 @@ class Logic_Report extends Logic_Obat {
                     'fontsize' => 8,
                     'stretchtext' => 4
                 );
-                $str = "SELECT barcode FROM detail_sbbm WHERE idsbbm=$idsbbm";
-                $this->db->setFieldTable(array('barcode'));
+                $str = "SELECT nama_obat,barcode FROM detail_sbbm WHERE idsbbm=$idsbbm";
+                $this->db->setFieldTable(array('nama_obat','barcode'));
                 $r=$this->db->getRecord($str);
                 
                 $row=6;
                 $jumlah_record=count($r); 
                 $this->rpt->SetFont ('helvetica','B',10);                
                 for ($i=1;$i <= $jumlah_record;$i++) {
-                    // CODE 39 - ANSI MH10.8M-1983 - USD-3 - 3 of 9.                    
+                    // CODE 39 - ANSI MH10.8M-1983 - USD-3 - 3 of 9. 
+                    $this->rpt->Cell(0, 0, $r[$i]['nama_obat'], 0, 1);
                     $this->rpt->write1dbarcode($r[$i]['barcode'], 'C39', '', '', '', 18, 0.4, $style, 'N');                
                     $this->rpt->Ln();
                     $row+=5;                    

@@ -15,7 +15,7 @@ class DaftarSBBM extends MainPageSA {
                 $this->detailProcess();                
             }else {
                 if (!isset($_SESSION['currentPageDaftarSBBM'])||$_SESSION['currentPageDaftarSBBM']['page_name']!='sa.mutasibarang.DaftarSBBM') {
-                    $_SESSION['currentPageDaftarSBBM']=array('page_name'=>'sa.mutasibarang.DaftarSBBM','page_num'=>0,'search'=>false,'datasbbm'=>array(),'cart'=>array(),'status_sbbm'=>'complete');												
+                    $_SESSION['currentPageDaftarSBBM']=array('page_name'=>'sa.mutasibarang.DaftarSBBM','page_num'=>0,'search'=>false,'datasbbm'=>array(),'cart'=>array(),'status_sbbm'=>'seluruh');												
                 }   
                 $_SESSION['currentPageDaftarSBBM']['search']=false;              
                 $this->cmbFilterStatus->Text=$_SESSION['currentPageDaftarSBBM']['status_sbbm'];            
@@ -58,7 +58,8 @@ class DaftarSBBM extends MainPageSA {
         }
     }
     public function populateData ($search=false) {        
-        $status=$_SESSION['currentPageDaftarSBBM']['status_sbbm'];        
+        $status=$_SESSION['currentPageDaftarSBBM']['status_sbbm'];  
+        $str_status = $status == 'seluruh' ? '':"AND status='$status'";
         $ta=$_SESSION['ta'];        
         if ($search) {            
             $txtsearch=$this->txtKriteria->Text;
@@ -76,8 +77,8 @@ class DaftarSBBM extends MainPageSA {
                 break;
             }
         }else {
-            $str = "SELECT ms.idsbbm,ms.no_sbbm,ms.tanggal_sbbm,ms.sumber_dana,ps.nama_penyalur,ms.no_faktur,penerima,status,tanggal_faktur,date_modified FROM master_sbbm ms LEFT JOIN penyalur_sbbm ps ON (ms.idsbbm=ps.idsbbm) WHERE status='$status' AND tahun=$ta";        
-            $jumlah_baris=$this->DB->getCountRowsOfTable ("master_sbbm WHERE status='$status' AND tahun=$ta",'no_sbbm');		
+            $str = "SELECT ms.idsbbm,ms.no_sbbm,ms.tanggal_sbbm,ms.sumber_dana,ps.nama_penyalur,ms.no_faktur,penerima,status,tanggal_faktur,date_modified FROM master_sbbm ms LEFT JOIN penyalur_sbbm ps ON (ms.idsbbm=ps.idsbbm) WHERE tahun=$ta $str_status";        
+            $jumlah_baris=$this->DB->getCountRowsOfTable ("master_sbbm WHERE tahun=$ta $str_status",'no_sbbm');		
         }		
         $this->RepeaterS->CurrentPageIndex=$_SESSION['currentPageDaftarSBBM']['page_num'];
 		$this->RepeaterS->VirtualItemCount=$jumlah_baris;
@@ -89,7 +90,8 @@ class DaftarSBBM extends MainPageSA {
 			$limit=$itemcount-$offset;
 		}
 		if ($limit < 0) {$offset=0;$limit=10;$_SESSION['currentPageDaftarSBBM']['page_num']=0;}
-        $str = "$str ORDER BY date_added DESC,no_sbbm ASC LIMIT $offset,$limit";        
+        $str_order = $status == 'seluruh' ? "FIELD(status, 'none', 'draft', 'complete')," :'';
+        $str = "$str ORDER BY $str_order date_added DESC,no_sbbm ASC LIMIT $offset,$limit";        
 		$this->DB->setFieldTable(array('idsbbm','no_sbbm','tanggal_sbbm','sumber_dana','nama_penyalur','no_faktur','tanggal_faktur','penerima','status','date_modified'));
 		$r=$this->DB->getRecord($str,$offset+1);          
         $data_r=array();

@@ -16,7 +16,7 @@ class SBBMBaru extends MainPageSA {
                 $this->detailProcess();                                
             }else {
                 if (!isset($_SESSION['currentPageSBBMBaru'])||$_SESSION['currentPageSBBMBaru']['page_name']!='sa.mutasibarang.SBBMBaru') {
-                    $_SESSION['currentPageSBBMBaru']=array('page_name'=>'sa.mutasibarang.SBBMBaru','page_num'=>0,'search'=>false,'datasbbm'=>array(),'idprodusen'=>'none','cart'=>array());												
+                    $_SESSION['currentPageSBBMBaru']=array('page_name'=>'sa.mutasibarang.SBBMBaru','page_num'=>0,'search'=>false,'datasbbm'=>array(),'idprodusen'=>'none','cart'=>array());												                    
                 }                
             }			
 		}	        
@@ -39,9 +39,11 @@ class SBBMBaru extends MainPageSA {
             $nosbbm = addslashes(trim($this->txtNoSBBMBaru->Text));      
             $ta=$_SESSION['ta'];
             $tanggal_sbbm=Date("$ta-m-d");
-            $this->DB->insertRecord("INSERT INTO master_sbbm (no_sbbm,tanggal_sbbm,tahun,date_added,date_modified) VALUES ('$nosbbm',$tanggal_sbbm,$ta,NOW(),NOW())");            
+            $tanggal_faktur=$tanggal_sbbm;
+            $this->DB->insertRecord("INSERT INTO master_sbbm (no_sbbm,tanggal_sbbm,tanggal_faktur,tahun,date_added,date_modified) VALUES ('$nosbbm','$tanggal_sbbm','$tanggal_faktur',$ta,NOW(),NOW())");            
             $idsbbm=$this->DB->getLastInsertID ();
             $_SESSION['currentPageSBBMBaru']['datasbbm']=array('idsbbm'=>$idsbbm,'no_sbbm'=>$nosbbm,'mode'=>'buat','issaved'=>false);
+            $_SESSION['currentPageSBBMBaru']['cart']=array();
             $this->redirect('mutasibarang.SBBMBaru',true);
         }
     }
@@ -146,6 +148,49 @@ class SBBMBaru extends MainPageSA {
 		$_SESSION['currentPageSBBMBaru']['idprodusen']=$this->cmbFilterProdusen->Text;
         $this->populateData();
 	}    
+    public function addObatAll ($sender,$param) {  
+        $this->idProcess='add';
+        foreach ($this->RepeaterS->Items as $inputan) {
+            $qty=$inputan->txtQTY->getText();
+            if ($qty > 0) {
+                $item=$inputan->txtQTY->getNamingContainer();
+                $idobat=$this->RepeaterS->DataKeys[$item->getItemIndex()];
+                $dataobat=$this->Obat->getInfoMasterObat($idobat);            
+                $no_batch=addslashes($inputan->txtNoBatch->getText());            
+                $tangal_expire = date('Y-m-d',$inputan->cmbAddExpire->TimeStamp);
+                $cart = $_SESSION['currentPageSBBMBaru']['cart'];
+                $bool_exist=false;
+                foreach ($cart as $k=>$v) {
+                    if ($idobat == $v['idobat'] && $tangal_expire == $v['tanggal_expire']) {
+                        $bool_exist=true;
+                        $idcart=$k;
+                        break;
+                    }
+                }
+                if ($bool_exist) {                
+                    $_SESSION['currentPageSBBMBaru']['cart'][$idcart]['qty']=$qty;
+                    $_SESSION['currentPageSBBMBaru']['cart'][$idcart]['no_batch']=$no_batch;
+                    $_SESSION['currentPageSBBMBaru']['cart'][$idcart]['tanggal_expire']=$tangal_expire;
+                }else{
+                    $idcart = count($cart)+1;
+                    $_SESSION['currentPageSBBMBaru']['cart'][$idcart]=array(                                                            
+                                                                'idcart'=>$idcart,
+                                                                'idobat'=>$idobat,
+                                                                'kode_obat'=>$dataobat['kode_obat'],
+                                                                'nama_obat'=>$dataobat['nama_obat'],
+                                                                'harga'=>$dataobat['harga'],
+                                                                'nama_bentuk'=>$dataobat['nama_bentuk'],
+                                                                'kemasan'=>$dataobat['kemasan'],
+                                                                'idprodusen'=>$dataobat['idprodusen'],
+                                                                'nama_produsen'=>$dataobat['nama_produsen'],                                                                    
+                                                                'qty'=>$qty,
+                                                                'no_batch'=>$no_batch,
+                                                                'tanggal_expire'=>$tangal_expire);
+                }
+            }            
+        }
+        $this->redirect('mutasibarang.SBBMBaru',true);
+    }
     public function addProductRepeater($sender,$param) {        
         if ($this->IsValid) {                        
             $idobat=$this->getDataKeyField($sender,$this->RepeaterS);            
@@ -169,7 +214,7 @@ class SBBMBaru extends MainPageSA {
                 $_SESSION['currentPageSBBMBaru']['cart'][$idcart]['tanggal_expire']=$tangal_expire;
             }else{
                 $idcart = count($cart)+1;
-                $_SESSION['currentPageSBBMBaru']['cart'][$idcart]=array(
+                $_SESSION['currentPageSBBMBaru']['cart'][$idcart]=array(                                                            
                                                             'idcart'=>$idcart,
                                                             'idobat'=>$idobat,
                                                             'kode_obat'=>$dataobat['kode_obat'],
@@ -197,10 +242,28 @@ class SBBMBaru extends MainPageSA {
         }
     }
     protected function populateCart () {             
-        $this->idProcess='add';
+        $this->idProcess='add';                
 		$this->RepeaterCart->DataSource=$_SESSION['currentPageSBBMBaru']['cart'];
 		$this->RepeaterCart->dataBind();             
-	}    
+	} 
+    public function saveItemAll($sender,$param) {        
+        $this->idProcess='add';
+        foreach ($this->RepeaterCart->Items as $inputan) {
+            $qty=$inputan->txtQTY->getText();
+            if ($qty > 0) {
+                $item=$inputan->txtQTY->getNamingContainer();
+                $idcart=$this->RepeaterCart->DataKeys[$item->getItemIndex()];                            
+                $no_batch=addslashes($inputan->txtNoBatch->getText());            
+                $tangal_expire = date('Y-m-d',$inputan->cmbAddExpire->TimeStamp);
+                
+                $_SESSION['currentPageSBBMBaru']['cart'][$idcart]['qty']=$qty;
+                $_SESSION['currentPageSBBMBaru']['cart'][$idcart]['no_batch']=$no_batch;
+                $_SESSION['currentPageSBBMBaru']['cart'][$idcart]['tanggal_expire']=$tangal_expire;
+            }
+        }            
+        $this->redirect('mutasibarang.SBBMBaru',true);
+        
+    }
     public function saveItem($sender,$param) {        
         if ($this->IsValid) {                        
             $idcart=$this->getDataKeyField($sender,$this->RepeaterCart);            
@@ -264,7 +327,7 @@ class SBBMBaru extends MainPageSA {
 		if (($offset+$limit)>$itemcount) {
 			$limit=$itemcount-$offset;
 		}
-		if ($limit < 0) {$offset=0;$limit=10;$_SESSION['currentPageSBBMBaru']['page_num']=0;}
+		if ($limit < 0) {$offset=0;$limit=5;$_SESSION['currentPageSBBMBaru']['page_num']=0;}
         $str = "$str ORDER BY nama_obat ASC LIMIT $offset,$limit";        
 		$this->DB->setFieldTable(array('idobat','kode_obat','nama_obat','harga','nama_bentuk','kemasan','stock'));
 		$r=$this->DB->getRecord($str,$offset+1);             
