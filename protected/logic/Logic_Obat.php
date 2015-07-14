@@ -142,7 +142,7 @@ class Logic_Obat extends Logic_Global {
                 }                
             break;
             case 'sumberdanapuskesmas' :
-                $str = "SELECT idsumber_dana_gudang,SUM(qty) AS jumlah FROM master_sbbm_puskesmas msb,detail_sbbm_puskesmas dsb WHERE msb.idsbbm_puskesmas=dsb.idsbbm_puskesmas AND dsb.idobat_puskesmas=$idobat AND dsb.harga=$harga AND status_puskesmas='complete' AND msb.tahun_puskesmas=$tahun AND DATE_FORMAT(msb.tanggal_sbbm_puskesmas,'%Y-%m')<='$monthyear' GROUP BY idsumber_dana_gudang ORDER BY idsumber_dana_gudang ASC";                
+                $str = "SELECT idsumber_dana_gudang,SUM(qty) AS jumlah FROM master_sbbm_puskesmas msb,detail_sbbm_puskesmas dsb WHERE msb.idsbbm_puskesmas=dsb.idsbbm_puskesmas AND dsb.idobat_puskesmas=$idobat AND dsb.harga=$harga AND status_puskesmas='complete' AND DATE_FORMAT(msb.tanggal_sbbm_puskesmas,'%Y-%m')<='$monthyear' GROUP BY idsumber_dana_gudang ORDER BY idsumber_dana_gudang ASC";                
                 $this->db->setFieldTable(array('idsumber_dana_gudang','jumlah'));
                 $r=$this->db->getRecord($str);  
                 $awalstock=$this->DMaster->removeIdFromArray($this->DMaster->getListSumberDana (),'none');
@@ -156,7 +156,7 @@ class Logic_Obat extends Logic_Global {
                 foreach ($r as $k=>$v) {
                     $awalstock_penerimaan[$v['idsumber_dana_gudang']]=$v['jumlah'];
                 }
-                $str = "SELECT dsk.idsumber_dana_gudang,COUNT(ks.idkartu_stock_puskesmas) AS jumlah FROM master_sbbk_puskesmas msk,detail_sbbk_puskesmas dsb,kartu_stock_puskesmas ks,master_sbbm_puskesmas msb,detail_sbbm_puskesmas dsk WHERE msk.idsbbk_puskesmas=dsb.idsbbk_puskesmas AND ks.idobat_puskesmas=$idobat AND ks.iddetail_sbbk_puskesmas=dsb.iddetail_sbbk_puskesmas AND ks.idsbbm_puskesmas=msb.idsbbm_puskesmas AND ks.iddetail_sbbm_puskesmas=dsk.iddetail_sbbm_puskesmas AND dsb.harga=$harga AND msb.tahun_puskesmas=$tahun AND DATE_FORMAT(msk.tanggal_sbbk_puskesmas,'%Y-%m')<='$monthyear' AND ks.isdestroyed=0 GROUP BY dsk.idsumber_dana_gudang ORDER BY dsk.idsumber_dana_gudang ASC";                
+                $str = "SELECT dsk.idsumber_dana_gudang,COUNT(ks.idkartu_stock_puskesmas) AS jumlah FROM master_sbbk_puskesmas msk,detail_sbbk_puskesmas dsb,kartu_stock_puskesmas ks,master_sbbm_puskesmas msb,detail_sbbm_puskesmas dsk WHERE msk.idsbbk_puskesmas=dsb.idsbbk_puskesmas AND ks.idobat_puskesmas=$idobat AND ks.iddetail_sbbk_puskesmas=dsb.iddetail_sbbk_puskesmas AND ks.idsbbm_puskesmas=msb.idsbbm_puskesmas AND ks.iddetail_sbbm_puskesmas=dsk.iddetail_sbbm_puskesmas AND dsb.harga=$harga AND DATE_FORMAT(msk.tanggal_sbbk_puskesmas,'%Y-%m')<='$monthyear' AND ks.isdestroyed=0 GROUP BY dsk.idsumber_dana_gudang ORDER BY dsk.idsumber_dana_gudang ASC";                
                 $this->db->setFieldTable(array('idsumber_dana_gudang','jumlah'));
                 $r=$this->db->getRecord($str);  
                 $awalstock_pengeluaran[1]=0;
@@ -175,20 +175,20 @@ class Logic_Obat extends Logic_Global {
                 }                
             break;
             case 'defaultpuskesmas' :
-                $str_penerimaan="master_sbbm_puskesmas msb,detail_sbbm_puskesmas dsb WHERE msb.idsbbm_puskesmas=dsb.idsbbm_puskesmas AND dsb.idobat_puskesmas=$idobat AND harga=$harga AND msb.tahun_puskesmas=$tahun AND status_puskesmas='complete' AND DATE_FORMAT(msb.tanggal_sbbm_puskesmas,'%Y-%m')<='$monthyear'";                
+                $str_penerimaan="master_sbbm_puskesmas msb,detail_sbbm_puskesmas dsb WHERE msb.idsbbm_puskesmas=dsb.idsbbm_puskesmas AND dsb.idobat_puskesmas=$idobat AND harga=$harga AND msb.tahun_puskesmas=$tahun AND msb.status_puskesmas='complete' AND DATE_FORMAT(msb.tanggal_sbbm_puskesmas,'%Y-%m')<='$monthyear'";                
                 $penerimaan=$this->db->getSumRowsOfTable('qty',$str_penerimaan);                                                            
-                $pengeluaran=$this->db->getSumRowsOfTable('pemberian_puskesmas',"master_sbbk_puskesmas msk,detail_sbbk_puskesmas dsk WHERE msk.idsbbk_puskesmas=dsk.idsbbk_puskesmas AND dsk.idobat_puskesmas=$idobat AND harga=$harga AND msk.tahun_puskesmas=$tahun AND  DATE_FORMAT(msk.tanggal_sbbk_puskesmas,'%Y-%m')='$monthyear'");            
+                $pengeluaran=$this->db->getSumRowsOfTable('pemberian_puskesmas',"master_sbbk_puskesmas msk,detail_sbbk_puskesmas dsk WHERE msk.idsbbk_puskesmas=dsk.idsbbk_puskesmas AND dsk.idobat_puskesmas=$idobat AND msk.status_puskesmas='complete' AND harga=$harga AND DATE_FORMAT(msk.tanggal_sbbk_puskesmas,'%Y-%m')<='$monthyear'");            
                 $awalstock=($pengeluaran < $penerimaan) ? $penerimaan - $pengeluaran:0;
             break;
             case 'defaultpuskesmasdinas' :
-                $str_penerimaan="master_sbbm_puskesmas msb,detail_sbbm_puskesmas dsb WHERE msb.idsbbm_puskesmas=dsb.idsbbm_puskesmas AND dsb.idobat_puskesmas=$idobat AND harga=$harga AND msb.tahun_puskesmas=$tahun AND status_puskesmas='complete' AND DATE_FORMAT(msb.tanggal_sbbm_puskesmas,'%Y-%m')<='$monthyear'";                
+                $str_penerimaan="master_sbbm_puskesmas msb,detail_sbbm_puskesmas dsb WHERE msb.idsbbm_puskesmas=dsb.idsbbm_puskesmas AND dsb.idobat_puskesmas=$idobat AND harga=$harga AND msb.status_puskesmas='complete' AND DATE_FORMAT(msb.tanggal_sbbm_puskesmas,'%Y-%m')<='$monthyear'";                
                 $penerimaan=$this->db->getSumRowsOfTable('qty',$str_penerimaan);                                                                            
-                $pengeluaran=$this->db->getCountRowsOfTable("detail_sbbk_puskesmas dsk,kartu_stock_puskesmas_dinas kspd WHERE kspd.iddetail_sbbk_puskesmas=dsk.iddetail_sbbk_puskesmas AND dsk.idobat_puskesmas=$idobat AND harga=$harga AND DATE_FORMAT(kspd.tanggal_puskesmas,'%Y-%m')='$monthyear'",'kspd.idkartu_stock_puskesmas');
+                $pengeluaran=$this->db->getCountRowsOfTable("detail_sbbk_puskesmas dsk,kartu_stock_puskesmas_dinas kspd WHERE kspd.iddetail_sbbk_puskesmas=dsk.iddetail_sbbk_puskesmas AND harga=$harga AND msk.status_puskesmas='complete' AND DATE_FORMAT(kspd.tanggal_puskesmas,'%Y-%m')='$monthyear'",'kspd.idkartu_stock_puskesmas');
                 $awalstock=($pengeluaran < $penerimaan) ? $penerimaan - $pengeluaran:0;                
             break;
             default :
                 $penerimaan=$this->db->getSumRowsOfTable('qty',"master_sbbm msb,detail_sbbm dsb WHERE msb.idsbbm=dsb.idsbbm AND dsb.idobat=$idobat AND harga=$harga AND status='complete' AND DATE_FORMAT(msb.tanggal_sbbm,'%Y-%m')<='$monthyear'");            
-                $pengeluaran=$this->db->getSumRowsOfTable('pemberian',"master_sbbk msk,detail_sbbk dsk WHERE msk.idsbbk=dsk.idsbbk AND dsk.idobat=$idobat AND harga=$harga AND msk.status='complete' AND  DATE_FORMAT(msk.tanggal_sbbk,'%Y-%m')='$monthyear'");            
+                $pengeluaran=$this->db->getSumRowsOfTable('pemberian',"master_sbbk msk,detail_sbbk dsk WHERE msk.idsbbk=dsk.idsbbk AND dsk.idobat=$idobat AND harga=$harga AND msk.status='complete' AND  DATE_FORMAT(msk.tanggal_sbbk,'%Y-%m')<='$monthyear'");            
                 $awalstock=($pengeluaran < $penerimaan) ? $penerimaan - $pengeluaran:0;
         }
         return $awalstock;                    
