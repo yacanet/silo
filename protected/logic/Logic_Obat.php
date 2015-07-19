@@ -81,8 +81,11 @@ class Logic_Obat extends Logic_Global {
      * digunakan untuk mengetahui jumlah stock obat
      * 
      */
-    public function getJumlahStockObat () {                
+    public function getJumlahStockObat ($withpuskesmas=false) {                
         $jumlah=$this->db->getSumRowsOfTable ('stock','master_obat');                
+        if ($withpuskesmas) {
+            $jumlah+=$this->db->getCountRowsOfTable ("kartu_stock_puskesmas_dinas WHERE mode_puskesmas='masuk'",'idkartu_stock_puskesmas');                
+        }
         return $jumlah;
     }
     /**
@@ -183,7 +186,7 @@ class Logic_Obat extends Logic_Global {
             case 'defaultpuskesmasdinas' :
                 $str_penerimaan="master_sbbm_puskesmas msb,detail_sbbm_puskesmas dsb WHERE msb.idsbbm_puskesmas=dsb.idsbbm_puskesmas AND dsb.idobat_puskesmas=$idobat AND harga=$harga AND msb.status_puskesmas='complete' AND DATE_FORMAT(msb.tanggal_sbbm_puskesmas,'%Y-%m')<='$monthyear'";                
                 $penerimaan=$this->db->getSumRowsOfTable('qty',$str_penerimaan);                                                                            
-                $pengeluaran=$this->db->getCountRowsOfTable("detail_sbbk_puskesmas dsk,kartu_stock_puskesmas_dinas kspd WHERE kspd.iddetail_sbbk_puskesmas=dsk.iddetail_sbbk_puskesmas AND harga=$harga AND msk.status_puskesmas='complete' AND DATE_FORMAT(kspd.tanggal_puskesmas,'%Y-%m')='$monthyear'",'kspd.idkartu_stock_puskesmas');
+                $pengeluaran=$this->db->getCountRowsOfTable("detail_sbbk_puskesmas dsk,kartu_stock_puskesmas_dinas kspd WHERE kspd.iddetail_sbbk_puskesmas=dsk.iddetail_sbbk_puskesmas AND harga=$harga AND DATE_FORMAT(kspd.tanggal_puskesmas,'%Y-%m')='$monthyear'",'kspd.idkartu_stock_puskesmas');
                 $awalstock=($pengeluaran < $penerimaan) ? $penerimaan - $pengeluaran:0;                
             break;
             default :

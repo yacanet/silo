@@ -693,7 +693,7 @@ class TCustomDatePicker extends TTextBox
 		$days = $this->getDropDownDayOptions();
 		$writer->addAttribute('id', $this->getClientID().TControl::CLIENT_ID_SEPARATOR.'day');
 		$writer->addAttribute('name', $this->getUniqueID().TControl::ID_SEPARATOR.'day');
-		$writer->addAttribute('class', 'date-tnde date-tnde-day');        
+		$writer->addAttribute('class', 'date-silo date-silo-day');        
 		if($this->getReadOnly() || !$this->getEnabled(true))
 			$writer->addAttribute('disabled', 'disabled');
 		$writer->renderBeginTag('select');
@@ -727,7 +727,7 @@ class TCustomDatePicker extends TTextBox
 		$info = $this->getLocalizedCalendarInfo();
 		$writer->addAttribute('id', $this->getClientID().TControl::CLIENT_ID_SEPARATOR.'month');
 		$writer->addAttribute('name', $this->getUniqueID().TControl::ID_SEPARATOR.'month');
-		$writer->addAttribute('class', 'date-tnde date-tnde-month');        
+		$writer->addAttribute('class', 'date-silo date-silo-month');        
 		if($this->getReadOnly() || !$this->getEnabled(true))
 			$writer->addAttribute('disabled', 'disabled');
 		$writer->renderBeginTag('select');
@@ -774,7 +774,7 @@ class TCustomDatePicker extends TTextBox
 			$years[$i] = $i;
 		$writer->addAttribute('id', $this->getClientID().TControl::CLIENT_ID_SEPARATOR.'year');
 		$writer->addAttribute('name', $this->getUniqueID().TControl::ID_SEPARATOR.'year');
-		$writer->addAttribute('class', 'date-tnde date-tnde-year');        
+		$writer->addAttribute('class', 'date-silo date-silo-year');        
 		if($this->getReadOnly() || !$this->getEnabled(true))
 			$writer->addAttribute('disabled', 'disabled');
 		$writer->renderBeginTag('select');

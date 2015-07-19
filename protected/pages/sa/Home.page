@@ -50,6 +50,15 @@ a:hover {
             <a href="<%=$this->constructUrl('report.DinamikaLogistikObat',true)%>">
                 <div class="main-box infographic-box colored emerald-bg">
                     <i class="fa fa-codepen"></i>
+                    <span class="headline">Stock Obat Seluruh</span>
+                    <span class="value"><%=$_SESSION['currentPageHome']['stockobatall']%></span>
+                </div>
+            </a>
+        </div>
+        <div class="col-lg-3 col-sm-6 col-xs-12">
+            <a href="<%=$this->constructUrl('report.DinamikaLogistikObat',true)%>">
+                <div class="main-box infographic-box colored green-bg">
+                    <i class="fa fa-codepen"></i>
                     <span class="headline">Stock Obat</span>
                     <span class="value"><%=$_SESSION['currentPageHome']['stockobat']%></span>
                 </div>
@@ -63,16 +72,7 @@ a:hover {
                     <span class="value"><%=$_SESSION['currentPageHome']['obatexpires']%></span>
                 </div>
             </a>
-        </div>
-        <div class="col-lg-3 col-sm-6 col-xs-12">
-            <a href="<%=$this->constructUrl('permintaan.DaftarLPO',true)%>">
-                <div class="main-box infographic-box colored green-bg">
-                    <i class="fa fa-car"></i>
-                    <span class="headline">Lembar PO Baru</span>
-                    <span class="value"><%=$_SESSION['currentPageHome']['lembarpo']%></span>
-                </div>
-            </a>
-        </div>
+        </div>        
         <div class="col-lg-3 col-sm-6 col-xs-12">
             <a href="<%=$this->constructUrl('report.DistribusiObat',true)%>">
                 <div class="main-box infographic-box colored purple-bg">
@@ -149,6 +149,104 @@ a:hover {
                                         Info!
                                     </strong>
                                     Tidak ada obat yang ada pada masa expire .
+                                </div>
+                            </prop:EmptyTemplate>
+                        </com:TActiveRepeater>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="main-box clearfix">
+                <header class="main-box-header clearfix">
+                    <h2 class="pull-left"><i class="fa fa-file-text"></i> Daftar LPO Terbaru yang Diajukan oleh Puskesmas</h2>                    
+                </header>
+                <div class="main-box-body clearfix">
+                    <div class="table-responsive clearfix">
+                        <com:TActiveRepeater ID="RepeaterLPO" DataKeyField="idlpo" OnItemCreated="itemCreatedLPO">
+                            <prop:HeaderTemplate>			
+                                <table class="table table-striped table-hover">	
+                                    <thead>
+                                    <tr>
+                                        <th width="120" rowspan="2"><span>NOMOR LPO</span></th>
+                                        <th width="120" rowspan="2"><span>TANGGAL LPO</span></th>
+                                        <th colspan="3"><span>JUMLAH KUNJUNGAN</span></th>                                        
+                                        <th rowspan="2">TOTAL PERMINTAAN</th>							
+                                        <th width="150" rowspan="2">PUSKESMAS</th>							
+                                        <th width="200" rowspan="2"><span>KEPALA PUSKESMAS</span></th>                                                                                                                                                              
+                                        <th width="120" rowspan="2"></th>							
+                                    </tr>							
+                                    <tr>
+                                        <th>GRATIS</th>
+                                        <th>BAYAR</th>
+                                        <th>BPJS</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                            </prop:HeaderTemplate>
+                            <prop:ItemTemplate>
+                                <tr>
+                                    <td><%#$this->DataItem['no_lpo']%></td>
+                                    <td><%#$this->Page->TGL->tanggal('d/m/Y',$this->DataItem['tanggal_lpo'])%></td>                                       
+                                    <td><%#$this->DataItem['jumlah_kunjungan_gratis']%></td>
+                                    <td><%#$this->DataItem['jumlah_kunjungan_bayar']%></td>                                    
+                                    <td><%#$this->DataItem['jumlah_kunjungan_bpjs']%></td>                            
+                                    <td><%#$this->DataItem['total_permintaan']%></td>
+                                    <td><%#$this->Page->DMaster->getNamaPuskesmasByID($this->DataItem['idpuskesmas'])%></td>            
+                                    <td><%#$this->DataItem['nama_ka']%></td>
+                                    <td>
+                                        <com:TActiveLinkButton ID="btnView" ClientSide.PostState="false" CssClass="table-link" OnClick="Page.viewRecordLPO" Attributes.Title="View data LPO">
+                                            <prop:Text>
+                                                <span class="fa-stack">
+                                                    <i class="fa fa-square fa-stack-2x"></i>
+                                                    <i class="fa fa-search-plus fa-stack-1x fa-inverse"></i>
+                                                </span>
+                                            </prop:Text>
+                                            <prop:ClientSide.OnPreDispatch>
+                                                $('loading').show();                                             
+                                                $('<%=$this->btnView->ClientId%>').disabled='disabled';						
+                                            </prop:ClientSide.OnPreDispatch>
+                                            <prop:ClientSide.OnLoading>
+                                                $('<%=$this->btnView->ClientId%>').disabled='disabled';									                            
+                                            </prop:ClientSide.OnLoading>
+                                            <prop:ClientSide.onComplete>
+                                                $('loading').hide();                                                
+                                            </prop:ClientSide.OnComplete>
+                                        </com:TActiveLinkButton>
+                                        <com:TActiveLinkButton ID="btnNewSBBK" ClientSide.PostState="false" CssClass="table-link" OnClick="Page.buatSBBK" Attributes.Title="SBBK Baru">
+                                            <prop:Text>
+                                                <span class="fa-stack">
+                                                    <i class="fa fa-square fa-stack-2x"></i>
+                                                    <i class="fa fa-file-o fa-stack-1x fa-inverse"></i>
+                                                </span>
+                                            </prop:Text>
+                                            <prop:ClientSide.OnPreDispatch>
+                                                $('loading').show();                                             
+                                                $('<%=$this->btnNewSBBK->ClientId%>').disabled='disabled';						
+                                            </prop:ClientSide.OnPreDispatch>
+                                            <prop:ClientSide.OnLoading>
+                                                $('<%=$this->btnNewSBBK->ClientId%>').disabled='disabled';									                            
+                                            </prop:ClientSide.OnLoading>
+                                            <prop:ClientSide.onComplete>
+                                                $('loading').hide();                                                
+                                            </prop:ClientSide.OnComplete>
+                                        </com:TActiveLinkButton>
+                                    </td>
+                                </tr>
+                            </prop:ItemTemplate>				                
+                            <prop:FooterTemplate>               
+                                </tbody>
+                                </table>
+                            </prop:FooterTemplate>	
+                            <prop:EmptyTemplate>                                                       
+                                <div class="alert alert-info">
+                                    <i class="fa fa-info-circle fa-fw fa-lg"></i>
+                                    <strong>
+                                        Info!
+                                    </strong>
+                                     Data LPO belum ada.
                                 </div>
                             </prop:EmptyTemplate>
                         </com:TActiveRepeater>
