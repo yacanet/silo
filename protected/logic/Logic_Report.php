@@ -3127,22 +3127,28 @@ class Logic_Report extends Logic_Obat {
                 $sheet->getStyle("A$row:I$row")->applyFromArray($styleArray);
                 $sheet->getStyle("A$row:I$row")->getAlignment()->setWrapText(true);
                 
-                $str = "SELECT mo.idobat,mo.nama_obat,mo.idsatuan_obat,mo.kemasan,COALESCE(penerimaan_jumlah_tahun_lalu-pengeluaran_jumlah_tahun_lalu,0) AS penerimaan_jumlah_tahun_lalu,COALESCE(penerimaan_jumlah,0) penerimaan_jumlah,COALESCE(pengeluaran_jumlah,0) pengeluaran_jumlah FROM master_obat mo LEFT JOIN (SELECT idobat,SUM(qty) AS penerimaan_jumlah_tahun_lalu FROM master_sbbm msb,detail_sbbm dsb WHERE msb.idsbbm=dsb.idsbbm AND msb.tahun=$tahun_sebelumnya GROUP BY dsb.idobat) penerimaan_tahun_lalu ON (penerimaan_tahun_lalu.idobat=mo.idobat) LEFT JOIN (SELECT idobat,SUM(pemberian) AS pengeluaran_jumlah_tahun_lalu FROM master_sbbk msk,detail_sbbk dsk WHERE msk.idsbbk=dsk.idsbbk AND msk.tahun=$tahun_sebelumnya GROUP BY idobat) pengeluaran_tahun_lalu ON (pengeluaran_tahun_lalu.idobat=mo.idobat) LEFT JOIN (SELECT idobat,SUM(qty) AS penerimaan_jumlah FROM master_sbbm msb,detail_sbbm dsb WHERE msb.idsbbm=dsb.idsbbm AND msb.tahun=$tahun GROUP BY dsb.idobat) penerimaan ON (penerimaan.idobat=mo.idobat) LEFT JOIN (SELECT idobat,SUM(pemberian) AS pengeluaran_jumlah FROM master_sbbk msk,detail_sbbk dsk WHERE msk.idsbbk=dsk.idsbbk AND msk.tahun=$tahun GROUP BY idobat) pengeluaran ON (pengeluaran.idobat=mo.idobat) ORDER BY mo.nama_obat ASC";
-                $this->db->setFieldTable(array('idobat','nama_obat','idsatuan_obat','kemasan','penerimaan_jumlah_tahun_lalu','penerimaan_jumlah','pengeluaran_jumlah'));
+                $str = "SELECT mo.idobat,mo.nama_obat,mo.idsatuan_obat,mo.kemasan FROM master_obat mo ORDER BY mo.nama_obat ASC";
+                $this->db->setFieldTable(array('idobat','nama_obat','idsatuan_obat','kemasan'));
                 $r=$this->db->getRecord($str);                
                 $row_awal=$row;
                 $row+=1;                
                 while (list($k,$v)=each($r)) {
+                    $idobat=$v['idobat'];
+                    $penerimaan=$this->db->getSumRowsOfTable('qty',"master_sbbm msb,detail_sbbm dsb WHERE msb.idsbbm=dsb.idsbbm AND dsb.idobat=$idobat AND msb.status='complete' AND DATE_FORMAT(msb.tanggal_sbbm,'%Y')<='$tahun_sebelumnya'");            
+                    $pengeluaran=$this->db->getSumRowsOfTable('pemberian',"master_sbbk msk,detail_sbbk dsk WHERE msk.idsbbk=dsk.idsbbk AND dsk.idobat=$idobat AND msk.status='complete' AND DATE_FORMAT(msk.tanggal_sbbk,'%Y')<='$tahun_sebelumnya'");            
+                    $stock_awal=($pengeluaran < $penerimaan) ? $penerimaan - $pengeluaran:0;                                    
+                    $penerimaan2=$this->db->getSumRowsOfTable('qty',"master_sbbm msb,detail_sbbm dsb WHERE msb.idsbbm=dsb.idsbbm AND dsb.idobat=$idobat AND msb.status='complete' AND DATE_FORMAT(msb.tanggal_sbbm,'%Y')='$tahun'");                    
+                    $pengeluaran2=$this->db->getSumRowsOfTable('pemberian',"master_sbbk msk,detail_sbbk dsk WHERE msk.idsbbk=dsk.idsbbk AND dsk.idobat=$idobat AND msk.status='complete' AND DATE_FORMAT(msk.tanggal_sbbk,'%Y')='$tahun'");                    
+                    $stock_akhir=($stock_awal+$penerimaan2)-$pengeluaran2;                    
                     $sheet->setCellValue("A$row",$v['no']);                                                                
                     $sheet->mergeCells("B$row:C$row");
                     $sheet->setCellValue("B$row",$v['nama_obat']);                                                                
                     $sheet->setCellValue("D$row",$this->DMaster->getNamaSatuanObat($v['idsatuan_obat']));    
                     $sheet->setCellValue("E$row",$v['kemasan']);    
-                    $sheet->setCellValue("F$row",$v['penerimaan_jumlah_tahun_lalu']);    
-                    $sheet->setCellValue("G$row",$v['penerimaan_jumlah']);    
-                    $sheet->setCellValue("H$row",$v['pengeluaran_jumlah']); 
-                    $sisa_stock=($v['penerimaan_jumlah_tahun_lalu']+$v['penerimaan_jumlah'])-$v['pengeluaran_jumlah'];
-                    $sheet->setCellValue("I$row",$sisa_stock);                                                     
+                    $sheet->setCellValue("F$row",$stock_awal);    
+                    $sheet->setCellValue("G$row",$penerimaan2);    
+                    $sheet->setCellValue("H$row",$pengeluaran2);                     
+                    $sheet->setCellValue("I$row",$stock_akhir);                                                     
                     $sheet->getRowDimension($row)->setRowHeight(21);
                     $row+=1;
                 }

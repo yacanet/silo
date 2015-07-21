@@ -1,6 +1,6 @@
 <%@ Title="Permintaan - Daftar LPO" %>
 <com:TContent ID="moduleheader">
-    <i class="fa fa-file-text"></i> Daftar LPO Tahun <com:TActiveLabel ID="labelTahunDaftarLPO" />
+    <i class="fa fa-file-text"></i> Daftar LPO Tahun <com:TActiveLabel ID="labelTahun" />
 </com:TContent>
 <com:TContent ID="modulebreadcrumb">    
     <li><a href="#">Mutasi Barang Masuk</a></li>

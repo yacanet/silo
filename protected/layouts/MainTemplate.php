@@ -25,6 +25,7 @@ class MainTemplate extends TTemplateControl {
      */
     private function populateLabelTahun () {
         switch ($this->Page->getPagePath()) {
+            case 'ad.permintaan.DaftarLPO' :
             case 'sa.permintaan.DaftarLPO' :
                 $this->Page->labelTahun->Text=$_SESSION['ta'];                         
                 if ($this->Page->getDefaultProcess()) {

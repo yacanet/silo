@@ -10,7 +10,7 @@ class DaftarLPO extends MainPageAD {
         $this->createObj('Obat');
         $this->createObj('DMaster');
 		if (!$this->IsPostBack&&!$this->IsCallBack) {	
-            $this->Page->labelTahunDaftarLPO->Text=$_SESSION['ta'];                         
+            $this->Page->labelTahun->Text=$_SESSION['ta'];                         
             if (isset($_SESSION['currentPageDaftarLPO']['datalpo']['no_lpo'])) {
                 $this->detailProcess();
             }else {
@@ -124,11 +124,23 @@ class DaftarLPO extends MainPageAD {
         $str = "SELECT ml.idlpo,ml.no_lpo,ml.tanggal_lpo,jumlah_kunjungan_gratis,jumlah_kunjungan_bayar,jumlah_kunjungan_bpjs,ml.nip_ka,ml.nama_ka,ml.nip_pengelola_obat AS nip_pengelola,ml.nama_pengelola_obat AS nama_pengelola FROM master_lpo ml WHERE ml.idlpo=$id";            
         $this->DB->setFieldTable(array('idlpo','no_lpo','tanggal_lpo','jumlah_kunjungan_gratis','jumlah_kunjungan_bayar','jumlah_kunjungan_bpjs','nip_ka','nama_ka','nip_pengelola','nama_pengelola'));
         $r=$this->DB->getRecord($str);
+        $datalpo=$r[1];
         $_SESSION['currentPageLPOBaru']['idprodusen']='none';
-        $_SESSION['currentPageLPOBaru']['tanggal_lpo']=$r[1]['tanggal_lpo'];
-        $_SESSION['currentPageLPOBaru']['datalpo']=$r[1];
-        $_SESSION['currentPageLPOBaru']['datalpo']['issaved']=true;
-        $_SESSION['currentPageLPOBaru']['datalpo']['mode']='buat';        
+        $_SESSION['currentPageLPOBaru']['tanggal_lpo']=$datalpo['tanggal_lpo'];        
+        
+        $datalpo['nip_ka'] = $this->Pengguna->getDataUser('nip_ka');
+        $datalpo['nama_ka'] = $this->Pengguna->getDataUser('nama_ka');
+        $datalpo['nip_pengelola'] = $this->Pengguna->getDataUser('nip_pengelola_obat');
+        $datalpo['nama_pengelola'] = $this->Pengguna->getDataUser('nama_pengelola_obat');
+
+        $datalpo['nip_kadis']=$this->setup->getSettingValue('nip_kadis');        
+        $datalpo['nama_kadis']=$this->setup->getSettingValue('nama_kadis');        
+        $datalpo['nip_ka_gudang']=$this->setup->getSettingValue('nip_ka_gudang');        
+        $datalpo['nama_ka_gudang']=$this->setup->getSettingValue('nama_ka_gudang');        
+        $datalpo['issaved']=true;
+        $datalpo['mode']='buat';        
+        $_SESSION['currentPageLPOBaru']['datalpo']=$datalpo;
+        
         $str = "SELECT iddetail_lpo,idlpo,idobat,idobat_puskesmas,kode_obat,nama_obat,harga,kemasan,stock_awal,penerimaan AS total_penerimaan,persediaan,pemakaian AS total_pemakaian,stock_akhir,permintaan AS qty FROM detail_lpo WHERE idlpo='$id' AND permintaan > 0";
         $this->DB->setFieldTable(array('iddetail_lpo','idlpo','idobat','idobat_puskesmas','kode_obat','nama_obat','harga','kemasan','stock_awal','total_penerimaan','persediaan','total_pemakaian','stock_akhir','qty'));
         $r=$this->DB->getRecord($str);            

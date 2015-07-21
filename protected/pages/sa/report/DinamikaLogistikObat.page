@@ -121,10 +121,10 @@
                                     <td><%#$this->DataItem['nama_obat']%></td>                                    
                                     <td><%#$this->Page->DMaster->getNamaSatuanObat($this->DataItem['idsatuan_obat'])%></td>
                                     <td><%#$this->DataItem['kemasan']%></td>
-                                    <td><%#$this->DataItem['penerimaan_jumlah_tahun_lalu']%></td>
-                                    <td><%#$this->DataItem['penerimaan_jumlah']%></td>
-                                    <td><%#$this->DataItem['pengeluaran_jumlah']%></td>
-                                    <td><%#$this->DataItem['sisa_stock']%></td>
+                                    <td><%#$this->DataItem['stock_awal']%></td>
+                                    <td><%#$this->DataItem['penerimaan']%></td>
+                                    <td><%#$this->DataItem['pengeluaran']%></td>
+                                    <td><%#$this->DataItem['stock_akhir']%></td>
                                 </tr>
                             </prop:ItemTemplate>				                
                             <prop:FooterTemplate>               

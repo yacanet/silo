@@ -122,11 +122,23 @@ class LPOBaru extends MainPageAD {
             $str = "SELECT ml.idlpo,ml.no_lpo,ml.idpuskesmas,ml.tanggal_lpo,jumlah_kunjungan_gratis,jumlah_kunjungan_bayar,jumlah_kunjungan_bpjs,ml.nip_ka,ml.nama_ka,ml.nip_pengelola_obat AS nip_pengelola,ml.nama_pengelola_obat AS nama_pengelola,response_lpo FROM master_lpo ml WHERE ml.no_lpo='$no_lpo'";            
             $this->DB->setFieldTable(array('idlpo','no_lpo','idpuskesmas','tanggal_lpo','jumlah_kunjungan_gratis','jumlah_kunjungan_bayar','jumlah_kunjungan_bpjs','nip_ka','nama_ka','response_lpo','nip_pengelola','nama_pengelola'));
             $r=$this->DB->getRecord($str);
-            $_SESSION['currentPageLPOBaru']['tanggal_lpo']=$r[1]['tanggal_lpo'];
-            $_SESSION['currentPageLPOBaru']['datalpo']=$r[1];
-            $_SESSION['currentPageLPOBaru']['datalpo']['issaved']=true;
-            $_SESSION['currentPageLPOBaru']['datalpo']['mode']='buat';
-            $idlpo=$r[1]['idlpo'];
+            $datalpo=$r[1];
+            $_SESSION['currentPageLPOBaru']['tanggal_lpo']=$datalpo['tanggal_lpo'];                        
+            
+            $datalpo['nip_ka'] = $this->Pengguna->getDataUser('nip_ka');
+            $datalpo['nama_ka'] = $this->Pengguna->getDataUser('nama_ka');
+            $datalpo['nip_pengelola'] = $this->Pengguna->getDataUser('nip_pengelola_obat');
+            $datalpo['nama_pengelola'] = $this->Pengguna->getDataUser('nama_pengelola_obat');
+
+            $datalpo['nip_kadis']=$this->setup->getSettingValue('nip_kadis');        
+            $datalpo['nama_kadis']=$this->setup->getSettingValue('nama_kadis');        
+            $datalpo['nip_ka_gudang']=$this->setup->getSettingValue('nip_ka_gudang');        
+            $datalpo['nama_ka_gudang']=$this->setup->getSettingValue('nama_ka_gudang');      
+            $datalpo['issaved']=true;
+            $datalpo['mode']='buat';
+            $_SESSION['currentPageLPOBaru']['datalpo']=$datalpo;
+            
+            $idlpo=$datalpo['idlpo'];
             $str = "SELECT iddetail_lpo,idlpo,idobat,idobat_puskesmas,kode_obat,nama_obat,harga,kemasan,stock_awal,penerimaan AS total_penerimaan,persediaan,pemakaian AS total_pemakaian,stock_akhir,permintaan AS qty FROM detail_lpo WHERE idlpo='$idlpo' AND permintaan > 0";
             $this->DB->setFieldTable(array('iddetail_lpo','idobat','idobat_puskesmas','kode_obat','nama_obat','harga','kemasan','stock_awal','total_penerimaan','persediaan','total_pemakaian','stock_akhir','qty'));
             $r=$this->DB->getRecord($str);            
@@ -405,9 +417,20 @@ class LPOBaru extends MainPageAD {
             $no_lpo=addslashes($this->txtAddNoLPO->Text);
             $jmlh_kunjungan_bayar=$this->txtAddJumlahKunjunganBayar->Text;
             $jmlh_kunjungan_gratis=$this->txtAddJumlahKunjunganGratis->Text;            
-            $jmlh_kunjungan_bpjs=$this->txtAddJumlahKunjunganBPJS->Text;            
+            $jmlh_kunjungan_bpjs=$this->txtAddJumlahKunjunganBPJS->Text;                        
+            
+            $nip_ka=$datalpo['nip_ka'];
+            $nama_ka=$datalpo['nama_ka'];
+            $nip_pengelola=$datalpo['nip_pengelola'];
+            $nama_pengelola=$datalpo['nama_pengelola'];
+
+            $nip_kadis=$datalpo['nip_kadis'];        
+            $nama_kadis=$datalpo['nama_kadis'];        
+            $nip_ka_gudang=$datalpo['nip_ka_gudang'];        
+            $nama_ka_gudang=$datalpo['nama_ka_gudang'];      
+            
             $this->DB->query('BEGIN');            
-            $str = "UPDATE master_lpo SET no_lpo='$no_lpo',tanggal_lpo='$tanggal_lpo',jumlah_kunjungan_gratis='$jmlh_kunjungan_gratis',jumlah_kunjungan_bayar='$jmlh_kunjungan_bayar',jumlah_kunjungan_bpjs='$jmlh_kunjungan_bpjs',status='draft',date_modified=NOW() WHERE idlpo=$idlpo";
+            $str = "UPDATE master_lpo SET no_lpo='$no_lpo',tanggal_lpo='$tanggal_lpo',nip_ka='$nip_ka',nama_ka='$nama_ka',nip_pengelola_obat='$nip_pengelola',nama_pengelola_obat='$nama_pengelola',nip_kadis='$nip_kadis',nama_kadis='$nama_kadis',nip_ka_gudang='$nip_ka_gudang',nama_ka_gudang='$nama_ka_gudang',jumlah_kunjungan_gratis='$jmlh_kunjungan_gratis',jumlah_kunjungan_bayar='$jmlh_kunjungan_bayar',jumlah_kunjungan_bpjs='$jmlh_kunjungan_bpjs',status='draft',date_modified=NOW() WHERE idlpo=$idlpo";
             if ($this->DB->updateRecord($str)) {    
                 $datalpo['issaved']=true;                                                                        
                 $datalpo['no_lpo']=$no_lpo;                
@@ -443,9 +466,20 @@ class LPOBaru extends MainPageAD {
             $no_lpo=addslashes($this->txtAddNoLPO->Text);
             $jmlh_kunjungan_bayar=$this->txtAddJumlahKunjunganBayar->Text;
             $jmlh_kunjungan_gratis=$this->txtAddJumlahKunjunganGratis->Text;            
-            $jmlh_kunjungan_bpjs=$this->txtAddJumlahKunjunganBPJS->Text;            
+            $jmlh_kunjungan_bpjs=$this->txtAddJumlahKunjunganBPJS->Text;         
+            
+            $nip_ka=$datalpo['nip_ka'];
+            $nama_ka=$datalpo['nama_ka'];
+            $nip_pengelola=$datalpo['nip_pengelola'];
+            $nama_pengelola=$datalpo['nama_pengelola'];
+
+            $nip_kadis=$datalpo['nip_kadis'];        
+            $nama_kadis=$datalpo['nama_kadis'];        
+            $nip_ka_gudang=$datalpo['nip_ka_gudang'];        
+            $nama_ka_gudang=$datalpo['nama_ka_gudang'];    
+            
             $this->DB->query('BEGIN');            
-            $str = "UPDATE master_lpo SET no_lpo='$no_lpo',tanggal_lpo='$tanggal_lpo',jumlah_kunjungan_gratis='$jmlh_kunjungan_gratis',jumlah_kunjungan_bayar='$jmlh_kunjungan_bayar',jumlah_kunjungan_bpjs='$jmlh_kunjungan_bpjs',status='complete',date_modified=NOW() WHERE idlpo=$idlpo";
+            $str = "UPDATE master_lpo SET no_lpo='$no_lpo',tanggal_lpo='$tanggal_lpo',nip_ka='$nip_ka',nama_ka='$nama_ka',nip_pengelola_obat='$nip_pengelola',nama_pengelola_obat='$nama_pengelola',nip_kadis='$nip_kadis',nama_kadis='$nama_kadis',nip_ka_gudang='$nip_ka_gudang',nama_ka_gudang='$nama_ka_gudang',jumlah_kunjungan_gratis='$jmlh_kunjungan_gratis',jumlah_kunjungan_bayar='$jmlh_kunjungan_bayar',jumlah_kunjungan_bpjs='$jmlh_kunjungan_bpjs',status='complete',date_modified=NOW() WHERE idlpo=$idlpo";
             if ($this->DB->updateRecord($str)) {    
                 $datalpo['idpuskesmas']=$this->idpuskesmas;                                                                        
                 $datalpo['issaved']=true;                                                                        

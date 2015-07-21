@@ -369,9 +369,9 @@ class Logic_Obat extends Logic_Global {
      */
     public function getJumlahDistribusiObat ($tahun,$idpuskesmas=null) {
         if ($idpuskesmas == null) {
-            $jumlah=$this->db->getCountRowsOfTable("kartu_stock WHERE mode='keluar' AND tahun=$tahun AND isdestroyed=0","idkartu_stock");
+            $jumlah=$this->db->getCountRowsOfTable("kartu_stock WHERE mode='keluar' AND DATE_FORMAT(date_modified,'%Y')=$tahun AND isdestroyed=0","idkartu_stock");
         }else{
-            $jumlah=$this->db->getCountRowsOfTable("kartu_stock_puskesmas WHERE mode_puskesmas='keluar' AND tahun_puskesmas=$tahun AND isdestroyed=0","idkartu_stock_puskesmas");
+            $jumlah=$this->db->getCountRowsOfTable("kartu_stock_puskesmas WHERE mode_puskesmas='keluar' AND DATE_FORMAT(date_modified,'%Y')=$tahun AND isdestroyed=0","idkartu_stock_puskesmas");
         }
         return $jumlah;
     }

@@ -34,8 +34,8 @@ class DinamikaLogistikObat extends MainPageSA {
     }
     public function populateData ($search=false) {
         $tahun=$_SESSION['ta'];
-        $tahun_sebelumnya=$_SESSION['ta']-1;
-        $str = "SELECT mo.idobat,mo.nama_obat,mo.idsatuan_obat,mo.kemasan,COALESCE(penerimaan_jumlah_tahun_lalu-pengeluaran_jumlah_tahun_lalu,0) AS penerimaan_jumlah_tahun_lalu,COALESCE(penerimaan_jumlah,0) penerimaan_jumlah,COALESCE(pengeluaran_jumlah,0) pengeluaran_jumlah FROM master_obat mo LEFT JOIN (SELECT idobat,SUM(qty) AS penerimaan_jumlah_tahun_lalu FROM master_sbbm msb,detail_sbbm dsb WHERE msb.idsbbm=dsb.idsbbm AND msb.tahun=$tahun_sebelumnya GROUP BY dsb.idobat) penerimaan_tahun_lalu ON (penerimaan_tahun_lalu.idobat=mo.idobat) LEFT JOIN (SELECT idobat,SUM(pemberian) AS pengeluaran_jumlah_tahun_lalu FROM master_sbbk msk,detail_sbbk dsk WHERE msk.idsbbk=dsk.idsbbk AND msk.tahun=$tahun_sebelumnya GROUP BY idobat) pengeluaran_tahun_lalu ON (pengeluaran_tahun_lalu.idobat=mo.idobat) LEFT JOIN (SELECT idobat,SUM(qty) AS penerimaan_jumlah FROM master_sbbm msb,detail_sbbm dsb WHERE msb.idsbbm=dsb.idsbbm AND msb.tahun=$tahun GROUP BY dsb.idobat) penerimaan ON (penerimaan.idobat=mo.idobat) LEFT JOIN (SELECT idobat,SUM(pemberian) AS pengeluaran_jumlah FROM master_sbbk msk,detail_sbbk dsk WHERE msk.idsbbk=dsk.idsbbk AND msk.tahun=$tahun GROUP BY idobat) pengeluaran ON (pengeluaran.idobat=mo.idobat)";
+        $tahun_sebelumnya=$_SESSION['ta']-1;        
+        $str = "SELECT mo.idobat,mo.nama_obat,mo.idsatuan_obat,mo.kemasan FROM master_obat mo";
          if ($search) {
             $txtsearch=$this->txtKriteria->Text;
             switch ($this->cmbKriteria->Text) {
@@ -64,11 +64,21 @@ class DinamikaLogistikObat extends MainPageSA {
 		}
 		if ($limit < 0) {$offset=0;$limit=30;$_SESSION['currentPageDinamikaLogistikObat']['page_num']=0;}
         $str = "$str ORDER BY mo.nama_obat ASC LIMIT $offset,$limit";        
-        $this->DB->setFieldTable(array('idobat','nama_obat','idsatuan_obat','kemasan','penerimaan_jumlah_tahun_lalu','penerimaan_jumlah','pengeluaran_jumlah'));
+        $this->DB->setFieldTable(array('idobat','nama_obat','idsatuan_obat','kemasan'));
         $r=$this->DB->getRecord($str);
         $data=array();        
         while (list($k,$v)=each($r)) {
-            $v['sisa_stock']=($v['penerimaan_jumlah_tahun_lalu']+$v['penerimaan_jumlah'])-$v['pengeluaran_jumlah'];
+            $idobat=$v['idobat'];
+            $penerimaan=$this->DB->getSumRowsOfTable('qty',"master_sbbm msb,detail_sbbm dsb WHERE msb.idsbbm=dsb.idsbbm AND dsb.idobat=$idobat AND msb.status='complete' AND DATE_FORMAT(msb.tanggal_sbbm,'%Y')<='$tahun_sebelumnya'");            
+            $pengeluaran=$this->DB->getSumRowsOfTable('pemberian',"master_sbbk msk,detail_sbbk dsk WHERE msk.idsbbk=dsk.idsbbk AND dsk.idobat=$idobat AND msk.status='complete' AND DATE_FORMAT(msk.tanggal_sbbk,'%Y')<='$tahun_sebelumnya'");            
+            $stock_awal=($pengeluaran < $penerimaan) ? $penerimaan - $pengeluaran:0;            
+            $v['stock_awal']=$stock_awal;                
+            $penerimaan2=$this->DB->getSumRowsOfTable('qty',"master_sbbm msb,detail_sbbm dsb WHERE msb.idsbbm=dsb.idsbbm AND dsb.idobat=$idobat AND msb.status='complete' AND DATE_FORMAT(msb.tanggal_sbbm,'%Y')='$tahun'");
+            $v['penerimaan']=$penerimaan2;
+            $pengeluaran2=$this->DB->getSumRowsOfTable('pemberian',"master_sbbk msk,detail_sbbk dsk WHERE msk.idsbbk=dsk.idsbbk AND dsk.idobat=$idobat AND msk.status='complete' AND DATE_FORMAT(msk.tanggal_sbbk,'%Y')='$tahun'");
+            $v['pengeluaran']=$pengeluaran2;
+            $stock_akhir=($stock_awal+$penerimaan2)-$pengeluaran2;
+            $v['stock_akhir']=$stock_akhir;
             $data[$k]=$v;
         }
         $this->RepeaterS->DataSource=$data;
