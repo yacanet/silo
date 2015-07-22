@@ -107,7 +107,8 @@
                             <label class="col-lg-2 control-label">Kriteria :</label>
                             <div class="col-lg-2">
                                 <com:TDropDownList ID="cmbKriteria" CssClass="form-control">                                                           
-                                    <com:TListItem Text="Nomor SBBK" Value="kode" />                                    
+                                    <com:TListItem Text="Nomor SBBK" Value="nomor_sbbk" />
+                                    <com:TListItem Text="Nomor LPO" Value="nomor_lpo" />
                                 </com:TDropDownList>
                             </div>
                         </div>

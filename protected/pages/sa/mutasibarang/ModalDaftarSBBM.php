@@ -35,7 +35,7 @@ class ModalDaftarSBBM extends MainPageSA {
         $this->populateData();
 	}
     protected function populateData ($search=false) {                
-        $str = "SELECT tanggal_sbbm,no_sbbm,kode_obat,nama_obat,harga,kemasan,nama_produsen,qty,tanggal_expire,nama_penyalur,barcode FROM master_sbbm ms,detail_sbbm ds WHERE ms.idsbbm=ds.idsbbm AND ms.status='complete' AND tanggal_sbbm <= NOW()";        
+        $str = "SELECT tanggal_sbbm,no_sbbm,no_batch,nama_obat,harga,kemasan,nama_produsen,qty,tanggal_expire,nama_penyalur,barcode FROM master_sbbm ms,detail_sbbm ds WHERE ms.idsbbm=ds.idsbbm AND ms.status='complete' AND tanggal_sbbm <= NOW()";        
         if ($search) {            
             $txtsearch=$this->txtKriteria->Text;
             switch ($this->cmbKriteria->Text) {
@@ -64,7 +64,7 @@ class ModalDaftarSBBM extends MainPageSA {
 		}
 		if ($limit < 0) {$offset=0;$limit=10;$_SESSION['currentPageModalSBBM']['page_num']=0;}
         $str = "$str ORDER BY ms.date_added DESC,no_sbbm ASC LIMIT $offset,$limit";            
-		$this->DB->setFieldTable(array('tanggal_sbbm','no_sbbm','kode_obat','nama_obat','harga','kemasan','nama_produsen','qty','tanggal_expire','nama_penyalur','barcode'));
+		$this->DB->setFieldTable(array('tanggal_sbbm','no_sbbm','no_batch','nama_obat','harga','kemasan','nama_produsen','qty','tanggal_expire','nama_penyalur','barcode'));
 		$r=$this->DB->getRecord($str,$offset+1);      
         
 		$this->RepeaterS->DataSource=$r;

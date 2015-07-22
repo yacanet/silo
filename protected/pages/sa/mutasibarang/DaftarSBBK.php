@@ -182,17 +182,8 @@ class DaftarSBBK extends MainPageSA {
         $str = "SELECT idlpo,idsbbk,no_sbbk,tanggal_sbbk,permintaan_dari,idlpo,no_lpo,tanggal_lpo,keperluan,no_spmb,nip_ka_gudang,nama_ka_gudang,nip_pengemas,nama_pengemas FROM master_sbbk WHERE idsbbk=$id";
         $this->DB->setFieldTable(array('idlpo','idsbbk','no_sbbk','tanggal_sbbk','permintaan_dari','idlpo','no_lpo','tanggal_lpo','keperluan','no_spmb','nip_ka_gudang','nama_ka_gudang','nip_pengemas','nama_pengemas'));
         $datasbbk=$this->DB->getRecord($str);        
-        $_SESSION['currentPageDaftarSBBK']['datasbbk']=$datasbbk[1];        
+        $_SESSION['currentPageDaftarSBBK']['datasbbk']=$datasbbk[1]; 
         
-        $idsbbk=$datasbbk[1]['idsbbk'];
-        $str = "SELECT dsb.idobat,dsb.kode_obat,dsb.nama_obat,mo.harga,dsb.kemasan,mo.stock,dsb.stock_awal,dsb.penerimaan AS total_penerimaan,dsb.persediaan,dsb.pemakaian AS total_pemakaian,dsb.stock_akhir,dsb.permintaan,dsb.pemberian,dsb.islpo FROM detail_sbbk dsb LEFT JOIN master_obat mo ON (dsb.idobat=mo.idobat) WHERE idsbbk='$idsbbk'";        
-        $this->DB->setFieldTable(array('idobat','kode_obat','nama_obat','harga','kemasan','stock','stock_awal','total_penerimaan','persediaan','total_pemakaian','stock_akhir','permintaan','pemberian','islpo'));
-        $r=$this->DB->getRecord($str);               
-        $cart = array();
-        while (list($k,$v)=each($r)) {            
-            $cart[$v['idobat']]=$v;
-        }                        
-        $_SESSION['currentPageDaftarSBBK']['cart']=$cart;                    
         $this->redirect('mutasibarang.DaftarSBBK',true);
     }  
     public function itemCreatedCart($sender,$param) {
@@ -205,8 +196,14 @@ class DaftarSBBK extends MainPageSA {
     }    
     public function detailProcess() {
         $this->datasbbk = $_SESSION['currentPageDaftarSBBK']['datasbbk'];              
-        $this->idProcess='view';                    
-        $this->RepeaterCart->DataSource=$_SESSION['currentPageDaftarSBBK']['cart'];
+        $this->idProcess='view'; 
+        
+        $idsbbk=$this->datasbbk['idsbbk'];
+        $str = "SELECT dsb.idobat,dsb.no_batch,dsb.nama_obat,dsb.harga,dsb.kemasan,dsb.stock_awal,dsb.penerimaan AS total_penerimaan,dsb.persediaan,dsb.pemakaian AS total_pemakaian,dsb.stock_akhir,dsb.permintaan,dsb.pemberian,dsb.islpo,dsb.ischecked FROM detail_sbbk dsb WHERE idsbbk='$idsbbk'";        
+        $this->DB->setFieldTable(array('idobat','no_batch','nama_obat','harga','kemasan','stock_awal','total_penerimaan','persediaan','total_pemakaian','stock_akhir','permintaan','pemberian','islpo','ischecked'));
+        $r=$this->DB->getRecord($str);               
+        
+        $this->RepeaterCart->DataSource=$r;
 		$this->RepeaterCart->dataBind();             
     }
     public function printOut ($sender,$param) {

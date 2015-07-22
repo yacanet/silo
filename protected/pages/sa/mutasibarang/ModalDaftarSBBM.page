@@ -81,7 +81,7 @@
                                     <tr>
                                         <th><span>TANGGAL SBBM</span></th>
                                         <th style="width:120px"><span>NOMOR SBBM</span></th>
-                                        <th style="width:120px"><span>KODE OBAT</span></th>
+                                        <th style="width:120px"><span>NO.BATCH</span></th>
                                         <th style="width:270px"><span>NAMA OBAT</span></th>
                                         <th style="width:100px"><span>KEMASAN</span></th>
                                         <th><span>HARGA</span></th>
@@ -97,7 +97,7 @@
                                 <tr>
                                     <td><%#$this->Page->TGL->tanggal('d/m/Y',$this->DataItem['tanggal_sbbm'])%></td>    
                                     <td><%#$this->DataItem['no_sbbm']%></td>
-                                    <td><%#$this->DataItem['kode_obat']%></td>   
+                                    <td><%#$this->DataItem['no_batch']%></td>   
                                     <td><%#$this->DataItem['nama_obat']%></td>                                                                       
                                     <td><%#$this->DataItem['kemasan']%></td>   
                                     <td><%#$this->Page->Obat->toRupiah($this->DataItem['harga'])%></td>

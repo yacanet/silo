@@ -67,13 +67,19 @@ class SBBMBaru extends MainPageAD {
     }    
     public function detailProcess() {
         $this->idProcess='add';
-        $this->datasbbm = $_SESSION['currentPageSBBMBaru']['datasbbm'];
+        $this->datasbbm = $_SESSION['currentPageSBBMBaru']['datasbbm'];                
         $this->cmbAddTanggalSBBM->Text=$this->TGL->tanggal('d-m-Y',$this->datasbbm['tanggal_diterima']);
         $this->txtAddNIPPenerima->Text=$this->datasbbm['nip_penerima'];
         $this->txtAddNamaPenerima->Text=$this->datasbbm['nama_penerima'];
+        
+        $status_puskesmas=$_SESSION['currentPageSBBMBaru']['datasbbm']['status_puskesmas'];
+        if ($status_puskesmas == 'complete') {
+            $this->btnSave->Enabled=false;
+            $this->btnBatal->Enabled=false;
+        }
     }
     public function renderCallback ($sender,$param) {
-        $this->idProcess=$_SESSION['currentPageSBBMBaru']['datasbbm']['mode']=='buat'?'add':'edit';
+        $this->idProcess='add';
 		$this->RepeaterS->render($param->NewWriter);	
 	}	
 	public function Page_Changed ($sender,$param) {     
@@ -102,7 +108,11 @@ class SBBMBaru extends MainPageAD {
 		if ($item->ItemType === 'Item' || $item->ItemType === 'AlternatingItem') {                        
             SBBMBaru::$totalQTY += $item->DataItem['pemberian'];
             SBBMBaru::$totalHARGA += $item->DataItem['harga'];      
+            $status_puskesmas=$_SESSION['currentPageSBBMBaru']['datasbbm']['status_puskesmas'];
             $item->chkChecked->Checked=$item->DataItem['ischecked'];      
+            if ($status_puskesmas == 'complete') {                
+                $item->chkChecked->Enabled=!$item->DataItem['ischecked'];
+            }            
         }
     }    
     public function batalSBBM ($sender,$param) {
@@ -137,12 +147,7 @@ class SBBMBaru extends MainPageAD {
                     $iddetail_sbbk=$this->RepeaterCart->DataKeys[$item->getItemIndex()];                        
                     if ($inputan->chkChecked->Checked) {                        
                         $str = "INSERT INTO detail_sbbm_puskesmas (idsbbm_puskesmas,iddetail_sbbk_gudang,idprogram_gudang,idsumber_dana_gudang,idobat,idobat_puskesmas,kode_obat,nama_obat,harga,idsatuan_obat,idgolongan,kemasan,no_batch,qty,tanggal_expire,barcode,date_added,date_modified) SELECT $idsbbm_puskesmas,dsb.iddetail_sbbk,msb.idprogram,msb.idsumber_dana,dsb.idobat,dsb.idobat_puskesmas,dsb.kode_obat,dsb.nama_obat,dsb.harga,dsb.idsatuan_obat,dsb.idgolongan,dsb.kemasan,dsb.no_batch,dsb.pemberian,dsb2.tanggal_expire,dsb2.barcode,NOW(),NOW() FROM detail_sbbk dsb, kartu_stock ks,detail_sbbm dsb2,master_sbbm msb WHERE dsb.iddetail_sbbk=ks.iddetail_sbbk AND dsb2.iddetail_sbbm=ks.iddetail_sbbm AND msb.idsbbm=ks.idsbbm AND dsb.iddetail_sbbk=$iddetail_sbbk LIMIT 1";
-                        $this->DB->insertRecord($str);
-                        $str = "UPDATE detail_sbbk SET ischecked=true WHERE iddetail_sbbk=$iddetail_sbbk";
-                        $this->DB->updateRecord($str);
-                    }else {
-                        $str = "UPDATE detail_sbbk SET ischecked=false WHERE iddetail_sbbk=$iddetail_sbbk";
-                        $this->DB->updateRecord($str);
+                        $this->DB->insertRecord($str);                        
                     }
                 }
                 $this->DB->query('COMMIT');
@@ -187,23 +192,23 @@ class SBBMBaru extends MainPageAD {
                         $this->DB->insertRecord($str);
                         $iddetail_sbbm_puskesmas=$this->DB->getLastInsertID ();
                         $str = "UPDATE detail_sbbk SET ischecked=true WHERE iddetail_sbbk=$iddetail_sbbk";
-                        $this->DB->updateRecord($str);
-                        
-                        $str = "INSERT INTO kartu_stock_puskesmas (idobat,idobat_puskesmas,idpuskesmas,idsbbm_puskesmas,iddetail_sbbm_puskesmas,tanggal_puskesmas,bulan_puskesmas,tahun_puskesmas,tanggal_expire_puskesmas,mode_puskesmas,isopname_puskesmas,islocked_puskesmas,date_added,date_modified) "
-                            . "SELECT ks.idobat,dsb.idobat_puskesmas,$idpuskesmas,$idsbbm_puskesmas,$iddetail_sbbm_puskesmas,'$tanggal_sbbm','$bulan',$tahun,tanggal_expire,'masuk',0,1,NOW(),NOW() FROM kartu_stock ks,detail_sbbk dsb WHERE ks.iddetail_sbbk=dsb.iddetail_sbbk AND ks.iddetail_sbbk=$iddetail_sbbk";
-                                                
-                        $this->DB->insertRecord($str);                        
-                        
-                        $str = "INSERT INTO kartu_stock_puskesmas_dinas (idobat,idobat_puskesmas,idpuskesmas,idsbbm_puskesmas,iddetail_sbbm_puskesmas,tanggal_puskesmas,bulan_puskesmas,tahun_puskesmas,tanggal_expire_puskesmas,mode_puskesmas,isopname_puskesmas,islocked_puskesmas,date_added,date_modified) "
-                            . "SELECT ks.idobat,dsb.idobat_puskesmas,$idpuskesmas,$idsbbm_puskesmas,$iddetail_sbbm_puskesmas,'$tanggal_sbbm','$bulan',$tahun,tanggal_expire,'masuk',0,1,NOW(),NOW() FROM kartu_stock ks,detail_sbbk dsb WHERE ks.iddetail_sbbk=dsb.iddetail_sbbk AND ks.iddetail_sbbk=$iddetail_sbbk";
-                                                
-                        $this->DB->insertRecord($str);                        
-                        
-                        $str = "INSERT INTO log_ks_puskesmas (idpuskesmas,idobat,idobat_puskesmas,idsbbm_puskesmas,iddetail_sbbm_puskesmas,tanggal_puskesmas,bulan_puskesmas,tahun_puskesmas,qty_puskesmas,sisa_stock_puskesmas,keterangan_puskesmas,mode_puskesmas,userid_puskesmas,username_puskesmas,nama_user_puskesmas,date_added) SELECT $idpuskesmas,dsp.idobat,dsp.idobat_puskesmas,dsp.idsbbm_puskesmas,dsp.iddetail_sbbm_puskesmas,'$tanggal_sbbm','$bulan',$tahun,dsp.qty,dsp.qty+mop.stock,CONCAT('Barang masuk dari gudang farmasi dengan no.sbbk ($nosbbk) sebanyak ',dsp.qty),'masuk',$userid,'$username','$nama',NOW() FROM detail_sbbm_puskesmas dsp,master_obat_puskesmas mop WHERE mop.idobat_puskesmas=dsp.idobat_puskesmas AND dsp.iddetail_sbbm_puskesmas=$iddetail_sbbm_puskesmas";
-                        $this->DB->insertRecord($str);                        
-                        
-                        $this->DB->updateRecord("UPDATE master_obat_puskesmas mop,(SELECT idobat_puskesmas,qty FROM detail_sbbm_puskesmas WHERE iddetail_sbbm_puskesmas=$iddetail_sbbm_puskesmas) AS temp SET stock=stock+temp.qty,stock_dinas=stock_dinas+temp.qty WHERE mop.idobat_puskesmas=temp.idobat_puskesmas");                                              
-                                                
+                        $this->DB->updateRecord($str);                        
+                        if ($inputan->chkChecked->Enabled) { // bagi yang sudah, tidak akan dijalankan perintah dalam blok ini.
+                            $str = "INSERT INTO kartu_stock_puskesmas (idobat,idobat_puskesmas,idpuskesmas,idsbbm_puskesmas,iddetail_sbbm_puskesmas,tanggal_puskesmas,bulan_puskesmas,tahun_puskesmas,tanggal_expire_puskesmas,mode_puskesmas,isopname_puskesmas,islocked_puskesmas,date_added,date_modified) "
+                                . "SELECT ks.idobat,dsb.idobat_puskesmas,$idpuskesmas,$idsbbm_puskesmas,$iddetail_sbbm_puskesmas,'$tanggal_sbbm','$bulan',$tahun,tanggal_expire,'masuk',0,1,NOW(),NOW() FROM kartu_stock ks,detail_sbbk dsb WHERE ks.iddetail_sbbk=dsb.iddetail_sbbk AND ks.iddetail_sbbk=$iddetail_sbbk";
+
+                            $this->DB->insertRecord($str);                        
+
+                            $str = "INSERT INTO kartu_stock_puskesmas_dinas (idobat,idobat_puskesmas,idpuskesmas,idsbbm_puskesmas,iddetail_sbbm_puskesmas,tanggal_puskesmas,bulan_puskesmas,tahun_puskesmas,tanggal_expire_puskesmas,mode_puskesmas,isopname_puskesmas,islocked_puskesmas,date_added,date_modified) "
+                                . "SELECT ks.idobat,dsb.idobat_puskesmas,$idpuskesmas,$idsbbm_puskesmas,$iddetail_sbbm_puskesmas,'$tanggal_sbbm','$bulan',$tahun,tanggal_expire,'masuk',0,1,NOW(),NOW() FROM kartu_stock ks,detail_sbbk dsb WHERE ks.iddetail_sbbk=dsb.iddetail_sbbk AND ks.iddetail_sbbk=$iddetail_sbbk";
+
+                            $this->DB->insertRecord($str);                        
+
+                            $str = "INSERT INTO log_ks_puskesmas (idpuskesmas,idobat,idobat_puskesmas,idsbbm_puskesmas,iddetail_sbbm_puskesmas,tanggal_puskesmas,bulan_puskesmas,tahun_puskesmas,qty_puskesmas,sisa_stock_puskesmas,keterangan_puskesmas,mode_puskesmas,userid_puskesmas,username_puskesmas,nama_user_puskesmas,date_added) SELECT $idpuskesmas,dsp.idobat,dsp.idobat_puskesmas,dsp.idsbbm_puskesmas,dsp.iddetail_sbbm_puskesmas,'$tanggal_sbbm','$bulan',$tahun,dsp.qty,dsp.qty+mop.stock,CONCAT('Barang masuk dari gudang farmasi dengan no.sbbk ($nosbbk) sebanyak ',dsp.qty),'masuk',$userid,'$username','$nama',NOW() FROM detail_sbbm_puskesmas dsp,master_obat_puskesmas mop WHERE mop.idobat_puskesmas=dsp.idobat_puskesmas AND dsp.iddetail_sbbm_puskesmas=$iddetail_sbbm_puskesmas";
+                            $this->DB->insertRecord($str);                        
+
+                            $this->DB->updateRecord("UPDATE master_obat_puskesmas mop,(SELECT idobat_puskesmas,qty FROM detail_sbbm_puskesmas WHERE iddetail_sbbm_puskesmas=$iddetail_sbbm_puskesmas) AS temp SET stock=stock+temp.qty,stock_dinas=stock_dinas+temp.qty WHERE mop.idobat_puskesmas=temp.idobat_puskesmas");                                              
+                        }                                               
                     }
                 }
                 $this->DB->query('COMMIT');

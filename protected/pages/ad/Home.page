@@ -96,7 +96,7 @@ a:hover {
                                         <th colspan="3"><span>JUMLAH KUNJUNGAN</span></th> 
                                         <th rowspan="2">TOTAL PERMINTAAN</th>	
                                         <th rowspan="2"><span>KEPALA PUSKESMAS</span></th>                                        
-                                        <th rowspan="2"><span>RESPONSE</span></th>
+                                        <th rowspan="2"><span>RESPONSE <br/>INSTALASI FARMASI</span></th>
                                         <th width="70" rowspan="2"></th>							
                                     </tr>							
                                     <tr>

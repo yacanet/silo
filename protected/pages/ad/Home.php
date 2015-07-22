@@ -27,7 +27,7 @@ class Home extends MainPageAD {
         $ta=$_SESSION['ta'];
         $idpuskesmas=$this->idpuskesmas;        
         
-        $str = "SELECT ml.idlpo,ml.no_lpo,msk.no_sbbk,msk.tanggal_sbbk,ml.tanggal_lpo,ml.nama_ka,ml.jumlah_kunjungan_gratis,ml.jumlah_kunjungan_bayar,ml.jumlah_kunjungan_bpjs,ml.status,ml.response_lpo,ml.date_modified FROM master_lpo ml LEFT JOIN master_sbbk msk ON(ml.idlpo=msk.idlpo) WHERE ml.status='complete' AND ml.idpuskesmas='$idpuskesmas' AND ml.tahun=$ta AND ml.response_lpo=3 OR ml.response_lpo!=5 ORDER BY ml.date_modified DESC,ml.no_lpo ASC LIMIT 10";                                
+        $str = "SELECT ml.idlpo,ml.no_lpo,msk.no_sbbk,msk.tanggal_sbbk,ml.tanggal_lpo,ml.nama_ka,ml.jumlah_kunjungan_gratis,ml.jumlah_kunjungan_bayar,ml.jumlah_kunjungan_bpjs,ml.status,ml.response_lpo,ml.date_modified FROM master_lpo ml LEFT JOIN master_sbbk msk ON(ml.idlpo=msk.idlpo) WHERE ml.status='complete' AND ml.idpuskesmas='$idpuskesmas' AND ml.tahun=$ta AND (ml.response_lpo=3 OR ml.response_lpo!=5) ORDER BY ml.date_modified DESC,ml.no_lpo ASC LIMIT 10";                                
 		$this->DB->setFieldTable(array('idlpo','no_lpo','tanggal_lpo','no_sbbk','tanggal_sbbk','nama_ka','jumlah_kunjungan_gratis','jumlah_kunjungan_bayar','jumlah_kunjungan_bpjs','status','response_lpo','date_modified'));
 		$r=$this->DB->getRecord($str,$offset+1);          
         $data=array();        

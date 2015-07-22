@@ -42,10 +42,7 @@ class DaftarSBBM extends MainPageAD {
         $item=$param->Item;
 		if ($item->ItemType === 'Item' || $item->ItemType === 'AlternatingItem') {   
             $status=$item->DataItem['status_puskesmas'];
-            if ($status=='complete') {
-                $item->btnEdit->Enabled=false;                
-                $item->btnEdit->CssClass='table-link disabled';
-                
+            if ($status=='complete') {                
                 $item->btnDelete->Enabled=false;                
                 $item->btnDelete->CssClass='table-link disabled';
             }else {
@@ -63,8 +60,13 @@ class DaftarSBBM extends MainPageAD {
         if ($search) {            
             $txtsearch=$this->txtKriteria->Text;
             switch ($this->cmbKriteria->Text) {
-                case 'kode' :
+                case 'nomor_sbbk' :
                     $cluasa=" AND msp.no_sbbk_gudang='$txtsearch'";
+                    $jumlah_baris=$this->DB->getCountRowsOfTable ("master_sbbm_puskesmas msp,master_sbbk msb WHERE msp.idsbbk_gudang=msb.idsbbk AND msp.tahun_puskesmas=$ta AND msp.idpuskesmas=$idpuskesmas $cluasa",'msp.idsbbm_puskesmas');
+                    $str = "$str $cluasa";
+                break;                
+                case 'nomor_lpo' :
+                    $cluasa=" AND msb.no_lpo='$txtsearch'";
                     $jumlah_baris=$this->DB->getCountRowsOfTable ("master_sbbm_puskesmas msp,master_sbbk msb WHERE msp.idsbbk_gudang=msb.idsbbk AND msp.tahun_puskesmas=$ta AND msp.idpuskesmas=$idpuskesmas $cluasa",'msp.idsbbm_puskesmas');
                     $str = "$str $cluasa";
                 break;                
@@ -106,13 +108,13 @@ class DaftarSBBM extends MainPageAD {
     public function editRecord ($sender,$param) {
         $this->idProcess='edit';        
         $id=$this->getDataKeyField($sender,$this->RepeaterS);        		        
-        $str = "SELECT msp.idsbbm_puskesmas,msb.idsbbk,msb.no_sbbk,msb.tanggal_sbbk,msb.idpuskesmas,msb.permintaan_dari,msb.idlpo,msb.no_lpo,msb.tanggal_lpo,msb.keperluan,nip_penerima,nama_penerima,tanggal_diterima,msb.no_spmb,msb.nip_ka_gudang,msb.nama_ka_gudang,msb.nip_pengemas,msb.nama_pengemas,msb.response_sbbk,msb.tahun FROM master_sbbm_puskesmas msp,master_sbbk msb,master_lpo mlp WHERE msp.idsbbk_gudang=msb.idsbbk AND mlp.idlpo=msb.idlpo AND msp.idsbbm_puskesmas=$id";
-        $this->DB->setFieldTable(array('idsbbm_puskesmas','idsbbk','no_sbbk','tanggal_sbbk','idpuskesmas','permintaan_dari','idlpo','no_lpo','tanggal_lpo','keperluan','no_spmb','nip_penerima','nama_penerima','tanggal_diterima','nip_ka_gudang','nama_ka_gudang','nip_pengemas','nama_pengemas','response_sbbk','tahun'));
+        $str = "SELECT msp.idsbbm_puskesmas,msb.idsbbk,msb.no_sbbk,msb.tanggal_sbbk,msb.idpuskesmas,msb.permintaan_dari,msb.idlpo,msb.no_lpo,msb.tanggal_lpo,msb.keperluan,nip_penerima,nama_penerima,tanggal_diterima,msb.no_spmb,msb.nip_ka_gudang,msb.nama_ka_gudang,msb.nip_pengemas,msb.nama_pengemas,msb.response_sbbk,msb.tahun,msp.status_puskesmas FROM master_sbbm_puskesmas msp,master_sbbk msb,master_lpo mlp WHERE msp.idsbbk_gudang=msb.idsbbk AND mlp.idlpo=msb.idlpo AND msp.idsbbm_puskesmas=$id";
+        $this->DB->setFieldTable(array('idsbbm_puskesmas','idsbbk','no_sbbk','tanggal_sbbk','idpuskesmas','permintaan_dari','idlpo','no_lpo','tanggal_lpo','keperluan','no_spmb','nip_penerima','nama_penerima','tanggal_diterima','nip_ka_gudang','nama_ka_gudang','nip_pengemas','nama_pengemas','response_sbbk','tahun','status_puskesmas'));
         $datasbbm=$this->DB->getRecord($str);                                
         
         $_SESSION['currentPageSBBMBaru']['datasbbm']=$datasbbm[1];
         $_SESSION['currentPageSBBMBaru']['datasbbm']['issaved']=true;
-        $_SESSION['currentPageSBBMBaru']['datasbbm']['mode']='buat';               
+        $_SESSION['currentPageSBBMBaru']['datasbbm']['mode']=$datasbbm[1]['status_puskesmas']==1?'buat':'ubah';               
               
         $this->redirect('mutasibarang.SBBMBaru',true);
         
@@ -145,7 +147,7 @@ class DaftarSBBM extends MainPageAD {
         }
     }  
     public function detailProcess() {
-        $this->datasbbm = $_SESSION['currentPageDaftarSBBM']['datasbbm'];              
+        $this->datasbbm = $_SESSION['currentPageDaftarSBBM']['datasbbm'];                      
         $this->idProcess='view';          
         
         $idsbbm_puskesmas=$this->datasbbm['idsbbm_puskesmas'];
