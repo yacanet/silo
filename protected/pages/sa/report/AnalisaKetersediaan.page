@@ -117,7 +117,7 @@
         <div class="col-lg-12">
             <div class="main-box clearfix">
                 <header class="main-box-header clearfix">
-                    <h2 class="pull-left"><i class="fa fa-cubes"></i> Laporan Ketersediaan Obat Tahun <com:TActiveLabel ID="lblBulanTahun" /></h2>                     
+                    <h2 class="pull-left"><i class="fa fa-cubes"></i> Laporan Ketersediaan Obat <com:TActiveLabel ID="lblBulanTahun" /></h2>                     
                     <div class="filter-block pull-right">                                                
                         <com:TActiveLinkButton ID="btnPrintOutMutasiTahunan" CssClass="btn btn-primary pull-left" OnClick="printOut" ClientSide.PostState="false" Attributes.Title="Print Out Laporan Mutasi Obat Tahunan">
                             <prop:Text><i class="fa fa-print fa-lg"></i></prop:Text>

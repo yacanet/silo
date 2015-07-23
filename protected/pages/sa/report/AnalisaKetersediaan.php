@@ -81,7 +81,7 @@ class AnalisaKetersediaan extends MainPageSA {
             $str = "SELECT sisa_stock_puskesmas FROM log_ks_puskesmas ksp,(SELECT MAX(idlog_puskesmas) AS idlog_puskesmas FROM log_ks_puskesmas WHERE tahun_puskesmas=$tahun_lalu AND idobat=$idobat) AS ksp2 WHERE ksp.idlog_puskesmas=ksp2.idlog_puskesmas";                                    
             $this->DB->setFieldTable(array('sisa_stock_puskesmas'));
             $r1=$this->DB->getRecord($str);                    
-            $sisa_stock_pm=isset($r1[1]) ? $r1[1]['sisa_stock'] : 0;            
+            $sisa_stock_pm=isset($r1[1]) ? $r1[1]['sisa_stock_puskesmas'] : 0;            
             
             $v['sisa_stock_tahun_lalu']=$sisa_stock_gf+$sisa_stock_pm;
             
