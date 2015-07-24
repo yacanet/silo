@@ -110,7 +110,7 @@
                                 <td><%#$this->DataItem['stock_akhir']%></td>
                                 <td><%#$this->DataItem['permintaan']%></td>
                                 <td><%#$this->DataItem['pemberian']%></td>
-                                <td><%#$this->DataItem['ischecked']==1?'<span class="label label-success">Checked</span>':'<span class="label label-warning">Unchecked</span>'%></td>
+                                <td><%#($this->DataItem['ischecked']==1 && $_SESSION['currentPageDaftarSBBK']['datasbbk']['response_sbbk']==5) ?'<span class="label label-success">Checked</span>':'<span class="label label-warning">Unchecked</span>'%></td>
                             </tr>
                         </prop:ItemTemplate>				                
                         <prop:FooterTemplate>               

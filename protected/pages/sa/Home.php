@@ -38,6 +38,10 @@ class Home extends MainPageSA {
         unset($_SESSION['currentPageHome']);
         $this->redirect('sa.Home');
     }
+    public function clickExpiredObat  ($sender,$param) {
+        $_SESSION['currentPageExpireObat']=array('page_name'=>'sa.report.ExpireObat','page_num'=>0,'idprogram'=>'none','waktuexpires'=>1,'modeexpires'=>'telahexpire');
+        $this->redirect('report.ExpireObat',true);
+    }
     public function clickDetailObatExpire  ($sender,$param) {
         $_SESSION['currentPageExpireObat']=array('page_name'=>'sa.report.ExpireObat','page_num'=>0,'idprogram'=>'none','waktuexpires'=>5,'modeexpires'=>'bulan');												        
         $this->redirect('report.ExpireObat',true);

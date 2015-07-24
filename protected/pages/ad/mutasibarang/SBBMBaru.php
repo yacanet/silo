@@ -145,9 +145,12 @@ class SBBMBaru extends MainPageAD {
                 foreach ($this->RepeaterCart->Items as $inputan) {
                     $item=$inputan->chkChecked->getNamingContainer();
                     $iddetail_sbbk=$this->RepeaterCart->DataKeys[$item->getItemIndex()];                        
-                    if ($inputan->chkChecked->Checked) {                        
+                    if ($inputan->chkChecked->Checked) {                           
                         $str = "INSERT INTO detail_sbbm_puskesmas (idsbbm_puskesmas,iddetail_sbbk_gudang,idprogram_gudang,idsumber_dana_gudang,idobat,idobat_puskesmas,kode_obat,nama_obat,harga,idsatuan_obat,idgolongan,kemasan,no_batch,qty,tanggal_expire,barcode,date_added,date_modified) SELECT $idsbbm_puskesmas,dsb.iddetail_sbbk,msb.idprogram,msb.idsumber_dana,dsb.idobat,dsb.idobat_puskesmas,dsb.kode_obat,dsb.nama_obat,dsb.harga,dsb.idsatuan_obat,dsb.idgolongan,dsb.kemasan,dsb.no_batch,dsb.pemberian,dsb2.tanggal_expire,dsb2.barcode,NOW(),NOW() FROM detail_sbbk dsb, kartu_stock ks,detail_sbbm dsb2,master_sbbm msb WHERE dsb.iddetail_sbbk=ks.iddetail_sbbk AND dsb2.iddetail_sbbm=ks.iddetail_sbbm AND msb.idsbbm=ks.idsbbm AND dsb.iddetail_sbbk=$iddetail_sbbk LIMIT 1";
-                        $this->DB->insertRecord($str);                        
+                        $this->DB->insertRecord($str);     
+                        
+                        $str = "UPDATE detail_sbbk SET ischecked=true WHERE iddetail_sbbk=$iddetail_sbbk";
+                        $this->DB->updateRecord($str);                                                
                     }
                 }
                 $this->DB->query('COMMIT');

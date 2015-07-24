@@ -644,7 +644,7 @@ class Logic_Report extends Logic_Obat {
                 $sheet->mergeCells("A$row:C$row");
                 $sheet->setCellValue("A$row",'Kepala Dinas Kesehatan');                
                 $sheet->mergeCells("E$row:G$row");
-                $sheet->setCellValue("E$row",'Kepala UPTD Instalasi Farmasi');                
+                $sheet->setCellValue("E$row",'Kepala UPT Instalasi Farmasi');                
                 $sheet->mergeCells("I$row:K$row");
                 $sheet->setCellValue("I$row",'Kepala Puskesmas');                
                 $sheet->mergeCells("M$row:O$row");
@@ -669,13 +669,13 @@ class Logic_Report extends Logic_Obat {
                 $sheet->setCellValue("M$row",$this->dataReport['nama_pengelola']);                
                 $row+=1;
                 $sheet->mergeCells("A$row:C$row");                
-                $sheet->setCellValueExplicit("A$row",$this->setup->nipFormat($this->dataReport['nip_kadis']),PHPExcel_Cell_DataType::TYPE_STRING);
+                $sheet->setCellValueExplicit("A$row",'NIP: '.$this->setup->nipFormat($this->dataReport['nip_kadis']),PHPExcel_Cell_DataType::TYPE_STRING);
                 $sheet->mergeCells("E$row:G$row");                
-                $sheet->setCellValueExplicit("E$row",$this->setup->nipFormat($this->dataReport['nip_ka_gudang']),PHPExcel_Cell_DataType::TYPE_STRING);
+                $sheet->setCellValueExplicit("E$row",'NIP: '.$this->setup->nipFormat($this->dataReport['nip_ka_gudang']),PHPExcel_Cell_DataType::TYPE_STRING);
                 $sheet->mergeCells("I$row:K$row");                            
-                $sheet->setCellValueExplicit("I$row",$this->setup->nipFormat($this->dataReport['nip_ka']),PHPExcel_Cell_DataType::TYPE_STRING);
+                $sheet->setCellValueExplicit("I$row",'NIP: '.$this->setup->nipFormat($this->dataReport['nip_ka']),PHPExcel_Cell_DataType::TYPE_STRING);
                 $sheet->mergeCells("M$row:O$row");                          
-                $sheet->setCellValueExplicit("M$row",$this->setup->nipFormat($this->dataReport['nip_pengelola']),PHPExcel_Cell_DataType::TYPE_STRING);
+                $sheet->setCellValueExplicit("M$row",'NIP: '.$this->setup->nipFormat($this->dataReport['nip_pengelola']),PHPExcel_Cell_DataType::TYPE_STRING);
                 
                 $styleArray=array(								
                                     'alignment' => array('horizontal'=>PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
@@ -832,7 +832,7 @@ class Logic_Report extends Logic_Obat {
                 $sheet->mergeCells("D$row:F$row");
                 $sheet->setCellValue("D$row",'Dikemas Oleh');                
                 $sheet->mergeCells("G$row:I$row");
-                $sheet->setCellValue("G$row",'Kepala UPTD Instalasi Farmasi');                                
+                $sheet->setCellValue("G$row",'Kepala UPT Instalasi Farmasi');                                
                 $row+=1;                
                 $sheet->mergeCells("G$row:I$row");
                 $sheet->setCellValue("G$row",'KABUPATEN BINTAN');                                
@@ -1327,13 +1327,13 @@ class Logic_Report extends Logic_Obat {
                 $sheet->setCellValue("X$row",'Tanjungpinang, '.$this->tgl->tanggal('d F Y'));                
                 $row+=1;
                 $sheet->mergeCells("X$row:AD$row");
-                $sheet->setCellValue("X$row",'Kepala UPTD Instalasi Gudang Farmasi');                                                                                 
+                $sheet->setCellValue("X$row",'Kepala UPT Instalasi Gudang Farmasi');                                                                                 
                 $row+=4;
                 $sheet->mergeCells("X$row:AD$row");
                 $sheet->setCellValue("X$row",$this->dataReport['nama_ka_gudang']);                
                 $row+=1;
                 $sheet->mergeCells("X$row:AD$row");
-                $sheet->setCellValue("X$row",$this->dataReport['nip_ka_gudang']);                
+                $sheet->setCellValue("X$row",'NIP: '.$this->setup->nipFormat($this->dataReport['nip_ka_gudang']));                
 
                 $styleArray=array(								
                                     'font' => array('bold' => true),
@@ -1815,7 +1815,7 @@ class Logic_Report extends Logic_Obat {
                 $sheet->setCellValue("X$row",$this->dataReport['nama_ka_puskesmas']);                
                 $row+=1;
                 $sheet->mergeCells("X$row:AD$row");
-                $sheet->setCellValue("X$row",$this->dataReport['nip_ka_puskesmas']);                
+                $sheet->setCellValue("X$row",'NIP: '.$this->setup->nipFormat($this->dataReport['nip_ka_puskesmas']));                
 
                 $styleArray=array(								
                                     'font' => array('bold' => true),
@@ -2280,13 +2280,13 @@ class Logic_Report extends Logic_Obat {
                 $sheet->setCellValue("X$row",'Tanjungpinang, '.$this->tgl->tanggal('d F Y'));                
                 $row+=1;
                 $sheet->mergeCells("X$row:AD$row");
-                $sheet->setCellValue("X$row",'Kepala UPTD Instalasi Farmasi');                                                                                 
+                $sheet->setCellValue("X$row",'Kepala UPT Instalasi Farmasi');                                                                                 
                 $row+=4;
                 $sheet->mergeCells("X$row:AD$row");
                 $sheet->setCellValue("X$row",$this->dataReport['nama_ka_gudang']);                
                 $row+=1;
                 $sheet->mergeCells("X$row:AD$row");
-                $sheet->setCellValue("X$row",$this->dataReport['nip_ka_gudang']);                
+                $sheet->setCellValue("X$row",'NIP: '.$this->setup->nipFormat($this->dataReport['nip_ka_gudang']));                
 
                 $styleArray=array(								
                                     'font' => array('bold' => true),
@@ -2761,13 +2761,13 @@ class Logic_Report extends Logic_Obat {
                 $sheet->setCellValue("X$row",'Tanjungpinang, '.$this->tgl->tanggal('d F Y'));                
                 $row+=1;
                 $sheet->mergeCells("X$row:AD$row");
-                $sheet->setCellValue("X$row",'Kepala UPTD Instalasi Gudang Farmasi');                                                                                 
+                $sheet->setCellValue("X$row",'Kepala UPT Instalasi Gudang Farmasi');                                                                                 
                 $row+=4;
                 $sheet->mergeCells("X$row:AD$row");
                 $sheet->setCellValue("X$row",$this->dataReport['nama_ka_gudang']);                
                 $row+=1;
                 $sheet->mergeCells("X$row:AD$row");
-                $sheet->setCellValue("X$row",$this->dataReport['nip_ka_gudang']);                
+                $sheet->setCellValue("X$row",'NIP: '.$this->setup->nipFormat($this->dataReport['nip_ka_gudang']));                
 
                 $styleArray=array(								
                                     'font' => array('bold' => true),
@@ -3169,7 +3169,7 @@ class Logic_Report extends Logic_Obat {
                 $row+=2;
                 $row_awal=$row;
                 $sheet->mergeCells("E$row:G$row");
-                $sheet->setCellValue("E$row",'Kepala UPTD Instalasi Farmasi');                                                                                 
+                $sheet->setCellValue("E$row",'Kepala UPT Instalasi Farmasi');                                                                                 
                 $row+=1;
                 $sheet->mergeCells("E$row:G$row");
                 $sheet->setCellValue("E$row",'Kepala Kabupaten Bintan');                                                                                 
@@ -3178,7 +3178,7 @@ class Logic_Report extends Logic_Obat {
                 $sheet->setCellValue("E$row",$this->dataReport['nama_ka_gudang']);                
                 $row+=1;
                 $sheet->mergeCells("E$row:G$row");
-                $sheet->setCellValue("E$row",$this->dataReport['nip_ka_gudang']);
+                $sheet->setCellValue("E$row",'NIP: '.$this->setup->nipFormat($this->dataReport['nip_ka_gudang']));
                 
                 $styleArray=array(								
                                     'font' => array('bold' => true),
@@ -3201,6 +3201,10 @@ class Logic_Report extends Logic_Obat {
         $waktuexpires=$this->dataReport['waktuexpires'];
         $modeexpires=$this->dataReport['modeexpires'];        
         switch($modeexpires) {
+            case 'telahexpire' :                                
+                $str_mode_expires = " AND tanggal_expire<=DATE(NOW())";
+                $keterangan='-';
+            break;
             case 'harikedepan' :                
                 $str_mode_expires = " AND tanggal_expire>=DATE(NOW()) AND tanggal_expire <= DATE_ADD(DATE(NOW()),INTERVAL $waktuexpires DAY)";
                 $keterangan="$waktuexpires Hari Ke Depan";
@@ -3226,8 +3230,8 @@ class Logic_Report extends Logic_Obat {
                 $keterangan="$waktuexpires Bulan Ke Belakang";
             break;   
         }
-        $str = "SELECT iddetail_sbbm,nama_obat,harga,idsatuan_obat,kemasan,tanggal_expire,dsb.idprogram FROM master_sbbm msb,detail_sbbm dsb WHERE dsb.idsbbm=msb.idsbbm AND status='complete'$str_mode_expires GROUP BY idobat,harga,tanggal_expire ORDER BY tanggal_expire ASC,nama_obat ASC";        
-        $this->db->setFieldTable(array('iddetail_sbbm','nama_obat','harga','idsatuan_obat','kemasan','tanggal_expire','idprogram'));
+        $str = "SELECT dsb.iddetail_sbbm,dsb.no_batch,dsb.nama_obat,dsb.harga,dsb.kemasan,dsb.tanggal_expire,msb.sumber_dana FROM master_sbbm msb,detail_sbbm dsb WHERE dsb.idsbbm=msb.idsbbm AND status='complete'$str_mode_expires GROUP BY idobat,harga,tanggal_expire ORDER BY tanggal_expire ASC,nama_obat ASC";        
+        $this->db->setFieldTable(array('iddetail_sbbm','no_batch','nama_obat','harga','kemasan','tanggal_expire','sumber_dana'));
         $str = $idprogram == 'none' ?$str:" $str AND dsb.idprogram=$idprogram";            
         switch ($this->getDriver()) {
             case 'excel2003' :               
@@ -3239,7 +3243,7 @@ class Logic_Report extends Logic_Obat {
                 $this->rpt->getDefaultStyle()->getFont()->setSize('9');                                                                                    
                 
                 $sheet->mergeCells("A$row:J$row");                
-                $sheet->setCellValue("A$row","LAPORAN KADALUWARSA OBAT$nama_program");                
+                $sheet->setCellValue("A$row","LAPORAN KADALUARSA OBAT$nama_program (EXPIRE)");                
                 $sheet->getRowDimension($row)->setRowHeight(20);                                
                 
                 $styleArray=array(
@@ -3268,13 +3272,13 @@ class Logic_Report extends Logic_Obat {
                 $sheet->setCellValue("A$row",'NO');                                                                
                 $sheet->mergeCells("B$row:C$row");
                 $sheet->setCellValue("B$row",'NAMA OBAT');                                                                
-                $sheet->setCellValue("D$row",'HARGA');    
-                $sheet->setCellValue("E$row",'SATUAN');    
-                $sheet->setCellValue("F$row",'KEMASAN');    
-                $sheet->setCellValue("G$row",'PROGRAM');    
+                $sheet->setCellValue("D$row",'KEMASAN');    
+                $sheet->setCellValue("E$row",'HARGA');    
+                $sheet->setCellValue("F$row",'NO.BATCH');    
+                $sheet->setCellValue("G$row",'SUMBER');    
                 $sheet->setCellValue("H$row",'TANGGAL KADALUWARSA');    
-                $sheet->setCellValue("I$row",'VOLUME');    
-                $sheet->setCellValue("J$row",'SUB TOTAL');                  
+                $sheet->setCellValue("I$row",'JUMLAH');    
+                $sheet->setCellValue("J$row",'TOTAL');                  
                 $styleArray=array(
 								'font' => array('bold' => true),
 								'alignment' => array('horizontal'=>PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
@@ -3286,27 +3290,30 @@ class Logic_Report extends Logic_Obat {
                 $sheet->getStyle("A$row:J$row")->getAlignment()->setWrapText(true);
                 
                 $r=$this->db->getRecord($str);                
-                $row_awal=$row;
                 $row+=1;                
+                $row_awal=$row;                
                 while (list($k,$v)=each($r)) {
                     $sheet->setCellValue("A$row",$v['no']);                                                                
                     $sheet->mergeCells("B$row:C$row");
-                    $sheet->setCellValue("B$row",$v['nama_obat']);                                                                
+                    $sheet->setCellValue("B$row",$v['nama_obat']);                                                                                    
+                    $sheet->setCellValue("D$row",$v['kemasan']);    
                     $harga=$v['harga'];                                                                                             
-                    $sheet->setCellValueExplicit("D$row",$this->toRupiah($harga),PHPExcel_Cell_DataType::TYPE_STRING);                        
-                    $sheet->setCellValue("E$row",'SATUAN');    
-                    $sheet->setCellValue("F$row",'KEMASAN');                        
-                    $sheet->setCellValue("G$row",$this->DMaster->getNamaProgramByID($v['idprogram']));    
+                    $sheet->setCellValueExplicit("E$row",$this->toRupiah($harga),PHPExcel_Cell_DataType::TYPE_STRING);                        
+                    $sheet->setCellValue("F$row",$v['no_batch']);                        
+                    $sheet->setCellValue("G$row",$v['sumber_dana']);    
                     $sheet->setCellValue("H$row",$this->tgl->tanggal('d/m/Y',$v['tanggal_expire']));    
                     $iddetail_sbbm=$v['iddetail_sbbm'];
                     $volume=$this->db->getCountRowsOfTable ("kartu_stock WHERE iddetail_sbbm=$iddetail_sbbm AND mode='masuk' AND isdestroyed=0",'iddetail_sbbm');		
                     $sheet->setCellValue("I$row",$volume);    
                     $subtotal=$volume*$harga;
+                    $total+=$subtotal;
                     $sheet->setCellValueExplicit("J$row",$this->toRupiah($subtotal),PHPExcel_Cell_DataType::TYPE_STRING);                        
                     $sheet->getRowDimension($row)->setRowHeight(21);
                     $row+=1;
                 }
-                $row-=1;
+                $sheet->mergeCells("A$row:I$row");
+                $sheet->setCellValueExplicit("J$row",$this->toRupiah($total),PHPExcel_Cell_DataType::TYPE_STRING);                        
+                $sheet->getRowDimension($row)->setRowHeight(21);
                 $styleArray=array(								
                                     'alignment' => array('horizontal'=>PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
                                                        'vertical'=>PHPExcel_Style_Alignment::HORIZONTAL_CENTER),
@@ -3322,8 +3329,29 @@ class Logic_Report extends Logic_Obat {
                 $styleArray=array(								
                                     'alignment' => array('horizontal'=>PHPExcel_Style_Alignment::HORIZONTAL_RIGHT)
                                 );																					 
-                $sheet->getStyle("D$row_awal:D$row")->applyFromArray($styleArray);                
+                $sheet->getStyle("E$row_awal:E$row")->applyFromArray($styleArray);                
                 $sheet->getStyle("J$row_awal:J$row")->applyFromArray($styleArray);                
+                
+                $row+=2;
+                $row_awal=$row;
+                $sheet->mergeCells("H$row:J$row");
+                $sheet->setCellValue("H$row",'Tanjungpinang, '.$this->tgl->tanggal('d F Y'));                
+                $row+=1;
+                $sheet->mergeCells("H$row:J$row");
+                $sheet->setCellValue("H$row",'Kepala UPT Instalasi Gudang Farmasi');                                                                                 
+                $row+=4;
+                $sheet->mergeCells("H$row:J$row");
+                $sheet->setCellValue("H$row",$this->dataReport['nama_ka_gudang']);                
+                $row+=1;
+                $sheet->mergeCells("H$row:J$row");
+                $sheet->setCellValue("H$row",'NIP: '.$this->setup->nipFormat($this->dataReport['nip_ka_gudang']));                
+
+                $styleArray=array(								
+                                    'font' => array('bold' => true),
+                                    'alignment' => array('horizontal'=>PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+                                                       'vertical'=>PHPExcel_Style_Alignment::HORIZONTAL_CENTER));																					 
+                $sheet->getStyle("H$row_awal:J$row")->applyFromArray($styleArray);
+                $sheet->getStyle("H$row_awal:J$row")->getAlignment()->setWrapText(true);
                 $this->printOut('laporanexpireobat');
             break;
         }

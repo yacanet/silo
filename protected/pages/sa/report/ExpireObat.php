@@ -9,7 +9,7 @@ class ExpireObat extends MainPageSA {
         $this->createObj('Obat');        
 		if (!$this->IsPostBack&&!$this->IsCallBack) {                                   
             if (!isset($_SESSION['currentPageExpireObat'])||$_SESSION['currentPageExpireObat']['page_name']!='sa.report.ExpireObat') {
-                $_SESSION['currentPageExpireObat']=array('page_name'=>'sa.report.ExpireObat','page_num'=>0,'idprogram'=>'none','waktuexpires'=>1,'modeexpires'=>'bulankedepan');												
+                $_SESSION['currentPageExpireObat']=array('page_name'=>'sa.report.ExpireObat','page_num'=>0,'idprogram'=>'none','waktuexpires'=>1,'modeexpires'=>'telahexpire');												
             }   
             $listprogram=$this->DMaster->getListProgram ();
             $listprogram['none']='Keseluruhan Program';
@@ -25,27 +25,37 @@ class ExpireObat extends MainPageSA {
 		}	        
 	}   
     private function setLabelJangkaWaktu () {        
+        $jangkawaktu=$_SESSION['currentPageExpireObat']['waktuexpires'];        
         switch ($_SESSION['currentPageExpireObat']['modeexpires']) {            
+            case 'telahexpire' :                                
+                $this->lblJangkaWaktu->Text='';
+            break;
             case 'harikedepan' :                
                 $waktu = ' Hari ke Depan';
+                $this->lblJangkaWaktu->Text="Jangka Waktu $jangkawaktu $waktu";
             break;
             case 'minggukedepan' :                
                 $waktu = ' Minggu ke Depan';
+                $this->lblJangkaWaktu->Text="Jangka Waktu $jangkawaktu $waktu";
             break;
             case 'bulankedepan' :                
                 $waktu = ' Bulan ke Depan';
+                $this->lblJangkaWaktu->Text="Jangka Waktu $jangkawaktu $waktu";
             break;                    
             case 'harikebelakang' :                
                 $waktu = ' Hari ke Belakang';
+                $this->lblJangkaWaktu->Text="Jangka Waktu $jangkawaktu $waktu";
             break;
             case 'minggukebelakang' :                
                 $waktu = ' Minggu ke Belakang';
+                $this->lblJangkaWaktu->Text="Jangka Waktu $jangkawaktu $waktu";
             break;
             case 'bulankebelakang' :                
                 $waktu = ' Bulan ke Belakang';
+                $this->lblJangkaWaktu->Text="Jangka Waktu $jangkawaktu $waktu";
             break;   
         }
-        $this->lblJangkaWaktu->Text=$_SESSION['currentPageExpireObat']['waktuexpires'] ." $waktu";
+        
     }
     public function renderCallback ($sender,$param) {
 		$this->RepeaterS->render($param->NewWriter);	
@@ -75,6 +85,9 @@ class ExpireObat extends MainPageSA {
         $waktuexpires=$_SESSION['currentPageExpireObat']['waktuexpires'];
         $modeexpires=$_SESSION['currentPageExpireObat']['modeexpires'];
         switch($modeexpires) {
+            case 'telahexpire' :
+                $str_mode_expires = " AND tanggal_expire<=DATE(NOW())";
+            break;
             case 'harikedepan' :                
                 $str_mode_expires = " AND tanggal_expire>=DATE(NOW()) AND tanggal_expire <= DATE_ADD(DATE(NOW()),INTERVAL $waktuexpires DAY)";
             break;
@@ -94,7 +107,7 @@ class ExpireObat extends MainPageSA {
                 $str_mode_expires = " AND YEAR(tanggal_expire) = YEAR(CURRENT_DATE - INTERVAL $waktuexpires MONTH) AND MONTH(tanggal_expire) = MONTH(CURRENT_DATE - INTERVAL $waktuexpires MONTH)";
             break;   
         }        
-        $str = "SELECT iddetail_sbbm,nama_obat,harga,idsatuan_obat,kemasan,tanggal_expire,dsb.idprogram FROM master_sbbm msb,detail_sbbm dsb WHERE dsb.idsbbm=msb.idsbbm AND status='complete'$str_mode_expires";
+        $str = "SELECT dsb.iddetail_sbbm,dsb.nama_obat,dsb.harga,dsb.no_batch,dsb.kemasan,dsb.tanggal_expire,msb.sumber_dana FROM master_sbbm msb,detail_sbbm dsb WHERE dsb.idsbbm=msb.idsbbm AND status='complete'$str_mode_expires";
         if ($search) {
             $txtsearch=$this->txtKriteria->Text;
             switch ($this->cmbKriteria->Text) {
@@ -125,7 +138,7 @@ class ExpireObat extends MainPageSA {
 		}
 		if ($limit < 0) {$offset=0;$limit=30;$_SESSION['currentPageExpireObat']['page_num']=0;}
         $str = "$str GROUP BY idobat,harga,tanggal_expire ORDER BY tanggal_expire ASC,nama_obat ASC LIMIT $offset,$limit";        
-        $this->DB->setFieldTable(array('iddetail_sbbm','nama_obat','harga','idsatuan_obat','kemasan','tanggal_expire','idprogram'));
+        $this->DB->setFieldTable(array('iddetail_sbbm','nama_obat','harga','no_batch','kemasan','tanggal_expire','sumber_dana'));
         $r=$this->DB->getRecord($str);
         $data=array();        
         while (list($k,$v)=each($r)) {

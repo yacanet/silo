@@ -394,7 +394,7 @@
                                     <strong>
                                         Info!
                                     </strong>
-                                     Data Obat pada SBBM belum ada.
+                                     Data Obat yang Telah dihapus belum ada.
                                 </div>
                             </prop:EmptyTemplate>
                         </com:TActiveRepeater>

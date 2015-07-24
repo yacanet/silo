@@ -93,6 +93,7 @@
                             <label class="col-lg-3 control-label">Mode Expires :</label>
                             <div class="col-lg-4">
                                 <com:TDropDownList ID="cmbModeExpires" CssClass="form-control">
+                                    <com:TListItem Value="telahexpire" Text="TELAH EXPIRES" />
                                     <com:TListItem Value="bulankedepan" Text="BULAN KE DEPAN" />
                                     <com:TListItem Value="minggukedepan" Text="MINGGU KE DEPAN" />
                                     <com:TListItem Value="harikedepan" Text="HARI KE DEPAN" />
@@ -105,7 +106,7 @@
                         <div class="form-group">
                             <label class="col-lg-3 control-label">Waktu Expires :</label>
                             <div class="col-lg-2">
-                                <com:TTextBox ID="txtFilterWaktuExpires" CssClass="form-control" Attributes.OnKeyUp="formatangka(this,true)" />
+                                <com:TActiveTextBox ID="txtFilterWaktuExpires" CssClass="form-control" Attributes.OnKeyUp="formatangka(this,true)" Enabled="<%=$_SESSION['currentPageExpireObat']['modeexpires']!='telahexpire'%>" />
                             </div>
                         </div> 
                         <div class="form-group">
@@ -136,7 +137,7 @@
         <div class="col-lg-12">
             <div class="main-box clearfix">
                 <header class="main-box-header clearfix">
-                    <h2 class="pull-left"><i class="fa fa-history"></i> Laporan Expire Obat Jangka Waktu <com:TActiveLabel ID="lblJangkaWaktu" /></h2>                     
+                    <h2 class="pull-left"><i class="fa fa-history"></i> Laporan Expire Obat <com:TActiveLabel ID="lblJangkaWaktu" /></h2>                     
                     <div class="filter-block pull-right">                                                
                         <com:TActiveLinkButton ID="btnPrintOutExpireObat" CssClass="btn btn-primary pull-left" OnClick="printOut" ClientSide.PostState="false" Attributes.Title="Print Out Expire Obat">
                             <prop:Text><i class="fa fa-print fa-lg"></i></prop:Text>
@@ -163,11 +164,11 @@
                                     <tr>                                        
                                         <th width="50"><span>NO</span></th>
                                         <th width="300"><span>NAMA OBAT</span></th>
-                                        <th width="90"><span>HARGA</span></th>                                        
-                                        <th width="90"><span>SATUAN</span></th>                                        
                                         <th width="90"><span>KEMASAN</span></th>
-                                        <th><span>PROGRAM</span></th>
-                                        <th><span>TANGGAL KADALUWARSA</span></th>
+                                        <th width="90"><span>HARGA</span></th>                                        
+                                        <th width="90"><span>NO.BATCH</span></th>                                                                                
+                                        <th><span>SUMBER DANA</span></th>
+                                        <th><span>TANGGAL KADALUARSA</span></th>
                                         <th><span>VOLUME</span></th>
                                         <th width="120"><span>SUB TOTAL</span></th>                                        
                                     </tr>					                                    
@@ -178,10 +179,10 @@
                                 <tr>                                    
                                     <td><%#$this->DataItem['no']%></td>                                    
                                     <td><%#$this->DataItem['nama_obat']%></td>                                    
-                                    <td><%#$this->DataItem['harga']%></td>
-                                    <td><%#$this->Page->DMaster->getNamaSatuanObat($this->DataItem['idsatuan_obat'])%></td>
                                     <td><%#$this->DataItem['kemasan']%></td>
-                                    <td><%#$this->DataItem['nama_program']%></td>
+                                    <td><%#$this->DataItem['harga']%></td>
+                                    <td><%#$this->DataItem['no_batch']%></td>                                    
+                                    <td><%#$this->DataItem['sumber_dana']%></td>
                                     <td><%#$this->DataItem['tanggal_expire']%></td>
                                     <td><%#$this->DataItem['volume']%></td>
                                     <td><%#$this->DataItem['subtotal']%></td>                                    

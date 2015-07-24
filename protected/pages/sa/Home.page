@@ -65,13 +65,26 @@ a:hover {
             </a>
         </div>
         <div class="col-lg-3 col-sm-6 col-xs-12">
-            <a href="<%=$this->constructUrl('report.ExpireObat',true)%>">
-                <div class="main-box infographic-box colored red-bg">
-                    <i class="fa fa-calendar-o"></i>
-                    <span class="headline">Obat Expires</span>
-                    <span class="value"><%=$_SESSION['currentPageHome']['obatexpires']%></span>
-                </div>
-            </a>
+            <com:TActiveLinkButton ID="btnExpireObat" OnClick="clickExpiredObat" ClientSide.PostState="false">
+                <prop:Text>
+                    <div class="main-box infographic-box colored red-bg">
+                        <i class="fa fa-calendar-o"></i>
+                        <span class="headline">Obat Expires</span>
+                        <span class="value"><%=$_SESSION['currentPageHome']['obatexpires']%></span>
+                    </div>
+                </prop:Text>
+                <prop:ClientSide.OnPreDispatch>                                                                   
+                    $('loading').show(); 
+                    $('<%=$this->btnExpireObat->ClientId%>').disabled='disabled';						                                    
+                </prop:ClientSide.OnPreDispatch>
+                <prop:ClientSide.OnLoading>
+                    $('<%=$this->btnExpireObat->ClientId%>').disabled='disabled';						                                    
+                </prop:ClientSide.OnLoading>
+                <prop:ClientSide.OnComplete>																	                                    						                                                                            
+                    $('<%=$this->btnExpireObat->ClientId%>').disabled='';                                    
+                    $('loading').hide(); 
+                </prop:ClientSide.OnComplete>
+            </com:TActiveLinkButton>            
         </div>        
         <div class="col-lg-3 col-sm-6 col-xs-12">
             <a href="<%=$this->constructUrl('report.DistribusiObat',true)%>">

@@ -179,8 +179,8 @@ class DaftarSBBK extends MainPageSA {
 	}
     public function viewRecord ($sender,$param) {        
         $id=$this->getDataKeyField($sender,$this->RepeaterS);           
-        $str = "SELECT idlpo,idsbbk,no_sbbk,tanggal_sbbk,permintaan_dari,idlpo,no_lpo,tanggal_lpo,keperluan,no_spmb,nip_ka_gudang,nama_ka_gudang,nip_pengemas,nama_pengemas FROM master_sbbk WHERE idsbbk=$id";
-        $this->DB->setFieldTable(array('idlpo','idsbbk','no_sbbk','tanggal_sbbk','permintaan_dari','idlpo','no_lpo','tanggal_lpo','keperluan','no_spmb','nip_ka_gudang','nama_ka_gudang','nip_pengemas','nama_pengemas'));
+        $str = "SELECT idlpo,idsbbk,no_sbbk,tanggal_sbbk,permintaan_dari,idlpo,no_lpo,tanggal_lpo,keperluan,no_spmb,nip_ka_gudang,nama_ka_gudang,nip_pengemas,nama_pengemas,response_sbbk FROM master_sbbk WHERE idsbbk=$id";
+        $this->DB->setFieldTable(array('idlpo','idsbbk','no_sbbk','tanggal_sbbk','permintaan_dari','idlpo','no_lpo','tanggal_lpo','keperluan','no_spmb','nip_ka_gudang','nama_ka_gudang','nip_pengemas','nama_pengemas','response_sbbk'));
         $datasbbk=$this->DB->getRecord($str);        
         $_SESSION['currentPageDaftarSBBK']['datasbbk']=$datasbbk[1]; 
         
