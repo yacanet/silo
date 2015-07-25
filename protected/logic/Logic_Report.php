@@ -3218,11 +3218,11 @@ class Logic_Report extends Logic_Obat {
                 $keterangan="$waktuexpires Bulan Ke Depan";
             break;   
             case 'harikebelakang' :                
-                $str_mode_expires = " AND YEAR(tanggal_expire) = YEAR(CURRENT_DATE - INTERVAL $waktuexpires MONTH) AND MONTH(tanggal_expire) = MONTH(CURRENT_DATE - INTERVAL $waktuexpires DAY)";
+                $str_mode_expires = " AND YEAR(tanggal_expire) = YEAR(CURRENT_DATE - INTERVAL $waktuexpires DAY) AND MONTH(tanggal_expire) = MONTH(CURRENT_DATE - INTERVAL $waktuexpires DAY)";
                 $keterangan="$waktuexpires Hari Ke Belakang";
             break;
             case 'minggukebelakang' :                
-                $str_mode_expires = " AND YEAR(tanggal_expire) = YEAR(CURRENT_DATE - INTERVAL $waktuexpires MONTH) AND MONTH(tanggal_expire) = MONTH(CURRENT_DATE - INTERVAL $waktuexpires WEEK)";
+                $str_mode_expires = " AND YEAR(tanggal_expire) = YEAR(CURRENT_DATE - INTERVAL $waktuexpires WEEK) AND MONTH(tanggal_expire) = MONTH(CURRENT_DATE - INTERVAL $waktuexpires WEEK)";
                 $keterangan="$waktuexpires Minggu Ke Belakang";
             break;
             case 'bulankebelakang' :                

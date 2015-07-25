@@ -98,10 +98,10 @@ class ExpireObat extends MainPageSA {
                 $str_mode_expires = " AND tanggal_expire>=DATE(NOW()) AND tanggal_expire <= DATE_ADD(DATE(NOW()),INTERVAL $waktuexpires MONTH)";
             break;          
             case 'harikebelakang' :                
-                $str_mode_expires = " AND YEAR(tanggal_expire) = YEAR(CURRENT_DATE - INTERVAL $waktuexpires MONTH) AND MONTH(tanggal_expire) = MONTH(CURRENT_DATE - INTERVAL $waktuexpires DAY)";
+                $str_mode_expires = " AND YEAR(tanggal_expire) = YEAR(CURRENT_DATE - INTERVAL $waktuexpires DAY) AND MONTH(tanggal_expire) = MONTH(CURRENT_DATE - INTERVAL $waktuexpires DAY)";
             break;
             case 'minggukebelakang' :                
-                $str_mode_expires = " AND YEAR(tanggal_expire) = YEAR(CURRENT_DATE - INTERVAL $waktuexpires MONTH) AND MONTH(tanggal_expire) = MONTH(CURRENT_DATE - INTERVAL $waktuexpires WEEK)";
+                $str_mode_expires = " AND YEAR(tanggal_expire) = YEAR(CURRENT_DATE - INTERVAL $waktuexpires WEEK) AND MONTH(tanggal_expire) = MONTH(CURRENT_DATE - INTERVAL $waktuexpires WEEK)";
             break;
             case 'bulankebelakang' :                
                 $str_mode_expires = " AND YEAR(tanggal_expire) = YEAR(CURRENT_DATE - INTERVAL $waktuexpires MONTH) AND MONTH(tanggal_expire) = MONTH(CURRENT_DATE - INTERVAL $waktuexpires MONTH)";
