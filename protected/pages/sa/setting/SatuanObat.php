@@ -102,14 +102,19 @@ class SatuanObat extends MainPageSA {
         }
     }    
     public function deleteRecord ($sender,$param) {
-		$id=$this->getDataKeyField($sender,$this->RepeaterS);        
-        $this->DB->deleteRecord("satuanobat WHERE idsatuan_obat=$id");
-            
-        if ($this->Application->Cache) {                                
-            $dataitem=$this->DMaster->getList('satuanobat WHERE enabled=1',array('idsatuan_obat','nama_satuan'),'nama_satuan',null,1);
-            $dataitem['none']='Seluruh SatuanObat';    
-            $this->Application->Cache->set('listsatuanobat',$dataitem);                    
-        }
-        $this->redirect('setting.SatuanObat',true);		        
+		$id=$this->getDataKeyField($sender,$this->RepeaterS); 
+        if ($this->DB->checkRecordIsExist('idsatuan_obat','master_obat',$id)) {                                
+            $this->lblPrintout->Text='Gagal menghapus Satuan Obat';
+            $this->labelMessageError->Text = "ID satuan obat ($id) sedang digunakan di master obat jadi tidak bisa dihapus.";
+            $this->modalMessageError->show();
+        }else{
+            $this->DB->deleteRecord("satuanobat WHERE idsatuan_obat=$id");
+            if ($this->Application->Cache) {                                
+                $dataitem=$this->DMaster->getList('satuanobat WHERE enabled=1',array('idsatuan_obat','nama_satuan'),'nama_satuan',null,1);
+                $dataitem['none']='Seluruh SatuanObat';    
+                $this->Application->Cache->set('listsatuanobat',$dataitem);                    
+            }
+            $this->redirect('setting.SatuanObat',true);		        
+        }  
 	}
 }

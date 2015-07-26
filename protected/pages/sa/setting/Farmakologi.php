@@ -102,14 +102,22 @@ class Farmakologi extends MainPageSA {
         }
     }    
     public function deleteRecord ($sender,$param) {
-		$id=$this->getDataKeyField($sender,$this->RepeaterS);        
-        $this->DB->deleteRecord("farmakologi WHERE idfarmakologi=$id");
-            
-        if ($this->Application->Cache) {                                
-            $dataitem=$this->DMaster->getList('farmakologi WHERE enabled=1',array('idfarmakologi','nama_farmakologi'),'nama_farmakologi',null,1);
-            $dataitem['none']='Seluruh Farmakologi';    
-            $this->Application->Cache->set('listfarmakologi',$dataitem);                    
-        }
-        $this->redirect('setting.Farmakologi',true);		        
+		$id=$this->getDataKeyField($sender,$this->RepeaterS);
+        $str = "SELECT idobat FROM master_obat WHERE farmakologi LIKE '%$id%' LIMIT 1";
+        $this->DB->setFieldTable(array('idobat'));
+		$r=$this->DB->getRecord($str);     
+        if (isset($r[1])) {                                
+            $this->lblPrintout->Text='Gagal menghapus farmakologi';
+            $this->labelMessageError->Text = "ID farmakologi ($id) sedang digunakan di master obat jadi tidak bisa dihapus.";
+            $this->modalMessageError->show();
+        }else{
+            $this->DB->deleteRecord("farmakologi WHERE idfarmakologi=$id");            
+            if ($this->Application->Cache) {                                
+                $dataitem=$this->DMaster->getList('farmakologi WHERE enabled=1',array('idfarmakologi','nama_farmakologi'),'nama_farmakologi',null,1);
+                $dataitem['none']='Seluruh Farmakologi';    
+                $this->Application->Cache->set('listfarmakologi',$dataitem);                    
+            }
+            $this->redirect('setting.Farmakologi',true);		        
+        }        
 	}
 }

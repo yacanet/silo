@@ -102,14 +102,19 @@ class BentukSediaan extends MainPageSA {
         }
     }    
     public function deleteRecord ($sender,$param) {
-		$id=$this->getDataKeyField($sender,$this->RepeaterS);        
-        $this->DB->deleteRecord("bentuksediaan WHERE idbentuk_sediaan=$id");
-            
-        if ($this->Application->Cache) {                                
-            $dataitem=$this->DMaster->getList('bentuksediaan WHERE enabled=1',array('idbentuk_sediaan','nama_bentuk'),'nama_bentuk',null,1);
-            $dataitem['none']='Seluruh Bentuk Sediaan';    
-            $this->Application->Cache->set('listbentuksediaan',$dataitem);                    
+		$id=$this->getDataKeyField($sender,$this->RepeaterS);                
+        if ($this->DB->checkRecordIsExist('idbentuk_sediaan','master_obat',$id)) {                                
+            $this->lblPrintout->Text='Gagal menghapus bentuk sediaan';
+            $this->labelMessageError->Text = "ID bentuk sediaan ($id) sedang digunakan di master obat jadi tidak bisa dihapus.";
+            $this->modalMessageError->show();
+        }else{
+            $this->DB->deleteRecord("bentuksediaan WHERE idbentuk_sediaan=$id");
+            if ($this->Application->Cache) {                                
+                $dataitem=$this->DMaster->getList('bentuksediaan WHERE enabled=1',array('idbentuk_sediaan','nama_bentuk'),'nama_bentuk',null,1);
+                $dataitem['none']='Seluruh Bentuk Sediaan';    
+                $this->Application->Cache->set('listbentuksediaan',$dataitem);                    
+            }
+            $this->redirect('setting.BentukSediaan',true);		        
         }
-        $this->redirect('setting.BentukSediaan',true);		        
 	}
 }
